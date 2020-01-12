@@ -56,6 +56,36 @@ export function path_removeQueryString(str: string): string
     return str;
 }
 
+// ------------------------------ path_toFileUri ----------------------------------
+// convert file path to string ready to be parsed by 
+export function path_toFileUri(path: string): string 
+{
+  // replace '\' with '/'
+  let toPath = '';
+  for (let ix = 0; ix < path.length; ++ix)
+  {
+    const ch1 = path.substr(ix, 1);
+    if (ch1 == '\\')
+      toPath += '/';
+    else
+      toPath += ch1;
+  }
+
+  // append file:/// to front of path.
+  const return_path = 'file:///' + toPath;
+
+  return return_path;
+}
+
+// -------------------------------- string_contains -------------------------------
+export function string_contains(str: string, pattern: string): boolean
+{
+  if (str.indexOf(pattern) >= 0)
+    return true;
+  else
+    return false;
+}
+
 // ----------------------- string_dequote ------------------------
 export function string_dequote(text: string): string
 {
@@ -86,6 +116,19 @@ export function string_rtrim(str:string): string
     return '';
   else
     return str.replace(/\s+$/, "");
+}
+
+// ----------------------string_tail ---------------------------------
+// return num number of characters from end of string.
+export function string_tail(str: string, num: number): string
+{
+  if (str.length <= num)
+    return str;
+  else
+  {
+    var bx = str.length - num;
+    return str.substr(bx);
+  }
 }
 
 // ------------------------ string_wordBx ---------------------------
