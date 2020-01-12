@@ -1,12 +1,12 @@
 {
   "name": "sr_common_ts",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "core typescript functions",
+  "main": "lib/core.js",
+  "types": "lib/core.d.ts",
   "scripts": {
     "test": "jest --config jestconfig.json",
     "build": "tsc",
-    "build2": "tsc ./src/index.ts --lib ES6",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json"
   },
@@ -18,7 +18,7 @@
     "url": "git+https://github.com/lae0901/sr_common_ts.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Stephen Richter",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/lae0901/sr_common_ts/issues"
