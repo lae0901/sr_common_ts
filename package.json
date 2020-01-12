@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest --config jestconfig.json",
     "build": "tsc",
+    "build2": "tsc ./src/index.ts --lib ES6",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json"
   },
