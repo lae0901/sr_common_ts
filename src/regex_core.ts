@@ -3,66 +3,6 @@
 // desc: regex functions and constants. Used to enhance functionality of javascript
 //       built in regex features.
 
-// rxp - const object that contains regex match patterns.
-export const rxp = {
-  any: '\\.',       // match any char
-  zeroMoreWhitespace: `\\s*`,
-  singleQuoteQuoted: `\\s*'(?:\\\\.|[^'\\\\])*'`,
-  doubleQuoteQuoted: `\\s*"(?:\\\\.|[^"\\\\])*"`,
-  jsonNameVluSep: `\\s*:`,
-  beginString: `^\\s*`,
-  jsonStart: `\\s*{`,
-  jsonEnd: `\\s*}`,
-  jsonStartArray: `\\s*\\[`,
-  jsonStartObject: `\\s*\\{`,
-  comma: `\\s*,`,
-  or: '|',
-  beginCapture: '(',
-  closeParen: '\\)',
-  endCapture: ')',
-  endCaptureZeroOne: ')?',
-  endCaptureZeroMore: ')*',
-  endCaptureOneMore: ')+',
-  oneMoreNumeric: '[\\d.]+',
-  oneMoreDigits: '\\d+',
-  oneMoreAlpha: '[A-Za-z]+',
-  oneMoreName: '[A-Za-z_]+',
-  oneMoreWord: '\\w+',
-  oneMoreWhitespace: '\\s+',
-  openParen: '\\(',
-  stringStart: '^',
-  stringEnd: '$',
-  variableName: `[a-zA-Z_]\\w*`,
-  zeroOneAny: '\\.?',
-  zeroMoreWord: '\\w*',
-
-  oneMoreAnyBut: (anyChars: string) =>
-  {
-    return '[^' + anyChars + ']+';
-  },
-
-  jsonVluStart: function()
-  {
-    return this.zeroMoreWhitespace + this.beginCapture + this.singleQuoteQuoted +
-      this.or + this.variableName + this.or + this.jsonStartArray +
-      this.or + this.jsonStartObject + this.endCapture
-  },
-  jsonPropName: function()
-  {
-    return this.zeroMoreWhitespace + this.beginCapture + this.singleQuoteQuoted +
-      this.or + this.variableName + this.endCapture
-  },
-  jsonNameVluPair: function()
-  {
-    return this.zeroMoreWhitespace + this.beginCapture + this.singleQuoteQuoted +
-      this.or + this.variableName + this.endCapture +
-      this.jsonNameVluSep +
-      this.beginCapture + this.singleQuoteQuoted +
-      this.or + this.variableName + this.endCapture
-  },
-  escape: (char: string) => { return '\\' + char }
-}
-
 // // -------------------------- regex_exec -----------------------------------
 // // match to a pattern, starting at bx in text string.
 // // re_pattern:  either a RegExp object or regular expression pattern.

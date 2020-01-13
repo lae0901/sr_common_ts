@@ -32,8 +32,9 @@ export function lines_findFirst(lines: string[], findText: string, options?: { s
 // ------------------------- object_toQueryString ---------------------------------
 export function object_toQueryString( obj:{} )
 {
+  // redefine the input obj argument. Redefine as object where all the property 
+  // names are strings. And the property values are of type any.
   interface StringAnyMap { [key: string]: any; }
-
   const mapObj = obj as StringAnyMap ;
 
   const qs = Object.keys(mapObj)
@@ -75,6 +76,67 @@ export function path_toFileUri(path: string): string
   const return_path = 'file:///' + toPath;
 
   return return_path;
+}
+
+// ------------------------------------- rxp --------------------------------------
+// rxp - const object that contains regex match patterns.
+export const rxp = {
+  any: '\\.',       // match any char
+  zeroMoreWhitespace: `\\s*`,
+  singleQuoteQuoted: `\\s*'(?:\\\\.|[^'\\\\])*'`,
+  doubleQuoteQuoted: `\\s*"(?:\\\\.|[^"\\\\])*"`,
+  jsonNameVluSep: `\\s*:`,
+  beginString: `^\\s*`,
+  jsonStart: `\\s*{`,
+  jsonEnd: `\\s*}`,
+  jsonStartArray: `\\s*\\[`,
+  jsonStartObject: `\\s*\\{`,
+  comma: `\\s*,`,
+  or: '|',
+  beginCapture: '(',
+  closeParen: '\\)',
+  endCapture: ')',
+  endCaptureZeroOne: ')?',
+  endCaptureZeroMore: ')*',
+  endCaptureOneMore: ')+',
+  oneMoreNumeric: '[\\d.]+',
+  oneMoreDigits: '\\d+',
+  oneMoreAlpha: '[A-Za-z]+',
+  oneMoreName: '[A-Za-z_]+',
+  oneMoreWord: '\\w+',
+  oneMoreWhitespace: '\\s+',
+  openParen: '\\(',
+  stringStart: '^',
+  stringEnd: '$',
+  variableName: `[a-zA-Z_]\\w*`,
+  zeroOneAny: '\\.?',
+  zeroMoreWord: '\\w*',
+
+  oneMoreAnyBut: (anyChars: string) =>
+  {
+    return '[^' + anyChars + ']+';
+  },
+
+  jsonVluStart: function ()
+  {
+    return this.zeroMoreWhitespace + this.beginCapture + this.singleQuoteQuoted +
+      this.or + this.variableName + this.or + this.jsonStartArray +
+      this.or + this.jsonStartObject + this.endCapture
+  },
+  jsonPropName: function ()
+  {
+    return this.zeroMoreWhitespace + this.beginCapture + this.singleQuoteQuoted +
+      this.or + this.variableName + this.endCapture
+  },
+  jsonNameVluPair: function ()
+  {
+    return this.zeroMoreWhitespace + this.beginCapture + this.singleQuoteQuoted +
+      this.or + this.variableName + this.endCapture +
+      this.jsonNameVluSep +
+      this.beginCapture + this.singleQuoteQuoted +
+      this.or + this.variableName + this.endCapture
+  },
+  escape: (char: string) => { return '\\' + char }
 }
 
 // -------------------------------- string_contains -------------------------------
