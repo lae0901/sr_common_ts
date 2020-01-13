@@ -1,5 +1,5 @@
 {
-  "name": "sr_common_ts",
+  "name": "sr_core_ts",
   "version": "1.4.0",
   "description": "core typescript functions",
   "main": "lib/core.js",
@@ -15,15 +15,15 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lae0901/sr_common_ts.git"
+    "url": "git+https://github.com/lae0901/sr_core_ts.git"
   },
   "keywords": [],
   "author": "Stephen Richter",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/lae0901/sr_common_ts/issues"
+    "url": "https://github.com/lae0901/sr_core_ts/issues"
   },
-  "homepage": "https://github.com/lae0901/sr_common_ts#readme",
+  "homepage": "https://github.com/lae0901/sr_core_ts#readme",
   "devDependencies": {
     "@types/jest": "^24.0.25",
     "jest": "^24.9.0",
