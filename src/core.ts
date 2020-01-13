@@ -1,5 +1,6 @@
 // src/core.ts
 
+
 // ------------------------------- lines_findFirst ----------------------------
 // return linn and coln of first occurance of findText in string array of lines.
 export function lines_findFirst(lines: string[], findText: string, options?: { start?: number })
