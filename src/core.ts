@@ -1,5 +1,8 @@
 // src/core.ts
 
+import { rxp } from './regex_core';
+
+export {rxp} ;
 
 // ------------------------------- lines_findFirst ----------------------------
 // return linn and coln of first occurance of findText in string array of lines.
@@ -79,65 +82,90 @@ export function path_toFileUri(path: string): string
   return return_path;
 }
 
-// ------------------------------------- rxp --------------------------------------
-// rxp - const object that contains regex match patterns.
-export const rxp = {
-  any: '\\.',       // match any char
-  zeroMoreWhitespace: `\\s*`,
-  singleQuoteQuoted: `\\s*'(?:\\\\.|[^'\\\\])*'`,
-  doubleQuoteQuoted: `\\s*"(?:\\\\.|[^"\\\\])*"`,
-  jsonNameVluSep: `\\s*:`,
-  beginString: `^\\s*`,
-  jsonStart: `\\s*{`,
-  jsonEnd: `\\s*}`,
-  jsonStartArray: `\\s*\\[`,
-  jsonStartObject: `\\s*\\{`,
-  comma: `\\s*,`,
-  or: '|',
-  beginCapture: '(',
-  closeParen: '\\)',
-  endCapture: ')',
-  endCaptureZeroOne: ')?',
-  endCaptureZeroMore: ')*',
-  endCaptureOneMore: ')+',
-  oneMoreNumeric: '[\\d.]+',
-  oneMoreDigits: '\\d+',
-  oneMoreAlpha: '[A-Za-z]+',
-  oneMoreName: '[A-Za-z_]+',
-  oneMoreWord: '\\w+',
-  oneMoreWhitespace: '\\s+',
-  openParen: '\\(',
-  stringStart: '^',
-  stringEnd: '$',
-  variableName: `[a-zA-Z_]\\w*`,
-  zeroOneAny: '\\.?',
-  zeroMoreWord: '\\w*',
+// --------------------------- scan_charNeAll ------------------------------
+// scan in string until char not equal any of pattern chars.
+export function scan_charNeAll(text: string, bx: number, pattern: string): number
+{
+  let ix = bx;
+  while (ix < text.length)
+  {
+    const ch1 = text.substr(ix, 1);
+    const fx = pattern.indexOf(ch1);
+    if (fx == -1)
+      break;
+    ix += 1;
+  }
+  if (ix < text.length)
+    return ix;
+  else
+    return -1;
+}
 
-  oneMoreAnyBut: (anyChars: string) =>
+// ----------------------------- scan_revCharEqAny --------------------------------
+// scan backwards until character is equal any of chars in anyChar string.
+export function scan_revCharEqAny(text: string, bx: number, anyChar: string): number
+{
+  let ix = bx;
+  while (ix >= 0)
   {
-    return '[^' + anyChars + ']+';
-  },
+    const ch1 = text.substr(ix, 1);
+    const fx = anyChar.indexOf(ch1);
+    if (fx >= 0)
+      break;
+    ix -= 1;
+  }
+  if (ix >= 0)
+    return ix;
+  else
+    return -1;
+}
 
-  jsonVluStart: function ()
+// ----------------------------- scan_revCharNeAll --------------------------------
+// scan backwards until character is not equal all of chars in pattern string.
+export function scan_revCharNeAll(text: string, bx: number, pattern: string): number
+{
+  let ix = bx;
+  while (ix >= 0)
   {
-    return this.zeroMoreWhitespace + this.beginCapture + this.singleQuoteQuoted +
-      this.or + this.variableName + this.or + this.jsonStartArray +
-      this.or + this.jsonStartObject + this.endCapture
-  },
-  jsonPropName: function ()
+    const ch1 = text.substr(ix, 1);
+    const fx = pattern.indexOf(ch1);
+    if (fx == -1)
+      break;
+    ix -= 1;
+  }
+
+  if (ix >= 0)
+    return ix;
+  else
+    return -1;
+}
+
+// --------------------------------- scan_revSepWord -----------------------
+// scan reverse to next separator delimited word. First step backwards past 
+// separator until last char of word. Then step back until separator found. That 
+// is char immed befor start of word.
+// This is simple word finder. Use scan_revWord and scan_word to find a word and
+// its delim chars.
+export function scan_revSepWord(text: string, pos: number, wsChars: string):
+  { text: string, bx: number } | null
+{
+  let wordText = '';
+  let bx = -1;
+  const ex = scan_revCharNeAll(text, pos, wsChars);
+  if (ex >= 0)
   {
-    return this.zeroMoreWhitespace + this.beginCapture + this.singleQuoteQuoted +
-      this.or + this.variableName + this.endCapture
-  },
-  jsonNameVluPair: function ()
-  {
-    return this.zeroMoreWhitespace + this.beginCapture + this.singleQuoteQuoted +
-      this.or + this.variableName + this.endCapture +
-      this.jsonNameVluSep +
-      this.beginCapture + this.singleQuoteQuoted +
-      this.or + this.variableName + this.endCapture
-  },
-  escape: (char: string) => { return '\\' + char }
+    const fx = scan_revCharEqAny(text, ex, wsChars);
+    if (fx == -1)
+      bx = 0;
+    else
+      bx = fx + 1;
+
+    // isolate the word.
+    const lx = ex - bx + 1;
+    wordText = text.substr(bx, lx);
+  }
+
+  return (wordText) ? { text: wordText, bx } : null;
 }
 
 // -------------------------------- string_contains -------------------------------
@@ -179,6 +207,58 @@ export function string_rtrim(str:string): string
     return '';
   else
     return str.replace(/\s+$/, "");
+}
+
+
+// -------------------------------- string_startsWith -------------------------
+// test that the starting text of text matches startText.
+export function string_startsWith(text: string, startText: string): boolean
+{
+  if (!startText)
+    return false;
+  const startLx = startText.length;
+  if (startLx > text.length)
+    return false;
+  else if (text.substr(0, startLx) == startText)
+    return true;
+  else
+    return false;
+}
+
+// ---------------------------- string_substrLenient --------------------
+// return substring of the input string. only, clip the results if start or end
+// pos are out of bounds of the string.
+function string_substrLenient(str: string, fx: number, lx: number = -1): string
+{
+  if ((typeof str) != 'string')
+    return '';
+
+  // move from from negative to zero. Reduce length by the adjusted amount.
+  if (fx < 0)
+  {
+    var adj = 0 - fx;
+    fx += adj;
+    if (lx != -1)
+    {
+      lx -= adj;
+      if (lx < 0)
+        lx = 0;
+    }
+  }
+
+  if (fx >= str.length)
+    return '';
+  if (lx == -1)
+    return str.substr(fx);
+
+  // remaining length.
+  var remLx = str.length - fx;
+
+  // trim length if remaining lgth exceeded.
+  if (lx > remLx)
+    lx = remLx;
+
+  return str.substr(fx, lx);
 }
 
 // ----------------------string_tail ---------------------------------
