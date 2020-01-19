@@ -1,6 +1,6 @@
 {
   "name": "sr_core_ts",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "core typescript functions",
   "main": "lib/core.js",
   "types": "lib/core.d.ts",
