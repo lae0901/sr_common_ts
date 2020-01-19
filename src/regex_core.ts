@@ -3,6 +3,8 @@
 // desc: regex functions and constants. Used to enhance functionality of javascript
 //       built in regex features.
 
+// xxxxx
+
 // ------------------------------------- rxp --------------------------------------
 // rxp - const object that contains regex match patterns.
 export const rxp = {
