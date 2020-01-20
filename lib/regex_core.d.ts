@@ -35,3 +35,18 @@ export declare const rxp: {
     jsonNameVluPair: () => string;
     escape: (char: string) => string;
 };
+interface regex_exec_rtnval_interface {
+    matchBx: number;
+    matchLx: number;
+    matchText: string;
+    execRv?: RegExpExecArray | null;
+    [key: string]: any;
+}
+interface map_capture_item_interface {
+    ix: number;
+    name: string;
+    trim?: boolean;
+    fxName?: string;
+}
+export declare function regex_exec(text: string, bx: number, re_pattern: RegExp, map_capture: map_capture_item_interface[]): regex_exec_rtnval_interface;
+export {};
