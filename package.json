@@ -1,6 +1,6 @@
 {
   "name": "sr_core_ts",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "core typescript functions",
   "main": "lib/core.js",
   "types": "lib/core.d.ts",
@@ -32,5 +32,8 @@
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.7.4"
+  },
+  "dependencies": {
+    "user": "0.0.0"
   }
 }
