@@ -3,8 +3,6 @@
 // desc: regex functions and constants. Used to enhance functionality of javascript
 //       built in regex features.
 
-// xxxxx
-
 // ------------------------------------- rxp --------------------------------------
 // rxp - const object that contains regex match patterns.
 export const rxp = {
@@ -66,24 +64,22 @@ export const rxp = {
   escape: (char: string) => { return '\\' + char }
 }
 
- interface regex_exec_rtnval_interface
+interface regex_exec_rtnval_interface
 {
-  matchBx:number,
-  matchLx:number,
-  matchText:string,
-  execRv?:RegExpExecArray | null,
+  matchBx: number,
+  matchLx: number,
+  matchText: string,
+  execRv?: RegExpExecArray | null,
   [key: string]: any;
-  }
+}
 
 interface map_capture_item_interface
 {
-  ix:number,
-  name:string,
-  trim?:boolean,
-  fxName?:string
+  ix: number,
+  name: string,
+  trim?: boolean,
+  fxName?: string
 }
-
-// matchBx, matchLx, matchOx, matchText, execRv: reg_rv
 
 // -------------------------- regex_exec -----------------------------------
 // match to a pattern, starting at bx in text string.
@@ -99,9 +95,9 @@ interface map_capture_item_interface
 //                       value.
 // const rv = regex_exec(stmt, bx, rxx_dataDefn, [{ ix: 1, name: 'const' },
 // { ix: 2, name: 'datatype' }, { ix: 3, name: 'pointer' }]);
-export function regex_exec(text:string, bx:number, re_pattern:RegExp, 
-            map_capture: map_capture_item_interface[] ) 
-        : regex_exec_rtnval_interface
+export function regex_exec(text: string, bx: number, re_pattern: RegExp,
+  map_capture: map_capture_item_interface[])
+  : regex_exec_rtnval_interface
 {
   let matchBx = -1;
   let matchLx = 0;
@@ -129,10 +125,10 @@ export function regex_exec(text:string, bx:number, re_pattern:RegExp,
     matchLx = matchText.length;
   }
 
-  let rv : regex_exec_rtnval_interface = { matchBx, matchLx, matchOx, matchText, execRv: reg_rv };
+  let rv: regex_exec_rtnval_interface = { matchBx, matchLx, matchOx, matchText, execRv: reg_rv };
 
   // map from capture array to properties in return value.
-  if (map_capture && reg_rv )
+  if (map_capture && reg_rv)
   {
     for (let mx = 0; mx < map_capture.length; ++mx)
     {

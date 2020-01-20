@@ -1,6 +1,6 @@
 {
   "name": "sr_core_ts",
-  "version": "1.11.0",
+  "version": "1.13.0",
   "description": "core typescript functions",
   "main": "lib/core.js",
   "types": "lib/core.d.ts",
@@ -11,7 +11,7 @@
     "lint": "tslint -p tsconfig.json"
   },
   "files": [
-    "lib /**/*"
+    "/lib"
   ],
   "repository": {
     "type": "git",
