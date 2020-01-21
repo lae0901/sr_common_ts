@@ -75,10 +75,10 @@ interface regex_exec_rtnval_interface
 
 interface map_capture_item_interface
 {
-  ix: number,
-  name: string,
-  trim?: boolean,
-  fxName?: string
+  ix: number,      // index into regex return array of the capture item
+  name: string,    // property name of the capture item.
+  trim?: boolean,  // trim whitespace from text of capture item
+  fxName?: string  // property name in which to store location of item
 }
 
 // -------------------------- regex_exec -----------------------------------
@@ -117,6 +117,10 @@ export function regex_exec(text: string, bx: number, re_pattern: RegExp | string
 
   const reg_rv = re.exec(text);
 
+  // got a match. store the location of the match and the text that was matched.
+  // matchOx is the offset from where the scan started ( bx ) to where the match
+  // was found ( reg_rv.index ). When matchOx is zero that means there is nothing
+  // between the start location and the match start position.
   if (reg_rv != null)
   {
     matchBx = reg_rv.index;
@@ -125,9 +129,15 @@ export function regex_exec(text: string, bx: number, re_pattern: RegExp | string
     matchLx = matchText.length;
   }
 
+  // store match info in the return value object.
   let rv: regex_exec_rtnval_interface = { matchBx, matchLx, matchOx, matchText, execRv: reg_rv };
 
-  // map from capture array to properties in return value.
+  // capture match instruction have been specified.
+  // The RegExp.exec method returned an array containing the text of what was 
+  // matched. The map_capture array contains instructions to copy that matched text
+  // into the rv object. Where each capture instruction item specifies the index
+  // into the RegExp return array of the match text, and the property name in the
+  // rv object where that match text is to be stored.
   if (map_capture && reg_rv)
   {
     for (let mx = 0; mx < map_capture.length; ++mx)
@@ -135,22 +145,19 @@ export function regex_exec(text: string, bx: number, re_pattern: RegExp | string
       const item = map_capture[mx];
       if (item.ix < reg_rv.length)
       {
-        let capture_text = reg_rv[item.ix];
+        // isolate matched text from regexp return array
+        let capture_text = reg_rv[item.ix] || '' ;
+
+        // trim blanks from the matched text..
+        if (item.trim)
+          capture_text = capture_text.trim();
+
+        // store captured text in specified property name of rv object.
         rv[item.name] = capture_text;
 
-        // trim blanks from the capture variable.
-        if (item.trim)
-        {
-          if (!capture_text)
-            capture_text = '';
-          else
-            capture_text = capture_text.trim();
-          rv[item.name] = capture_text;
-        }
-
         // the found position of the capture value. Scan the input text for the
-        // capture text. Store the found pos in the specified propert of the return
-        // object.
+        // capture text. Store the found pos in the specified property of the 
+        // return object.
         if (item.fxName)
         {
           const fx = text.indexOf(capture_text, capture_ix);
@@ -158,7 +165,8 @@ export function regex_exec(text: string, bx: number, re_pattern: RegExp | string
 
           // next time look for capture text, start looking after the location of
           // this just found capture text.
-          capture_ix = fx + capture_text.length;
+          if ( fx >= 0 )
+            capture_ix = fx + capture_text.length;
         }
       }
     }
