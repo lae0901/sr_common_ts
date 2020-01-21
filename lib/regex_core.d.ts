@@ -48,5 +48,5 @@ interface map_capture_item_interface {
     trim?: boolean;
     fxName?: string;
 }
-export declare function regex_exec(text: string, bx: number, re_pattern: RegExp, map_capture?: map_capture_item_interface[]): regex_exec_rtnval_interface;
+export declare function regex_exec(text: string, bx: number, re_pattern: RegExp | string, map_capture?: map_capture_item_interface[]): regex_exec_rtnval_interface;
 export {};

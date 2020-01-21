@@ -95,7 +95,7 @@ interface map_capture_item_interface
 //                       value.
 // const rv = regex_exec(stmt, bx, rxx_dataDefn, [{ ix: 1, name: 'const' },
 // { ix: 2, name: 'datatype' }, { ix: 3, name: 'pointer' }]);
-export function regex_exec(text: string, bx: number, re_pattern: RegExp,
+export function regex_exec(text: string, bx: number, re_pattern: RegExp | string,
   map_capture?: map_capture_item_interface[])
   : regex_exec_rtnval_interface
 {
@@ -107,7 +107,7 @@ export function regex_exec(text: string, bx: number, re_pattern: RegExp,
 
   // setup the regular expression to execute.
   let re = re_pattern;
-  if (typeof (re_pattern) == 'string')
+  if (typeof (re) == 'string')
   {
     re = new RegExp(re_pattern, 'g');
   }
