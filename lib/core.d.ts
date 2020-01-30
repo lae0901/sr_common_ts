@@ -6,6 +6,9 @@ export declare function lines_findFirst(lines: string[], findText: string, optio
     linn: number;
     coln: number;
 };
+export declare function object_indexerItems(obj: {
+    [key: string]: any;
+}): any[];
 export declare function object_toQueryString(obj: {}): string;
 export declare function path_removeQueryString(str: string): string;
 export declare function path_toFileUri(path: string): string;

@@ -33,6 +33,27 @@ export function lines_findFirst(lines: string[], findText: string, options?: { s
   return { linn, coln };
 }
 
+// --------------------------- object_indexerItems ------------------------
+// return an array containing the indexer properties of the object.
+export function object_indexerItems(obj: {[key: string]: any}): any[]
+{
+  const indexer: {}[] = [];
+  let str = '';
+  if (obj)
+  {
+    for (const key of Object.keys(obj))
+    {
+      if (!isNaN(Number(key)))
+      {
+        const vlu = obj[key];
+        indexer.push(vlu);
+      }
+    }
+  }
+
+  return indexer;
+}
+
 // ------------------------- object_toQueryString ---------------------------------
 export function object_toQueryString( obj:{} )
 {
