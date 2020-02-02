@@ -49,6 +49,43 @@ export async function dir_findFirstText(dirPath: string, findText: string)
   return promise;
 }
 
+// ----------------------------------- dir_mkdir ------------------------------
+export function dir_mkdir(dirPath: string): Promise<null>
+{
+  const promise = new Promise<null>(async (resolve, reject) =>
+  {
+    fs.mkdir(dirPath, (err) =>
+    {
+      if (err)
+        reject(err);
+      else
+        resolve();
+    });
+  });
+  return promise;
+}
+
+// --------------------------- dir_readdir ----------------------
+// return results of fs.readdir as a promise.
+export function dir_readdir(dirPath: string): Promise<string[]>
+{
+  const promise = new Promise<string[]>(async (resolve, reject) =>
+  {
+    fs.readdir(dirPath, (err, files) =>
+    {
+      if (files)
+      {
+        resolve(files);
+      }
+      else
+      {
+        reject(err);
+      }
+    });
+  });
+  return promise;
+}
+
 // ---------------------------- file_create -----------------------------
 export async function file_create(path: string) 
 {
