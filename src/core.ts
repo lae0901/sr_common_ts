@@ -171,16 +171,25 @@ export function file_findFirstText(filePath: string, findText: string)
 
 // ------------------------ file_isDirectory ----------------------------
 // return promise of fileSystem stat info of a file.
-export function file_isDirectory(path: string): Promise<boolean>
+export function file_isDirectory(path: string) 
+        : Promise<{isDir:boolean,errmsg:string,errno:number}>
 {
-  const promise = new Promise<boolean>((resolve, reject) =>
+  const promise = new Promise<{ isDir: boolean, errmsg: string, errno:number }>((resolve, reject) =>
   {
+    let isDir = false ;
+    let errmsg = '' ;
+    let errno = 0 ;
     fs.stat(path, (err, stats) =>
     {
       if (err)
-        reject(`file_isDirectory ${path} ${err}`);
+      {
+        errmsg = err.message;
+        errno = err.errno || 0 ;
+      }
       else
-        resolve(stats.isDirectory());
+        isDir = stats.isDirectory( ) ;
+        
+      resolve({ isDir, errmsg, errno });
     });
   });
 
