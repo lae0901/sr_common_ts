@@ -1,5 +1,25 @@
+/// <reference types="node" />
+import * as fs from 'fs';
 import { rxp, regex_exec } from './regex_core';
 export { rxp, regex_exec };
+export declare function dir_findFirstText(dirPath: string, findText: string): Promise<{
+    foundFilePath: string;
+    foundLinn: number;
+}>;
+export declare function file_create(path: string): Promise<unknown>;
+export declare function file_exists(path: string): Promise<boolean>;
+export declare function file_findFirstText(filePath: string, findText: string): Promise<{
+    foundLinn: number;
+    foundPos: number;
+}>;
+export declare function file_isDirectory(path: string): Promise<boolean>;
+export declare function file_readLines(filePath: string): Promise<{
+    lines: string[];
+    errmsg: string;
+}>;
+export declare function file_stat(path: string): Promise<fs.Stats>;
+export declare function file_ensureExists(path: string): Promise<void>;
+export declare function file_writeNew(path: string, text: string): Promise<unknown>;
 export declare function lines_findFirst(lines: string[], findText: string, options?: {
     start?: number;
 }): {
