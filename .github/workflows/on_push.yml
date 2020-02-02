@@ -3,14 +3,14 @@ name: on_push
 on: [push]
 
 jobs:
-  build:
-
+  store-to-artifact-job:
     runs-on: ubuntu-latest
 
     steps:
     - name: echo to artifact
       run: |
         echo Hello there! > steve.txt
+    - name: upload to artifact
       uses: actions/upload-artifact@v1
       with:
         name: messages
