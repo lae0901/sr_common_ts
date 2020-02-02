@@ -87,20 +87,22 @@ export function dir_readdir(dirPath: string): Promise<string[]>
 }
 
 // ---------------------------- file_create -----------------------------
-export async function file_create(path: string) 
+export async function file_create(path: string) : Promise<string>
 {
-  const promise = new Promise((resolve, reject) =>
+  const promise = new Promise<string>((resolve, reject) =>
   {
+    let errmsg = '' ;
     fs.open(path, 'w', function (err, fd)
     {
       if (err)
       {
-        reject('error opening file: ' + err);
+        errmsg = err.message ;
+        resolve(errmsg) ;
       }
 
       fs.close(fd, () =>
       {
-        resolve();
+        resolve(errmsg);
       });
     });
   });
