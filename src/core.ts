@@ -254,15 +254,17 @@ export function file_writeFile(filePath: string, text: string = ''): Promise<str
 
 // ---------------------------- file_writeNew -----------------------------
 // replace contents of existing file. Or write text to new file.
-export async function file_writeNew(path: string, text: string) 
+export async function file_writeNew(path: string, text: string) : Promise<string>
 {
-  const promise = new Promise((resolve, reject) =>
+  const promise = new Promise<string>((resolve, reject) =>
   {
+    let errmsg = '' ;
     fs.open(path, 'w', function (err, fd)
     {
       if (err)
       {
-        reject('error opening file: ' + err);
+        errmsg = err.message ;
+        resolve(errmsg) ;
       }
 
       const buf = Buffer.alloc(text.length, text);
@@ -272,9 +274,10 @@ export async function file_writeNew(path: string, text: string)
         if (err) reject('error writing file: ' + err);
         fs.close(fd, () =>
         {
-          resolve();
+          resolve( errmsg );
         });
       });
+
     });
   });
   return promise;
