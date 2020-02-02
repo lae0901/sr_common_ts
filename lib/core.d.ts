@@ -21,6 +21,7 @@ export declare function file_readLines(filePath: string): Promise<{
 }>;
 export declare function file_stat(path: string): Promise<fs.Stats>;
 export declare function file_ensureExists(path: string): Promise<void>;
+export declare function file_writeFile(filePath: string, text?: string): Promise<string>;
 export declare function file_writeNew(path: string, text: string): Promise<unknown>;
 export declare function lines_findFirst(lines: string[], findText: string, options?: {
     start?: number;
