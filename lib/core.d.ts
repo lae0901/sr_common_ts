@@ -6,6 +6,8 @@ export declare function dir_findFirstText(dirPath: string, findText: string): Pr
     foundFilePath: string;
     foundLinn: number;
 }>;
+export declare function dir_mkdir(dirPath: string): Promise<null>;
+export declare function dir_readdir(dirPath: string): Promise<string[]>;
 export declare function file_create(path: string): Promise<unknown>;
 export declare function file_exists(path: string): Promise<boolean>;
 export declare function file_findFirstText(filePath: string, findText: string): Promise<{
