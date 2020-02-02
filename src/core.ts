@@ -235,6 +235,23 @@ export async function file_ensureExists(path: string)
   }
 }
 
+// ----------------------------------- file_writeFile ------------------------------
+// write text to a new file.
+export function file_writeFile(filePath: string, text: string = ''): Promise<string>
+{
+  const promise = new Promise<string>(async (resolve, reject) =>
+  {
+    let errmsg = '';
+    fs.writeFile(filePath, text, (err) =>
+    {
+      if (err)
+        errmsg = err.message;
+      resolve(errmsg);
+    });
+  });
+  return promise;
+}
+
 // ---------------------------- file_writeNew -----------------------------
 // replace contents of existing file. Or write text to new file.
 export async function file_writeNew(path: string, text: string) 
