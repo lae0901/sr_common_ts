@@ -19,7 +19,7 @@ export async function dir_findFirstText(dirPath: string, findText: string)
       for (const item of items)
       {
         const itemPath = path.join(dirPath, item);
-        const isDir = await file_isDirectory(itemPath);
+        const {isDir}  = await file_isDir(itemPath);
         if (isDir)
         {
           const rv = await dir_findFirstText(itemPath, findText);
@@ -49,17 +49,48 @@ export async function dir_findFirstText(dirPath: string, findText: string)
   return promise;
 }
 
-// ----------------------------------- dir_mkdir ------------------------------
-export function dir_mkdir(dirPath: string): Promise<null>
+// ------------------------------- dir_ensureExists -----------------------------
+export function dir_ensureExists( dirPath: string) : Promise<{ created:boolean, errmsg:string}>
 {
-  const promise = new Promise<null>(async (resolve, reject) =>
+  const promise = new Promise<{created:boolean, errmsg:string}>(async (resolve, reject) =>
   {
+    let created = false ;
+    let errmsg = '' ;
+
+    const { isDir } = await file_isDir(dirPath) ;
+    if ( isDir )
+    {
+    }
+    else
+    {
+      const {errmsg:errmsg2, exists} = await dir_mkdir(dirPath) ;
+      errmsg = errmsg2 ;
+      if ( !errmsg && !exists )
+        created = true ;
+    }
+
+    resolve({ created, errmsg });
+  });
+  return promise;
+}
+
+// ----------------------------------- dir_mkdir ------------------------------
+// create directory. return { exists, errmsg }
+export function dir_mkdir(dirPath: string): Promise<{exists:boolean,errmsg:string}>
+{
+  const promise = new Promise<{exists:boolean, errmsg:string}>(async (resolve, reject) =>
+  {
+    let errmsg = '', exists = false ;
     fs.mkdir(dirPath, (err) =>
     {
       if (err)
-        reject(err);
-      else
-        resolve();
+      {
+        if ( err.code == 'EEXIST')
+          exists = true ;
+        else
+          errmsg = err.message ;
+      }
+      resolve({exists, errmsg});
     });
   });
   return promise;
@@ -169,27 +200,27 @@ export function file_findFirstText(filePath: string, findText: string)
   return promise;
 }
 
-// ------------------------ file_isDirectory ----------------------------
+// ------------------------ file_isDir ----------------------------
 // return promise of fileSystem stat info of a file.
-export function file_isDirectory(path: string) 
-        : Promise<{isDir:boolean,errmsg:string,errno:number}>
+export async function file_isDir(path: string)
+  : Promise<{ isDir: boolean, errmsg: string }>
 {
-  const promise = new Promise<{ isDir: boolean, errmsg: string, errno:number }>((resolve, reject) =>
+  const promise = new Promise<{ isDir: boolean, errmsg: string }>((resolve, reject) =>
   {
-    let isDir = false ;
-    let errmsg = '' ;
-    let errno = 0 ;
+    let isDir = false;
+    let errmsg = '';
     fs.stat(path, (err, stats) =>
     {
       if (err)
       {
         errmsg = err.message;
-        errno = err.errno || 0 ;
       }
       else
-        isDir = stats.isDirectory( ) ;
-        
-      resolve({ isDir, errmsg, errno });
+      {
+        isDir = stats.isDirectory();
+      }
+
+      resolve({ isDir, errmsg });
     });
   });
 

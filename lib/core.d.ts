@@ -6,7 +6,14 @@ export declare function dir_findFirstText(dirPath: string, findText: string): Pr
     foundFilePath: string;
     foundLinn: number;
 }>;
-export declare function dir_mkdir(dirPath: string): Promise<null>;
+export declare function dir_ensureExists(dirPath: string): Promise<{
+    created: boolean;
+    errmsg: string;
+}>;
+export declare function dir_mkdir(dirPath: string): Promise<{
+    exists: boolean;
+    errmsg: string;
+}>;
 export declare function dir_readdir(dirPath: string): Promise<string[]>;
 export declare function file_create(path: string): Promise<string>;
 export declare function file_exists(path: string): Promise<boolean>;
@@ -14,7 +21,10 @@ export declare function file_findFirstText(filePath: string, findText: string): 
     foundLinn: number;
     foundPos: number;
 }>;
-export declare function file_isDirectory(path: string): Promise<boolean>;
+export declare function file_isDir(path: string): Promise<{
+    isDir: boolean;
+    errmsg: string;
+}>;
 export declare function file_readLines(filePath: string): Promise<{
     lines: string[];
     errmsg: string;

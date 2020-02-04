@@ -7,3 +7,6 @@
 import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 
 ```
+
+# directory methods
+* {isDir, errmsg} = file_isDir(path)

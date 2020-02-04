@@ -1,11 +1,11 @@
 {
   "name": "sr_core_ts",
-  "version": "1.23.2",
+  "version": "1.25.0",
   "description": "core typescript functions",
   "main": "lib/core.js",
   "types": "lib/core.d.ts",
   "scripts": {
-    "test": "jest --config jestconfig.json",
+    "test": "jest",
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json"
@@ -25,8 +25,12 @@
   },
   "homepage": "https://github.com/lae0901/sr_core_ts#readme",
   "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/preset-typescript": "^7.8.3",
     "@types/jest": "^24.9.1",
     "@types/node": "^13.7.0",
+    "babel-jest": "^25.1.0",
     "jest": "^24.9.0",
     "prettier": "^1.19.1",
     "ts-jest": "^24.3.0",
@@ -34,6 +38,5 @@
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.7.5"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
