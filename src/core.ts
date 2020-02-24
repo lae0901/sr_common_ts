@@ -402,6 +402,32 @@ export function object_toQueryString( obj:{} )
   return qs;
 }
 
+// ---------------------------- path_findFile ----------------------------------
+// look for the file in each directory in the path.  Starting from the left.
+export async function path_findFile( dirPath: string, fileName: string ) : Promise<string> 
+{
+  let checkPath = '', foundDirPath = '' ;
+  let remPath = dirPath ;
+
+  // look for the file in each directory in the path.  Starting from the left.
+  while( remPath.length > 0 )
+  {
+    const { front, rem } = path_splitFront(remPath);
+    checkPath = path.join(checkPath, front ) ;
+    const filePath = path.join(checkPath, fileName) ;
+    const exists = await file_exists(filePath);
+    if ( exists )
+    {
+      foundDirPath = checkPath ;
+      break ;
+    }
+
+    remPath = rem ;
+  }
+
+  return foundDirPath ;
+}
+
 // ----------------------------------- path_removeQueryString ---------------------
 // find and remove the query string portion of the path 
 export function path_removeQueryString(str: string): string
