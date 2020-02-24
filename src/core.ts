@@ -149,11 +149,11 @@ export async function file_exists(path: string): Promise<boolean>
     {
       if (err == null)
       {
-        return true;
+        resolve(true);
       }
       else
       {
-        return false;
+        resolve(false);
       }
     });
   });
