@@ -6,6 +6,18 @@ import { rxp, regex_exec } from './regex_core' ;
 
 export {rxp, regex_exec} ;
 
+// ------------------------- array_front -------------------------------------
+// return either null or the first item in the array.
+export function array_front<T>(arr: T[]): T | null
+{
+  if (arr.length == 0)
+    return null;
+  else
+  {
+    return arr[0];
+  }
+}
+
 // ------------------------------ dir_findFirstText -----------------------------
 export async function dir_findFirstText(dirPath: string, findText: string)
   : Promise<{ foundFilePath: string, foundLinn: number }>
@@ -401,6 +413,26 @@ export function path_removeQueryString(str: string): string
   }
   else
     return str;
+}
+
+// ---------------------------------- path_splitFront ----------------------------------
+// split a path from the front.  Returning the front item and the remaining items.
+export function path_splitFront(path: string, sep: string = '/'): { front: string, rem: string }
+{
+  let front = '', rem = '';
+  const ix = path.indexOf(sep);
+  if (ix >= 0)
+  {
+    front = path.substr(0, ix);
+    rem = string_substrLenient(path, ix + 1);
+  }
+  else
+  {
+    front = path;
+    rem = '';
+  }
+
+  return { front, rem };
 }
 
 // ------------------------------ path_toFileUri ----------------------------------

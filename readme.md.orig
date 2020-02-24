@@ -8,6 +8,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 
 ```
 
+<<<<<<< HEAD
 ## array methods
 * array_front<T>( arr: T[] ) : T | null
 
@@ -17,9 +18,14 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 ## path methods
 * path_splitFront( path: string, sep: string = '/' ) : {front: string, rem:string }
 
+=======
+## directory methods
+* {isDir, errmsg} = file_isDir(path)
+
 ## publish instructions
 * increment version number in package.json
 * npm run build
 * git push to repo
 * npm publish
 * npm update in projects which use this package
+>>>>>>> b5386648941c056635dcbb570f4a5d296bd243c9

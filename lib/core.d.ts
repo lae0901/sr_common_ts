@@ -2,6 +2,7 @@
 import * as fs from 'fs';
 import { rxp, regex_exec } from './regex_core';
 export { rxp, regex_exec };
+export declare function array_front<T>(arr: T[]): T | null;
 export declare function dir_findFirstText(dirPath: string, findText: string): Promise<{
     foundFilePath: string;
     foundLinn: number;
@@ -44,6 +45,10 @@ export declare function object_indexerItems(obj: {
 }): any[];
 export declare function object_toQueryString(obj: {}): string;
 export declare function path_removeQueryString(str: string): string;
+export declare function path_splitFront(path: string, sep?: string): {
+    front: string;
+    rem: string;
+};
 export declare function path_toFileUri(path: string): string;
 export declare function scan_charNeAll(text: string, bx: number, pattern: string): number;
 export declare function scan_revCharEqAny(text: string, bx: number, anyChar: string): number;
