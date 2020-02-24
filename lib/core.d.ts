@@ -44,7 +44,10 @@ export declare function object_indexerItems(obj: {
     [key: string]: any;
 }): any[];
 export declare function object_toQueryString(obj: {}): string;
-export declare function path_findFile(dirPath: string, fileName: string): Promise<string>;
+export declare function path_findFile(dirPath: string, fileName: string): Promise<{
+    dirPath: string;
+    remPath: string;
+}>;
 export declare function path_removeQueryString(str: string): string;
 export declare function path_splitFront(path: string, sep?: string): {
     front: string;

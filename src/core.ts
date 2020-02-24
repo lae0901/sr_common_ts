@@ -404,9 +404,12 @@ export function object_toQueryString( obj:{} )
 
 // ---------------------------- path_findFile ----------------------------------
 // look for the file in each directory in the path.  Starting from the left.
-export async function path_findFile( dirPath: string, fileName: string ) : Promise<string> 
+// returns the folder path where the file is found. Also returns the remaining
+// part of the path that was not searched.
+export async function path_findFile( dirPath: string, fileName: string ) 
+          : Promise<{dirPath:string,remPath:string}> 
 {
-  let checkPath = '', foundDirPath = '' ;
+  let checkPath = '', foundDirPath = '', foundRemPath = '' ;
   let remPath = dirPath ;
 
   // look for the file in each directory in the path.  Starting from the left.
@@ -414,18 +417,18 @@ export async function path_findFile( dirPath: string, fileName: string ) : Promi
   {
     const { front, rem } = path_splitFront(remPath);
     checkPath = path.join(checkPath, front ) ;
+    remPath = rem;
     const filePath = path.join(checkPath, fileName) ;
     const exists = await file_exists(filePath);
     if ( exists )
     {
       foundDirPath = checkPath ;
+      foundRemPath = remPath ;
       break ;
     }
-
-    remPath = rem ;
   }
 
-  return foundDirPath ;
+  return {dirPath:foundDirPath, remPath:foundRemPath} ;
 }
 
 // ----------------------------------- path_removeQueryString ---------------------

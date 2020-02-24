@@ -15,7 +15,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * {isDir, errmsg} = file_isDir(path)
 
 ## path methods
-* path_findFile( dirPath: string, fileName: string ) : Promise<string> 
+* path_findFile( dirPath: string, fileName: string ) : Promise<{dirPath,remPath}> 
 * path_splitFront( path: string, sep: string = '/' ) : {front: string, rem:string }
 
 ## publish instructions
