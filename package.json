@@ -30,13 +30,21 @@
     "@babel/preset-typescript": "^7.8.3",
     "@types/jest": "^24.9.1",
     "@types/node": "^13.7.0",
+    "@vue/component-compiler-utils": "^3.1.1",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
     "babel-jest": "^25.1.0",
     "jest": "^24.9.0",
     "prettier": "^1.19.1",
     "ts-jest": "^24.3.0",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.7.5"
+    "typescript": "^3.7.5",
+    "vue-template-compiler": "^2.6.11"
   },
-  "dependencies": {}
+  "dependencies": {
+    "vue": "^2.6.11",
+    "vue-hot-reload-api": "^2.3.4",
+    "vue-property-decorator": "^8.3.0"
+  }
 }

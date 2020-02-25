@@ -453,6 +453,8 @@ export function path_splitFront(path: string, sep: string = '/'): { front: strin
   if (ix >= 0)
   {
     front = path.substr(0, ix);
+    if ( !front )
+      front = '/' ;
     rem = string_substrLenient(path, ix + 1);
   }
   else
