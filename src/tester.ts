@@ -6,6 +6,11 @@ import { path_findFile } from './core';
 
 const folderPath = '/c:/github/tester';
 const fileName = 'app.vue';
+
+const cwdOSRoot = path.parse(process.cwd()).root;
+const fileOSRoot = path.parse(__dirname).root;
+console.log(`os root:${cwdOSRoot}  fileRoot:${fileOSRoot}`);
+
 base_async(folderPath, fileName);
 
 if ( false )
