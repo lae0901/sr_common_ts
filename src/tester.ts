@@ -10,13 +10,11 @@ const fileName = 'app.vue';
 {
   const path1 = `file:///c:/web/pwa/dark-sky/demo/steve.txt`;  
   const parts = path_parts(path1) ;
-  console.table(parts) ;
 }
 
 {
   const path1 = `/web/pwa/dark-sky/demo/steve.txt`;
   const parts = path_parts(path1);
-  console.table(parts);
 }
 
 async_main( ) ;
@@ -62,7 +60,7 @@ async function base_async(folderPath: string, fileName: string)
 // ------------------------------- async_main ---------------------------------
 async function async_main( )
 {
-  const path1 = `c:/web/pwa/dark-sky/demo/steve.txt`;
+  const path1 = `c:/web/pwa/dark-sky/demo/src/steve.txt`;
   const parts = path_parts(path1);
   const { dirPath, remPath } = await path_findFile(path1, 'package.json');
   console.log(`dirPath:${dirPath} remPath:${remPath}`);

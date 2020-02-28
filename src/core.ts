@@ -455,7 +455,7 @@ export function path_parts(str:string) : interface_pathPart[]
     if ( !base )
       break ;
     cur = dir ;
-    remPath = path.join(remPath,base) ;
+    remPath = path.join(base,remPath) ;
   }
 
   return arr.reverse( ) ;
