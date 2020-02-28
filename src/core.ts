@@ -635,6 +635,20 @@ export function string_dequote(text: string): string
   return dequoteText;
 }
 
+// -------------------------- string_head ----------------------
+// return the front of the string
+export function string_head(str: string, lx: number)
+{
+  if (!str)
+    return '';
+  if (lx > str.length)
+    lx = str.length;
+  if (lx <= 0)
+    return '';
+  else
+    return str.substr(0, lx);
+}
+
 // ------------------------- string_rtrim --------------------
 export function string_rtrim(str:string): string
 {

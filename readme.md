@@ -18,6 +18,9 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * path_findFile( dirPath: string, fileName: string ) : Promise<{dirPath,remPath}> 
 * path_splitFront( path: string, sep: string = '/' ) : {front: string, rem:string }
 
+## string methods
+* string_head( str, lx)
+
 ## publish instructions
 * increment version number in package.json
 * npm run build
