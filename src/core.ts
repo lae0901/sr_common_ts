@@ -437,7 +437,7 @@ interface interface_pathPart {
   ext:string,
   dir:string,
   path:string,   // input to parse 
-  remPath:string // remain path. all parts that follow this part.
+  remPath:string // remain path. all parts that follow the path of this part.
 };
 
 // ------------------------- path_parts -----------------------------------
@@ -455,8 +455,7 @@ export function path_parts(str:string) : interface_pathPart[]
     if ( !base )
       break ;
     cur = dir ;
-    if ( !ext )
-      remPath = path.join(remPath,base) ;
+    remPath = path.join(remPath,base) ;
   }
 
   return arr.reverse( ) ;
