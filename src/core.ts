@@ -412,19 +412,19 @@ export async function path_findFile( dirPath: string, fileName: string )
   let checkPath = '', foundDirPath = '', foundRemPath = '' ;
   let remPath = dirPath ;
 
+  // parse the path into separated parts. 
+  const parts = path_parts(dirPath) ;
+
   // look for the file in each directory in the path.  Starting from the left.
-  while( remPath.length > 0 )
+  for( const part of parts )
   {
-    const { front, rem } = path_splitFront(remPath);
-    checkPath = path.join(checkPath, front ) ;
-    remPath = rem;
-    const filePath = path.join(checkPath, fileName) ;
+    const filePath = path.join( part.path, fileName);
     const exists = await file_exists(filePath);
-    if ( exists )
+    if (exists)
     {
-      foundDirPath = checkPath ;
-      foundRemPath = remPath ;
-      break ;
+      foundDirPath = part.path;
+      foundRemPath = part.remPath;
+      break;
     }
   }
 
@@ -432,10 +432,12 @@ export async function path_findFile( dirPath: string, fileName: string )
 }
 
 interface interface_pathPart {
-  root:string,
-  base:string,
+  root:string,  // root of the path.  drive letter  or slash.
+  base:string,  // filename.ext
   ext:string,
-  dir:string
+  dir:string,
+  path:string,   // input to parse 
+  remPath:string // remain path. all parts that follow this part.
 };
 
 // ------------------------- path_parts -----------------------------------
@@ -443,13 +445,18 @@ export function path_parts(str:string) : interface_pathPart[]
 {
   let arr : interface_pathPart[] = [] ;
   let cur = str ;
+  let remPath = '' ;
 
   while(cur)
   {
     const rv = path.parse(cur) ;
     const { root, base, dir, ext } = path.parse(cur) ;
-    arr.push({root,base,dir,ext});
+    arr.push({root,base,dir,ext,path:cur, remPath });
+    if ( !base )
+      break ;
     cur = dir ;
+    if ( !ext )
+      remPath = path.join(remPath,base) ;
   }
 
   return arr.reverse( ) ;

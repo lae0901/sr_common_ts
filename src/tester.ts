@@ -13,6 +13,14 @@ const fileName = 'app.vue';
   console.table(parts) ;
 }
 
+{
+  const path1 = `/web/pwa/dark-sky/demo/steve.txt`;
+  const parts = path_parts(path1);
+  console.table(parts);
+}
+
+async_main( ) ;
+
 if ( false )
 {
   const cwdOSRoot = path.parse(process.cwd()).root;
@@ -51,4 +59,11 @@ async function base_async(folderPath: string, fileName: string)
   console.log(`dirPath:${dirPath}  remPath:${remPath}`);
 }
 
-
+// ------------------------------- async_main ---------------------------------
+async function async_main( )
+{
+  const path1 = `c:/web/pwa/dark-sky/demo/steve.txt`;
+  const parts = path_parts(path1);
+  const { dirPath, remPath } = await path_findFile(path1, 'package.json');
+  console.log(`dirPath:${dirPath} remPath:${remPath}`);
+}
