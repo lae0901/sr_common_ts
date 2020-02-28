@@ -21,7 +21,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 ## publish instructions
 * increment version number in package.json
 * npm run build
-* git push to repo
+* git add, commit, push to repo
 * npm publish
 * npm update in projects which use this package
 
