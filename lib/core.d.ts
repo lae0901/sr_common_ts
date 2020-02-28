@@ -48,6 +48,13 @@ export declare function path_findFile(dirPath: string, fileName: string): Promis
     dirPath: string;
     remPath: string;
 }>;
+interface interface_pathPart {
+    root: string;
+    base: string;
+    ext: string;
+    dir: string;
+}
+export declare function path_parts(str: string): interface_pathPart[];
 export declare function path_removeQueryString(str: string): string;
 export declare function path_splitFront(path: string, sep?: string): {
     front: string;

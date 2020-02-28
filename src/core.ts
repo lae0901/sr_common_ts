@@ -431,6 +431,30 @@ export async function path_findFile( dirPath: string, fileName: string )
   return {dirPath:foundDirPath, remPath:foundRemPath} ;
 }
 
+interface interface_pathPart {
+  root:string,
+  base:string,
+  ext:string,
+  dir:string
+};
+
+// ------------------------- path_parts -----------------------------------
+export function path_parts(str:string) : interface_pathPart[]
+{
+  let arr : interface_pathPart[] = [] ;
+  let cur = str ;
+
+  while(cur)
+  {
+    const rv = path.parse(cur) ;
+    const { root, base, dir, ext } = path.parse(cur) ;
+    arr.push({root,base,dir,ext});
+    cur = dir ;
+  }
+
+  return arr.reverse( ) ;
+}
+
 // ----------------------------------- path_removeQueryString ---------------------
 // find and remove the query string portion of the path 
 export function path_removeQueryString(str: string): string

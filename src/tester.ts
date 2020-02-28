@@ -2,16 +2,25 @@ import { file_isDir, dir_ensureExists, dir_mkdir } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
-import { path_findFile } from './core';
+import { path_findFile, path_parts } from './core';
 
 const folderPath = '/c:/github/tester';
 const fileName = 'app.vue';
 
-const cwdOSRoot = path.parse(process.cwd()).root;
-const fileOSRoot = path.parse(__dirname).root;
-console.log(`os root:${cwdOSRoot}  fileRoot:${fileOSRoot}`);
+{
+  const path1 = `file:///c:/web/pwa/dark-sky/demo/steve.txt`;  
+  const parts = path_parts(path1) ;
+  console.table(parts) ;
+}
 
-base_async(folderPath, fileName);
+if ( false )
+{
+  const cwdOSRoot = path.parse(process.cwd()).root;
+  const fileOSRoot = path.parse(__dirname).root;
+  console.log(`os root:${cwdOSRoot}  fileRoot:${fileOSRoot}`);
+
+  base_async(folderPath, fileName);
+}
 
 if ( false )
 {
