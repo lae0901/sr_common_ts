@@ -21,6 +21,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 ## string methods
 * string_head( str, lx)
 * string_replaceAll( str, find, replace)
+* string_startsWith( str, text | string[])
 * string_substrLenient( str, bx, lx )
 
 ## publish instructions

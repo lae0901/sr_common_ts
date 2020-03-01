@@ -692,20 +692,32 @@ export function string_rtrim(str:string): string
     return str.replace(/\s+$/, "");
 }
 
-
 // -------------------------------- string_startsWith -------------------------
 // test that the starting text of text matches startText.
-export function string_startsWith(text: string, startText: string): boolean
+export function string_startsWith(text: string, startText: string | string[] ): boolean
 {
   if (!startText)
     return false;
-  const startLx = startText.length;
-  if (startLx > text.length)
-    return false;
-  else if (text.substr(0, startLx) == startText)
-    return true;
+  else if ( Array.isArray(startText))
+  {
+    for( const startTextItem of startText )
+    {
+      const rc = string_startsWith(text, startTextItem) ;
+      if ( rc )
+        return true ;
+    }
+    return false ;
+  }
   else
-    return false;
+  {
+    const startLx = startText.length;
+    if (startLx > text.length)
+      return false;
+    else if (text.substr(0, startLx) == startText)
+      return true;
+    else
+      return false;
+  }
 }
 
 // ---------------------------- string_substrLenient --------------------
