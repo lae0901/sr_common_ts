@@ -677,7 +677,7 @@ export function string_startsWith(text: string, startText: string): boolean
 // ---------------------------- string_substrLenient --------------------
 // return substring of the input string. only, clip the results if start or end
 // pos are out of bounds of the string.
-function string_substrLenient(str: string, fx: number, lx: number = -1): string
+export function string_substrLenient(str: string, fx: number, lx: number = -1): string
 {
   if ((typeof str) != 'string')
     return '';

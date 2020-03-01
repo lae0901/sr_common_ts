@@ -20,6 +20,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 
 ## string methods
 * string_head( str, lx)
+* string_substrLenient( str, bx, lx )
 
 ## publish instructions
 * increment version number in package.json
