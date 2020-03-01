@@ -649,6 +649,40 @@ export function string_head(str: string, lx: number)
     return str.substr(0, lx);
 }
 
+// -------------------- string_replaceAll -----------------------
+// replace all occurance of findText with replaceText
+export function string_replaceAll( str:string, findText:string, replaceText:string )
+{
+  let res = '';
+  let ix = 0;
+  while (ix < str.length)
+  {
+    const fx = str.indexOf(findText, ix);
+
+    // length from start to found position
+    let lx = 0;
+    if (fx == -1)
+      lx = str.length - ix;
+    else
+      lx = fx - ix;
+
+    // copy not match text to result.
+    if (lx > 0)
+      res += str.substr(ix, lx);
+
+    // match found. add replacement text to result.
+    if (fx != -1)
+      res += replaceText;
+
+    // advance in str.
+    if (fx == -1)
+      ix = str.length;
+    else
+      ix = fx + findText.length;
+  }
+  return res;
+}
+
 // ------------------------- string_rtrim --------------------
 export function string_rtrim(str:string): string
 {
