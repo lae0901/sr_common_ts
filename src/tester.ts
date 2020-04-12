@@ -2,7 +2,7 @@ import { file_isDir, dir_ensureExists, dir_mkdir } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
-import { path_findFile, path_parts } from './core';
+import { path_findFile, path_parts, rxp, regexPattern_toFragments } from './core';
 
 const folderPath = '/c:/github/tester';
 const fileName = 'app.vue';
@@ -17,6 +17,7 @@ const fileName = 'app.vue';
   const parts = path_parts(path1);
 }
 
+// run main function that is declared as async. 
 async_main( ) ;
 
 if ( false )
@@ -60,8 +61,22 @@ async function base_async(folderPath: string, fileName: string)
 // ------------------------------- async_main ---------------------------------
 async function async_main( )
 {
+  regex_listFragments();
+
   const path1 = `c:/web/pwa/dark-sky/demo/src/steve.txt`;
   const parts = path_parts(path1);
   const { dirPath, remPath } = await path_findFile(path1, 'package.json');
   console.log(`dirPath:${dirPath} remPath:${remPath}`);
+}
+
+// --------------------------------- regex_listFragments ------------------------
+// split a regex pattern into fragments.  Then list those fragments to console.
+function regex_listFragments()
+{
+  const pattern = rxp.comment ;
+  const frags = regexPattern_toFragments(pattern) ;
+  for( const frag of frags )
+  {
+    console.log( `frag name:${frag.name}  text:${frag.text}`);
+  }
 }
