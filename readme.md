@@ -24,6 +24,9 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * string_startsWith( str, text | string[])
 * string_substrLenient( str, bx, lx )
 
+## regular expression methods
+* regexPattern_toFragments( pattern: string) : regexFrag_interface[]
+
 ## publish instructions
 * increment version number in package.json
 * npm run build

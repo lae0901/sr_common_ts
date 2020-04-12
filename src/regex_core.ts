@@ -20,6 +20,7 @@ export const rxp = {
   or: '|',
   beginCapture: '(',
   closeParen: '\\)',
+  comment: '\\/\\*.+?\\*\\/|\\/\\/.*(?=[\\n\\r])',
   endCapture: ')',
   endCaptureZeroOne: ')?',
   endCaptureZeroMore: ')*',
@@ -61,7 +62,13 @@ export const rxp = {
       this.beginCapture + this.singleQuoteQuoted +
       this.or + this.variableName + this.endCapture
   },
-  escape: (char: string) => { return '\\' + char }
+  escape: (char: string) => { return '\\' + char },
+
+  beginNamedCapture: function (name:string)
+  {
+    return `(?<${name}>`;
+  },
+
 }
 
 interface regex_exec_rtnval_interface
