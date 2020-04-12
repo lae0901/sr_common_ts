@@ -226,3 +226,5 @@ function regexPattern_toFragments(pattern)
 
   return fragArray;
 }
+
+export { regexPattern_toFragments } ;
