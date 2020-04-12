@@ -82,7 +82,7 @@ function regexPattern_toFragments(pattern)
     { text: '\\.', name: 'any char not newline', quantifier: true },
 
     { text: '\\w*', name: 'zeroMoreWord' },
-    { text: rxp.varName, name: 'varName' },
+    { text: rxp.variableName, name: 'varName' },
     { text: rxp.oneMoreNumeric, name: 'oneMoreNumeric' },
     { text: rxp.oneMoreDigits, name: 'oneMoreDigits' },
     { text: rxp.oneMoreAlpha, name: 'oneMoreAlpha' },
