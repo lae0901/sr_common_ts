@@ -622,14 +622,21 @@ export function string_dequote(text: string): string
   const lastIx = text.length - 2;
   while (ix <= lastIx)
   {
-    if ((text[ix] == '\\') && (text[ix + 1] == quoteChar))
+    const ch1 = text[ix] ;
+    const nx1 = ( ix == lastIx ) ? '' : text[ix+1] ;
+    if (( ch1 == '\\') && ( nx1 == quoteChar))
     {
       ix += 2;
       dequoteText += quoteChar;
     }
+    else if (( ch1 == '\\') && ( nx1 == '\\'))
+    {
+      ix += 2;
+      dequoteText += ch1;
+    }
     else
     {
-      dequoteText += text[ix];
+      dequoteText += ch1;
       ix += 1;
     }
   }

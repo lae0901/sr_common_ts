@@ -16,5 +16,5 @@ interface regexFrag_interface {
   varvlu?: string,
   bx?: number,
   lx?: number
-
 }
+
