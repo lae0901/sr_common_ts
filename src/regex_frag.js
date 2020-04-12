@@ -19,7 +19,7 @@ function regexPattern_toFragments(pattern)
   const frag_advanceLazy = function (frag, pattern)
   {
     let lazy = false;
-    ch1 = pattern.substr(frag.bx + frag.lx, 1);
+    const ch1 = pattern.substr(frag.bx + frag.lx, 1);
     if (ch1 == '?')
       lazy = true;
 
@@ -37,7 +37,7 @@ function regexPattern_toFragments(pattern)
   {
     // look for quantifier after the escape command.
     let quantifier = '';
-    ch1 = pattern.substr(frag.bx + frag.lx, 1);
+    const ch1 = pattern.substr(frag.bx + frag.lx, 1);
     if (ch1 == '?')
       quantifier = 'zeroOrOne';
     else if (ch1 == '*')
