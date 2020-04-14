@@ -614,6 +614,10 @@ export function string_contains(str: string, pattern: string): boolean
 }
 
 // ----------------------- string_dequote ------------------------
+// note: the quote char can be any character. The rule is the first char is the
+//       quote char. Then the closing quote is that same first char. And the
+//       backslash is used to escape the quote char within the string.
+// Use string_isQuoted
 export function string_dequote(text: string): string
 {
   let dequoteText = '';
@@ -655,6 +659,25 @@ export function string_head(str: string, lx: number)
     return '';
   else
     return str.substr(0, lx);
+}
+
+// ------------------------------- string_isQuoted --------------------------------
+export function string_isQuoted(text : string) : boolean
+{
+  let isQuoted = false;
+  if (text.length >= 2)
+  {
+    const headChar = string_head(text, 1);
+    if ((headChar == '"') || (headChar == "'") || (headChar == '`') ||
+      (headChar == '/'))
+    {
+      const tailCh1 = string_tail(text, 1);
+      const tailCh2 = string_tail(text, 2);
+      if ((headChar == tailCh1) && (tailCh2.substr(0, 1) != '\\'))
+        isQuoted = true;
+    }
+  }
+  return isQuoted;
 }
 
 // -------------------- string_replaceAll -----------------------

@@ -19,7 +19,9 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * path_splitFront( path: string, sep: string = '/' ) : {front: string, rem:string }
 
 ## string methods
+* string_dequote( str )
 * string_head( str, lx)
+* string_isQuoted( str )
 * string_replaceAll( str, find, replace)
 * string_startsWith( str, text | string[])
 * string_substrLenient( str, bx, lx )

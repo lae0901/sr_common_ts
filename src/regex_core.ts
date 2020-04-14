@@ -8,8 +8,9 @@
 export const rxp = {
   any: '\\.',       // match any char
   zeroMoreWhitespace: `\\s*`,
-  singleQuoteQuoted: `\\s*'(?:\\\\.|[^'\\\\])*'`,
-  doubleQuoteQuoted: `\\s*"(?:\\\\.|[^"\\\\])*"`,
+  singleQuoteQuoted: `'(?:\\\\.|[^'\\\\])*'`,
+  doubleQuoteQuoted: `"(?:\\\\.|[^"\\\\])*"`,
+  forwardSlashEnclosed: `/(?:\\\\.|[^/\\\\])*/`,
   jsonNameVluSep: `\\s*:`,
   beginString: `^\\s*`,
   jsonStart: `\\s*{`,
