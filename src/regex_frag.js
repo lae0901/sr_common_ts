@@ -4,8 +4,9 @@
 function frag_apply_varvlu(frag, varvlu)
 {
   frag.varvlu = varvlu;
+  const unescaped_varvlu = string_unescape(varvlu);
   frag.text = frag.textMask.replace('{{}}', frag.varvlu);
-  frag.name = frag.nameMask.replace('{{}}', frag.varvlu);
+  frag.name = frag.nameMask.replace('{{}}', unescaped_varvlu);
   frag.lx = frag.text.length;
 }
 
@@ -15,7 +16,10 @@ function frag_apply_varvlu(frag, varvlu)
 // regex fragment item: {text, name, lx }
 function regexPattern_toFragments(pattern)
 {
+
   // ----------------------------- frag_advanceLazy --------------------
+  // process the ? that can follow a quantifier. This makes the quantifier lazy.
+  // Lazy, meaning, other "or" matches take precedence. 
   const frag_advanceLazy = function (frag, pattern)
   {
     let lazy = false;
@@ -48,14 +52,15 @@ function regexPattern_toFragments(pattern)
     // apply quantifier to regex fragment.
     if (quantifier)
     {
-      frag.name = `${quantifier} ${frag.name}`;
+      frag.name = `${frag.name} ${quantifier}`;
       frag.lx += 1;
       frag.text = pattern.substr(frag.bx, frag.lx);
       frag.quantifier = quantifier;
     }
   };
 
-  // quantifier:true.  a quantifier can follow this command.
+  // quantifier: true.  a quantifier can follow this command.
+  // style: info warning success ...  How to style fragment when display visually.
   const charCommandList = [
     { text: '^', name: 'start of string' },
     { text: '$', name: 'end of string' },
@@ -68,6 +73,18 @@ function regexPattern_toFragments(pattern)
       text: '(?<', name: 'beginNamedCapture',
       textMask: '(?<{{}}>', nameMask: 'beginNamedCapture {{}}',
       tail: '>', varvlu: '', style: 'info'
+    },
+
+    {
+      text: '[', name: 'any character',
+      textMask: '[{{}}]', nameMask: 'any character {{}}',
+      tail: ']', varvlu: '', style: 'info'
+    },
+
+    {
+      text: '[^', name: 'any character not',
+      textMask: '[^{{}}]', nameMask: 'any character not {{}}',
+      tail: ']', varvlu: '', style: 'info'
     },
 
     { text: ')', name: 'end capture', quantifier: true, style: 'info' },
@@ -93,8 +110,8 @@ function regexPattern_toFragments(pattern)
     { text: '\\?', name: '? char', quantifier: true },
     { text: '\\/', name: '/ char', quantifier: true },
     { text: rxp.comment, name: 'comment', style: 'warning' },
-    { text: rxp.singleQuoteQuoted, name: 'single quote quoted', style: 'warning' },
-    { text: rxp.doubleQuoteQuoted, name: 'double quote quoted', style: 'warning' },
+    { text: rxp.singleQuoteQuoted, name: 'single quote quoted', style: 'warning', highlevel: true },
+    { text: rxp.doubleQuoteQuoted, name: 'double quote quoted', style: 'warning', highlevel: true },
   ];
 
   const quantifierCommandList = [
@@ -122,7 +139,13 @@ function regexPattern_toFragments(pattern)
         const patternText = string_substrLenient(pattern, bx, textLx);
         if (patternText == item.text)
         {
-          found_item = item;
+          if ((item.highlevel) && (pattern == item.text))
+          {
+          }
+          else
+          {
+            found_item = item;
+          }
         }
       }
     }
@@ -131,6 +154,16 @@ function regexPattern_toFragments(pattern)
   };
 
   // --------------------------------- main ----------------------------------
+
+  // regex pattern is enclosed in forward slash. It is a regex literal. Remove the
+  // enclosing slash and replace any escaped fwd slash with unescaped fwd slash.
+  if (string_isQuoted(pattern, '/'))
+  {
+    const bx = 1;
+    const lx = pattern.length - 2;
+    pattern = string_substrLenient(pattern, bx, lx);
+    pattern = pattern.replace(/\\\//g, '/');
+  }
 
   while (px < pattern.length)
   {
@@ -153,7 +186,12 @@ function regexPattern_toFragments(pattern)
         if (frag.tail)
         {
           const bx = px + text.length;
-          const fx = pattern.indexOf(frag.tail, bx);  // find the tail
+          let fx;
+          if (frag.tail.length > 1)
+            fx = pattern.indexOf(frag.tail, bx);  // find the tail
+          else
+            fx = string_indexOfUnescapedChar(pattern, frag.tail, bx);
+
           if (fx >= 0)
           {
             const varvluLx = fx - bx;  // the variable value runs up to the tail.
@@ -166,49 +204,57 @@ function regexPattern_toFragments(pattern)
           }
         }
 
-        if (frag.quantifier)
-        {
-          frag_advanceQuantifier(frag, pattern);
-        }
-
-        // if the fragment has a quantifier.  process in lazy.
-        if (frag.quantifier)
-          frag_advanceLazy(frag, pattern);
-      }
-    }
-
-    // bracket expression.
-    if ((frag == null) && (ch1 == '['))
-    {
-      let lx = 1;
-      if (ch2 == '[^')
-        lx = 2;
-      // match to the closing square bracket.
-      const rv = regex_exec(pattern, px + lx, /(?:\\\]|[^\]])*\]/g);
-      if (rv != null)
-      {
-        lx += rv.matchLx;
-      }
-
-      frag = { text: pattern.substr(px, lx), name: 'match characters', bx: px, lx };
-      frag_advanceQuantifier(frag, pattern);
-      if (frag.quantifier)
+        frag_advanceQuantifier(frag, pattern);
         frag_advanceLazy(frag, pattern);
+      }
     }
 
     // process as plain text.
     if (frag == null) 
     {
-      const match = pattern.substr(px).match(/[A-Za-z0-9 ]+/);
+      // the special regex characters:  \ ^ . $ | ? * + ( ) [ {
+      // match for characters other than special regex characters.
+      const match = pattern.substr(px).match(/([^\\\^\.\$\|\?\*\+\(\)\[\{]|\\\\)+/);
       if (match)
       {
-        const matchText = match[0];
+        let matchText = match[0];
+
+        // // replace double \\ with single \.
+        // matchText = matchText.replace(/\\\\/g, '\\' ) ;
+
         frag = {
-          text: matchText, name: 'text: ' + matchText,
+          text: '', name: '',
           textMask: '{{}}', nameMask: 'text: {{}}',
-          varvlu: matchText,
+          varvlu: '',
           bx: px, lx: matchText.length, style: 'secondary'
         };
+
+        // look ahead to the next character in the pattern. A quantifier applies to
+        // the last character in the pattern. So if this is multiple plain text 
+        // characters, split off the last character as the one the quantifier 
+        // applies to.
+        {
+          const lx = matchText.length;
+          const nx1 = string_substrLenient(pattern, px + lx, 1);
+          if (regex_isQuantifier(nx1))
+          {
+            // split the regex text on its last character. Where a character is
+            // either an actual character. Or it is an escaped character.
+            const { part1, part2 } = regex_splitLastChar(matchText);
+            if (part1.length > 0)
+            {
+              matchText = part1;
+            }
+          }
+        }
+
+        // apply the variable value to this fragment. The fragment contains
+        // a textMask and nameMask. Build the text and name properties from
+        // these two masks.
+        frag_apply_varvlu(frag, matchText);
+
+        frag_advanceQuantifier(frag, pattern);
+        frag_advanceLazy(frag, pattern);
       }
     }
 
@@ -227,6 +273,21 @@ function regexPattern_toFragments(pattern)
   return fragArray;
 }
 
+// ------------------------------ fragments_toRegexPattern ------------------------
+function fragments_toRegexPattern(fragment_array)
+{
+  let pattern = '';
+  fragment_array.forEach((item) =>
+  {
+    if (!item.special)
+    {
+      pattern += item.text;
+    }
+  });
+  return pattern;
+}
+
+
 // site/js/regex_core.js
 // date: 2019-09-14
 // desc: regex functions and constants. Used to enhance functionality of javascript
@@ -236,8 +297,9 @@ function regexPattern_toFragments(pattern)
 const rxp = {
   any: '\\.',       // match any char
   zeroMoreWhitespace: `\\s*`,
-  singleQuoteQuoted: `\\s*'(?:\\\\.|[^'\\\\])*'`,
-  doubleQuoteQuoted: `\\s*"(?:\\\\.|[^"\\\\])*"`,
+  singleQuoteQuoted: `'(?:\\\\.|[^'\\\\])*'`,
+  doubleQuoteQuoted: `"(?:\\\\.|[^"\\\\])*"`,
+  forwardSlashEnclosed: `/(?:\\\\.|[^/\\\\])*/`,
   jsonNameVluSep: `\\s*:`,
   beginString: `^\\s*`,
   jsonStart: `\\s*{`,
@@ -292,88 +354,60 @@ const rxp = {
   escape: function (char) { return '\\' + char }
 }
 
-// -------------------------- regex_exec -----------------------------------
-// match to a pattern, starting at bx in text string.
-// re_pattern:  either a RegExp object or regular expression pattern.
-// map_capture:  map captured matches. [{ix, name, trim:true, fxName }]
-//               map from array of captured matches to properties in return value.
-//               ix: index in capture array of value to map
-//               name: property name to map to in the return object.
-//               trim: when true, trim whitespace from capture value when mapping
-//                     to map to property name in return object.
-//               fxName: property name in return object in which to store the
-//                       found position in the search text of the trimmed capture 
-//                       value.
-// const rv = regex_exec(stmt, bx, rxx_dataDefn, [{ ix: 1, name: 'const' },
-// { ix: 2, name: 'datatype' }, { ix: 3, name: 'pointer' }]);
-function regex_exec(text, bx, re_pattern, map_capture)
+// ----------------------- string_indexOfUnescapedChar ------------------------
+// find char in string that is not escaped ( preceded with escape char ) 
+function string_indexOfUnescapedChar(text, findChar, bx)
 {
-  let matchBx = -1;
-  let matchLx = 0;
-  let matchOx = -1;
-  let matchText = '';
-  let capture_ix = bx;
-
-  // setup the regular expression to execute.
-  let re = re_pattern;
-  if (typeof (re_pattern) == 'string')
+  let ix = bx || 0;  // start of search.
+  let foundIx = -1;  // find result. init to not found.
+  while (ix < text.length)
   {
-    re = new RegExp(re_pattern, 'g');
-  }
+    const ch1 = text[ix];
 
-  // start position in text
-  re.lastIndex = bx;
-
-  const reg_rv = re.exec(text);
-
-  if (reg_rv != null)
-  {
-    matchBx = reg_rv.index;
-    matchOx = matchBx - bx;
-    matchText = reg_rv[0];
-    matchLx = matchText.length;
-  }
-
-  let rv = { matchBx, matchLx, matchOx, matchText, execRv: reg_rv };
-
-  // map from capture array to properties in return value.
-  if (map_capture)
-  {
-    for (let mx = 0; mx < map_capture.length; ++mx)
+    // current char escapes the next char. advance past next char. 
+    if (ch1 == '\\')  
     {
-      const item = map_capture[mx];
-      if (item.ix < reg_rv.length)
+      ix += 2;
+    }
+
+    // character being searched for. return its index.
+    else if (ch1 == findChar)
+    {
+      foundIx = ix;
+      break;
+    }
+
+    // advance index. continue search.
+    else
+    {
+      ix += 1;
+    }
+  }
+  return foundIx;
+}
+
+// ------------------------------- string_isQuoted --------------------------------
+function string_isQuoted(text, quoteChar)
+{
+  let isQuoted = false;
+  if (text.length >= 2)
+  {
+    const headChar = string_head(text, 1);
+
+    // continue with test.  checking if is specified quote char.
+    if (!quoteChar || (headChar == quoteChar))
+    {
+      if ((headChar == '"') || (headChar == "'") || (headChar == '`') ||
+        (headChar == '/'))
       {
-        let capture_text = reg_rv[item.ix];
-        rv[item.name] = capture_text;
-
-        // trim blanks from the capture variable.
-        if (item.trim)
-        {
-          if (!capture_text)
-            capture_text = '';
-          else
-            capture_text = string_trim(capture_text);
-          rv[item.name] = capture_text;
-        }
-
-        // the found position of the capture value. Scan the input text for the
-        // capture text. Store the found pos in the specified propert of the return
-        // object.
-        if (item.fxName)
-        {
-          const fx = text.indexOf(capture_text, capture_ix);
-          rv[item.fxName] = fx;
-
-          // next time look for capture text, start looking after the location of
-          // this just found capture text.
-          capture_ix = fx + capture_text.length;
-        }
+        const tailCh1 = string_tail(text, 1);
+        const tailCh2 = string_tail(text, 2);
+        if ((headChar == tailCh1) && (tailCh2.substr(0, 1) != '\\'))
+          isQuoted = true;
       }
     }
   }
-
-  return rv;
+  return isQuoted;
 }
 
 // ------------------------- string_trim --------------------
@@ -426,5 +460,36 @@ function string_substrLenient(str, fx, lx = -1)
   return str.substr(fx, lx);
 }
 
+// ----------------------- string_unescape ------------------------
+// remove all the backslash characters from the string. With the exception of when
+// the backslash is followed by another backslash. In that case, remove only the
+// first of the pair.
+function string_unescape(text)
+{
+  let ix = 0;
+  let result = '';
+  while (ix < text.length)
+  {
+    const ch1 = text[ix];
+    const nx1 = (ix + 1 >= text.length) ? '' : text[ix + 1];
+    if ((ch1 == '\\') && (nx1 == '\\'))
+    {
+      result += ch1;
+      ix += 2;
+    }
+    else if (ch1 == '\\')
+    {
+      ix += 2;
+      result += nx1;
+    }
+    else
+    {
+      ix += 1;
+      result += ch1;
+    }
+  }
+  return result;
+}
 
-export { regexPattern_toFragments } ;
+
+export { fragments_toRegexPattern, regexPattern_toFragments } ;
