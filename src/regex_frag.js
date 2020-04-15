@@ -354,6 +354,47 @@ const rxp = {
   escape: function (char) { return '\\' + char }
 }
 
+// ---------------------------- regex_isQuantifier ----------------------
+function regex_isQuantifier(ch1)
+{
+  if ((ch1 == '+') || (ch1 == '*') || (ch1 == '?'))
+    return true;
+  else
+    return false;
+}
+
+// ------------------------------ regex_splitLastChar ---------------------------
+// split the last character of the end regex input text.
+// Each character in the string is either a single char. Or is a 2 char escaped
+// character.
+function regex_splitLastChar(text)
+{
+  let part1 = '';
+  let part2 = '';
+
+  let ix = 0;
+  while (ix < text.length)
+  {
+    let ch1 = text.substr(ix, 1);
+    if ((ch1 == '\\') && ((ix + 1) < text.length))
+    {
+      ch1 = text.substr(ix, 2);
+    }
+
+    // character is part of part1 or part2.
+    const next_ix = ix + ch1.length;
+    if (next_ix < text.length)
+      part1 += ch1;
+    else
+      part2 += ch1;
+
+    // advance ix to next character
+    ix += ch1.length;
+  }
+
+  return { part1, part2 };
+}
+
 // -------------------------- string_head ----------------------
 // return the front of the string
 function string_head(text, lx)
