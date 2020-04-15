@@ -354,6 +354,20 @@ const rxp = {
   escape: function (char) { return '\\' + char }
 }
 
+// -------------------------- string_head ----------------------
+// return the front of the string
+function string_head(text, lx)
+{
+  if (!text)
+    return '';
+  if (lx > text.length)
+    lx = text.length;
+  if (lx <= 0)
+    return '';
+  else
+    return text.substr(0, lx);
+}
+
 // ----------------------- string_indexOfUnescapedChar ------------------------
 // find char in string that is not escaped ( preceded with escape char ) 
 function string_indexOfUnescapedChar(text, findChar, bx)
@@ -408,6 +422,18 @@ function string_isQuoted(text, quoteChar)
     }
   }
   return isQuoted;
+}
+
+// ----------------------string_tail ---------------------------------
+function string_tail(text, lx)
+{
+  if (text.length <= lx)
+    return text;
+  else
+  {
+    var bx = text.length - lx;
+    return text.substr(bx);
+  }
 }
 
 // ------------------------- string_trim --------------------
