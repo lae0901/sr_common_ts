@@ -1,4 +1,43 @@
 
+// -------------------------- compositeFrag_build ----------------------------
+// this fragment is itself composed of fragments. Build the text, display name 
+// and display style of the composite fragment from its components.
+function compositeFrag_build(fragArray)
+{
+  let composite_name = '';
+  let composite_style = '';
+  let composite_text = '';
+  fragArray.forEach((item) =>
+  {
+    if (item.special != 'caret')
+    {
+      composite_text += item.text;
+      if (!composite_name)
+      {
+        if (item.compositeNameMask)
+          composite_name = item.compositeNameMask.replace('{{}}', item.varvlu);
+        else
+          composite_name = item.compositeName || item.name;
+        composite_style = item.compositeStyle || item.style;
+      }
+      else if (!item.isEndCapture)
+        composite_name += ' ' + item.name;
+    }
+  });
+  return { name: composite_name, style: composite_style, text: composite_text };
+}
+
+// ------------------------------- frag_apply_text ----------------------------
+// apply the varvlu to the textMask and nameMask of this regex pattern fragment.
+function frag_apply_text(frag, text)
+{
+  if (!frag.varvlu)
+  {
+    frag.text = text;
+    frag.lx = frag.text.length;
+  }
+}
+
 // ------------------------------- frag_apply_varvlu ----------------------------
 // apply the varvlu to the textMask and nameMask of this regex pattern fragment.
 function frag_apply_varvlu(frag, varvlu)
@@ -6,7 +45,10 @@ function frag_apply_varvlu(frag, varvlu)
   frag.varvlu = varvlu;
   const unescaped_varvlu = string_unescape(varvlu);
   frag.text = frag.textMask.replace('{{}}', frag.varvlu);
-  frag.name = frag.nameMask.replace('{{}}', unescaped_varvlu);
+  if (frag.nameMask)
+    frag.name = frag.nameMask.replace('{{}}', unescaped_varvlu);
+  else
+    frag.name = frag.text;
   frag.lx = frag.text.length;
 }
 
@@ -61,18 +103,31 @@ function regexPattern_toFragments(pattern)
 
   // quantifier: true.  a quantifier can follow this command.
   // style: info warning success ...  How to style fragment when display visually.
+  // compositeSyle: style used when this fragment is start of composite fragment.
+  // name: fragment name. Name is displayed when display fragments in visual form.
+  // compositeName: name used when this and fragments that follow are combined into
+  //                composite fragment.
+  // isBeginCapture:  this instruction is a begin capture instruction.
+  // isEndCapture:  this instruction is an end capture instruction.
+  // isComposite:   this fragment is itself composed of fragments.
+  // compositeFragArray: array of fragments that make up composite fragment.
+  //                     Capture fragment is a composite fragment.
   const charCommandList = [
     { text: '^', name: 'start of string' },
     { text: '$', name: 'end of string' },
     { text: '.', name: 'any character', quantifier: true },
-    { text: '(', name: 'begin capture', style: 'info' },
-    { text: '(?:', name: 'begin non capture', style: 'info' },
-    { text: '(?=', name: 'begin positive lookahead', style: 'info' },
 
     {
-      text: '(?<', name: 'beginNamedCapture',
+      text: '(', name: 'begin capture', compositeName: 'capture',
+      style: 'info', isBeginCapture: true
+    },
+    { text: '(?:', name: 'begin non capture', style: 'info', isBeginCapture: true },
+    { text: '(?=', name: 'begin positive lookahead capture', style: 'info', isBeginCapture: true },
+
+    {
+      text: '(?<', name: 'beginNamedCapture', compositeNameMask: 'NamedCapture {{}}',
       textMask: '(?<{{}}>', nameMask: 'beginNamedCapture {{}}',
-      tail: '>', varvlu: '', style: 'info'
+      tail: '>', varvlu: '', style: 'info', isBeginCapture: true
     },
 
     {
@@ -87,7 +142,7 @@ function regexPattern_toFragments(pattern)
       tail: ']', varvlu: '', style: 'info'
     },
 
-    { text: ')', name: 'end capture', quantifier: true, style: 'info' },
+    { text: ')', name: 'end capture', quantifier: true, style: 'info', isEndCapture: true },
     { text: '|', name: 'or' },
     { text: '\\s', name: 'whitespace', quantifier: true },
     { text: '\\S', name: 'not whitespace', quantifier: true },
@@ -114,14 +169,15 @@ function regexPattern_toFragments(pattern)
     { text: rxp.doubleQuoteQuoted, name: 'double quote quoted', style: 'warning', highlevel: true },
   ];
 
-  const quantifierCommandList = [
-    { text: '+', name: 'one or more' },
-    { text: '*', name: 'zero or more' },
-    { text: '?', name: 'zero or one' },
-  ];
+  // const quantifierCommandList = [
+  //   { text: '+', name: 'one or more' },
+  //   { text: '*', name: 'zero or more' },
+  //   { text: '?', name: 'zero or one' },
+  // ];
 
   let px = 0;
   const fragArray = [];
+  let captureDepth = 0;
 
   // --------------------------------- charCommandList_find ----------------------
   // search list of regex instructions. Examine each item, looking for the best
@@ -265,12 +321,190 @@ function regexPattern_toFragments(pattern)
       frag_advanceQuantifier(frag, pattern);
     }
 
+    // update and store captureDepth.
+    if (frag.isBeginCapture)
+      captureDepth += 1;
+    frag.captureDepth = captureDepth;
+    if (frag.isEndCapture)
+      captureDepth -= 1;
+
     // store fragment in fragment list.
     fragArray.push(frag);
     px += frag.lx;
+
+    // endCapture fragment. Check and process that the fragments from begin
+    // capture to endCapture can be combined into single capture fragment.
+    if (frag.isEndCapture)
+    {
+      const end_ix = fragArray.length - 1;
+      const { begin_ix, begin_frag } =
+        fragments_findCaptureBegin(fragArray, end_ix);
+      if (begin_frag)
+        fragments_combineCaptureFragments(fragArray, begin_ix, end_ix);
+    }
   }
 
   return fragArray;
+}
+
+// ----------------------------- fragments_applyLocation --------------------------
+// apply left, top, bottom location to each regex fragment.
+// regex visual frag item: {text, name, style, frag_num, left, top, bottom, rownum}
+function fragments_applyLocation(fragment_array, container_div)
+{
+  const child_elems = [...container_div.children];
+  for (let ix = 0; ix < child_elems.length; ++ix)
+  {
+    const child = child_elems[ix];
+
+    // this is a visual fragment DOM element.
+    if (child.id.substr(0, 8) == 'patfrag_')
+    {
+      const child_rect = child.getBoundingClientRect();
+
+      const frag_num = Number(child.id.substr(8));
+      const found_frag = fragment_array.find((item) =>
+      {
+        return item.frag_num == frag_num;
+      });
+
+      found_frag.left = Math.round(child_rect.left);
+      found_frag.top = Math.round(child_rect.top);
+      found_frag.bottom = Math.round(child_rect.bottom);
+    }
+  }
+}
+
+// ------------------------------------ fragments_assignRowNum --------------------
+// regex visual fragment item: {text, name, style, frag_num, top, bottom, rownum}
+function fragments_assignRowNum(fragment_array)
+{
+  // create rownum array from array of regex visual fragments. Each fragment
+  // contains a top and bottom property. Each row consists of fragments with the
+  // same top value.
+  const rownum_array = fragments_toRowNumArray(fragment_array);
+
+  // using rownum_array, update each fragment_array item with the corr rownum from
+  // the rownum_array.  Use the top pos of each fragment item as key to the rownum
+  // array.
+  fragment_array.forEach((fragItem) =>
+  {
+    const foundItem = rownum_array.find((rowItem) =>
+    {
+      return (rowItem.top == fragItem.top);
+    });
+    fragItem.rownum = foundItem.rownum;
+  });
+}
+
+// ------------------------------- fragments_findRownum ---------------------------
+// search regex fragments array. Looking for item where vertPos is within the range
+// of top and bottom location of the fragment. When found, return the rownum of
+// that fragment.
+function fragments_findRownum(fragment_array, vertPos)
+{
+  const found = fragment_array.find((item) =>
+  {
+    return ((vertPos >= item.top) && (vertPos <= item.bottom));
+  });
+  if (found == null)
+    return -1;
+  else
+    return found.rownum;
+}
+
+// -------------------------- fragments_toRowNumArray -----------------------------
+// return an array of distinct row numbers. Where each row corresponds to a 
+// distinct top position in the input array of regex fragments.
+function fragments_toRowNumArray(fragment_array)
+{
+  // build an array of distinct top locations. Each row of visual fragments 
+  // will have the same top location. From that distinct list, assign a
+  // row number.
+  const { rownum_array } = fragment_array.reduce((rio, item) =>
+  {
+    const top = item.top;
+    const found_row = rio.rownum_array.find((it) =>
+    {
+      return it.top == top;
+    });
+    if (found_row == null)
+      rio.rownum_array.push({ rownum: 0, top });
+    return rio;
+  }, { rownum_array: [] });
+
+  // sort rownum array by top pos.
+  rownum_array.sort((a, b) =>
+  {
+    if (a.top < b.top)
+      return -1;
+    else if (a.top == b.top)
+      return 0;
+    else
+      return 1;
+  });
+
+  // assign a row number to each visual fragment. 
+  let rownum = 0;
+  rownum_array.forEach((item) =>
+  {
+    item.rownum = rownum;
+    rownum += 1;
+  });
+
+  return rownum_array;
+}
+
+// --------------------------- fragments_combineCaptureFragments ------------------
+function fragments_combineCaptureFragments(fragArray, begin_ix, end_ix)
+{
+  // only a single fragment between the begin and end fragment. combine into a 
+  // single "caputure" fragment.
+  if ((end_ix - begin_ix) == 2)
+  {
+    // remove the component fragments.
+    const fragCx = end_ix - begin_ix + 1;
+    const componentFragArray = fragArray.splice(begin_ix, fragCx);
+
+    // build the name, text, style of the composite fragment.
+    const { name: composite_name, text: composite_text, style: composite_style }
+      = compositeFrag_build(componentFragArray);
+
+    // create the composite fragment.                    
+    const composite_frag = {
+      name: composite_name, text: composite_text,
+      style: composite_style,
+      isComposite: true,
+      compositeFragArray: componentFragArray
+    };
+
+    // add the composite_frag to end of fragArray.
+    fragArray.push(composite_frag);
+  }
+}
+
+// --------------------------- fragments_findCaptureBegin ------------------
+// starting from isEndCapture fragment, look backwards in fragments array until the
+// isBeginCapture fragment is found.
+function fragments_findCaptureBegin(fragArray, end_ix)
+{
+  let begin_ix;
+  let begin_frag;
+  const end_frag = fragArray[end_ix];
+
+  // find the begin fragment.
+  for (let ix = end_ix; ix >= 0; --ix)
+  {
+    const frag = fragArray[ix];
+    if (frag.isBeginCapture && (frag.captureDepth == end_frag.captureDepth))
+    {
+      begin_ix = ix;
+      begin_frag = frag;
+      break;
+    }
+  }
+
+  return { begin_ix, begin_frag };
 }
 
 // ------------------------------ fragments_toRegexPattern ------------------------
@@ -286,7 +520,6 @@ function fragments_toRegexPattern(fragment_array)
   });
   return pattern;
 }
-
 
 // site/js/regex_core.js
 // date: 2019-09-14
