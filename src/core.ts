@@ -680,6 +680,24 @@ export function string_isQuoted(text : string) : boolean
   return isQuoted;
 }
 
+// --------------------------------- string_matchGeneric --------------------------
+export function string_matchGeneric(str: string, pattern: string): boolean
+{
+  // remove final '*' from pattern.
+  const starChar = string_tail(pattern, 1);
+  if (starChar != '*')
+    return false;
+
+  const pattern_lx = pattern.length - 1;
+  pattern = string_substrLenient(pattern, 0, pattern_lx);
+  if (pattern_lx == 0)
+    return true;
+  else if (str.substr(0, pattern_lx) == pattern)
+    return true;
+  else
+    return false;
+}
+
 // -------------------- string_replaceAll -----------------------
 // replace all occurance of findText with replaceText
 export function string_replaceAll( str:string, findText:string, replaceText:string )
