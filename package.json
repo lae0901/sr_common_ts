@@ -1,14 +1,11 @@
 {
   "name": "sr_core_ts",
-  "version": "1.46.4",
+  "version": "1.46.5",
   "description": "core typescript functions",
   "main": "lib/core.js",
   "types": "lib/core.d.ts",
   "scripts": {
-    "test": "jest",
-    "build": "tsc",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "lint": "tslint -p tsconfig.json"
+    "build": "tsc"
   },
   "files": [
     "/lib"
@@ -33,10 +30,5 @@
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.9.2"
-  },
-  "dependencies": {
-    "vue": "^2.6.11",
-    "vue-hot-reload-api": "^2.3.4",
-    "vue-property-decorator": "^8.4.2"
   }
 }
