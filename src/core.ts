@@ -3,9 +3,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { rxp, regex_exec } from './regex_core' ;
-import { regexPattern_toFragments } from './regex_frag' ;
+// import { regexPattern_toFragments } from './regex_frag' ;
 
-export {rxp, regex_exec, regexPattern_toFragments } ;
+// export {rxp, regex_exec, regexPattern_toFragments } ;
+export {rxp, regex_exec } ;
 
 // ------------------------- array_front -------------------------------------
 // return either null or the first item in the array.

@@ -2,7 +2,8 @@ import { file_isDir, dir_ensureExists, dir_mkdir } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
-import { path_findFile, path_parts, rxp, regexPattern_toFragments } from './core';
+// import { path_findFile, path_parts, rxp, regexPattern_toFragments } from './core';
+import { path_findFile, path_parts, rxp } from './core';
 
 const folderPath = '/c:/github/tester';
 const fileName = 'app.vue';
@@ -74,9 +75,9 @@ async function async_main( )
 function regex_listFragments()
 {
   const pattern = rxp.comment ;
-  const frags = regexPattern_toFragments(pattern) ;
-  for( const frag of frags )
-  {
-    console.log( `frag name:${frag.name}  text:${frag.text}`);
-  }
+  // const frags = regexPattern_toFragments(pattern) ;
+  // for( const frag of frags )
+  // {
+  //   console.log( `frag name:${frag.name}  text:${frag.text}`);
+  // }
 }
