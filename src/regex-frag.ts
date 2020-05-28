@@ -4,7 +4,6 @@ import { string_isQuoted, string_substrLenient } from './core';
 import { rxp, regex_isQuantifier, regex_splitLastChar } from './regex_core';
 import { array_range, string_indexOfUnescapedChar, string_unescape } from './more-core' ;
 
-
 interface regexFrag_interface
 {
   name: string,
@@ -23,9 +22,11 @@ interface regexFrag_interface
   compositeStyle?: string,
   compositeNameMask?: string,
   isBeginCapture?: boolean,
+  isComponent?: boolean,
   isComposite?: boolean,
   isEndCapture?: boolean,
   isUserFragment?: boolean,
+  isHidden?: boolean,
   special?: string,
   editPopup?: boolean,
   focused?: boolean,
@@ -36,8 +37,10 @@ interface regexFrag_interface
   frag_num?: number,
   left?: number,
   top?: number,
-  bottom?: number
-}
+  bottom?: number,
+  rownum?: number,
+  insertMarker?: { rltv: string }
+};
 
 // quantifier: true.  a quantifier can follow this command.
 // style: info warning success ...  How to style fragment when display visually.
@@ -505,12 +508,15 @@ function fragments_assignRowNum(fragment_array : regexFrag_interface[] )
     {
       return (rowItem.top == fragItem.top);
     });
-    fragItem.rownum = foundItem.rownum;
+    if ( foundItem )
+    {
+      fragItem.rownum = foundItem.rownum;
+    }
   });
 }
 
 // ---------------------------- fragments_clearPopup -------------------------------
-function fragments_clearPopup(fragArray, options)
+function fragments_clearPopup(fragArray : regexFrag_interface[], options? : {deep?:boolean})
 {
   options = options || {};
   const deep = options.deep || false;
@@ -531,11 +537,14 @@ function fragments_clearPopup(fragArray, options)
 // search regex fragments array. Looking for item where vertPos is within the range
 // of top and bottom location of the fragment. When found, return the rownum of
 // that fragment.
-function fragments_findRownum(fragment_array, vertPos)
+function fragments_findRownum(fragment_array : regexFrag_interface[] , vertPos : number)
 {
   const found = fragment_array.find((item) =>
   {
-    return ((vertPos >= item.top) && (vertPos <= item.bottom));
+    const item_top = item.top || 0 ;
+    const item_bottom = item.bottom || 0 ;
+
+    return (vertPos >= item_top) && (vertPos <= item_bottom );
   });
   if (found == null)
     return -1;
@@ -543,17 +552,27 @@ function fragments_findRownum(fragment_array, vertPos)
     return found.rownum;
 }
 
+interface rowNumItem_interface
+{
+  rownum: number,
+  top:number
+}
+
 // -------------------------- fragments_toRowNumArray -----------------------------
 // return an array of distinct row numbers. Where each row corresponds to a 
 // distinct top position in the input array of regex fragments.
 function fragments_toRowNumArray(fragment_array : regexFrag_interface[])
 {
+
+  const arr: {rownum:number, top:number}[] = [] ;
+  let reduce_initial = { rownum_array: arr } ;
+
   // build an array of distinct top locations. Each row of visual fragments 
   // will have the same top location. From that distinct list, assign a
   // row number.
   const { rownum_array } = fragment_array.reduce((rio, item) =>
   {
-    const top = item.top;
+    const top = item.top || 0 ;
     const found_row = rio.rownum_array.find((it) =>
     {
       return it.top == top;
@@ -561,7 +580,7 @@ function fragments_toRowNumArray(fragment_array : regexFrag_interface[])
     if (found_row == null)
       rio.rownum_array.push({ rownum: 0, top });
     return rio;
-  }, { rownum_array: {rownum:number, top:number} [] });
+  }, reduce_initial );
 
   // sort rownum array by top pos.
   rownum_array.sort((a, b) =>
@@ -586,7 +605,7 @@ function fragments_toRowNumArray(fragment_array : regexFrag_interface[])
 }
 
 // --------------------------- fragments_combineCaptureFragments ------------------
-function fragments_combineCaptureFragments( fragArray, begin_ix, end_ix )
+function fragments_combineCaptureFragments( fragArray : regexFrag_interface[] , begin_ix : number, end_ix : number )
 {
   // only a single fragment between the begin and end fragment. combine into a 
   // single "caputure" fragment.
@@ -619,7 +638,7 @@ function fragments_combineCaptureFragments( fragArray, begin_ix, end_ix )
 // --------------------------- fragments_findCaptureBegin ------------------
 // starting from isEndCapture fragment, look backwards in fragments array until the
 // isBeginCapture fragment is found.
-function fragments_findCaptureBegin(fragArray, end_ix )
+function fragments_findCaptureBegin(fragArray : regexFrag_interface[] , end_ix : number )
 {
   let begin_ix;
   let begin_frag;
@@ -645,7 +664,8 @@ function fragments_findCaptureBegin(fragArray, end_ix )
 // this is a deep find. When fragment contains components, search that
 // component array.
 // deep: true false. if true, find caret in componentArray of composite fragments.
-function fragments_findCaret(fragArray, deep)
+function fragments_findCaret(fragArray : regexFrag_interface[] , deep : boolean) :
+          { found_index:number, found_array: regexFrag_interface[] | null, found_item: regexFrag_interface | null }
 {
   deep = deep || true ;
   let ix = -1 ;
@@ -680,7 +700,7 @@ function fragments_findCaret(fragArray, deep)
 // --------------------------- fragments_hideCaret ---------------------
 // hide caret frag item in array of fragments.
 // deep: true false. if true, hide caret in componentArray of composite fragments.
-function fragments_hideCaret(fragArray, deep)
+function fragments_hideCaret(fragArray : regexFrag_interface[], deep : boolean )
 {
   deep = deep || false;
   for (const item of fragArray)
@@ -698,7 +718,7 @@ function fragments_hideCaret(fragArray, deep)
 
 // ------------------------- fragments_assignInsertMarker -------------------------
 // marker: { rltv:'after', 'before', 'begin', 'end'}
-function fragments_assignInsertMarker(fragArray, index, marker)
+function fragments_assignInsertMarker(fragArray : regexFrag_interface[], index : number, marker : { rltv:string })
 {
   // first, unmark all items.
   fragArray.forEach((item) =>
@@ -733,7 +753,7 @@ function fragments_assignInsertMarker(fragArray, index, marker)
 
 // ------------------------- fragments_findInsertMarker -------------------------
 // marker: { rltv:'after', 'before', 'begin', 'end'}
-function fragments_findInsertMarker(fragArray)
+function fragments_findInsertMarker(fragArray : regexFrag_interface[] )
 {
   let marker;
   let marker_index = fragArray.findIndex((item) =>
@@ -748,7 +768,7 @@ function fragments_findInsertMarker(fragArray)
 }
 
 // ----------------------- fragments_insertCaret ----------------------------------
-function fragments_insertCaret( frag_array, index)
+function fragments_insertCaret( frag_array : regexFrag_interface[] , index : number)
 {
   // mark the item in frag_array as the "insert_before" item.
   if ( frag_array.length > 0)
@@ -777,9 +797,9 @@ function fragments_insertCaret( frag_array, index)
 }
 
 // ---------------------- fragments_insertCaret_atMarker -------------------------
-function fragments_insertCaret_atMarker( fragArray )
+function fragments_insertCaret_atMarker( fragArray : regexFrag_interface[] )
 {
-  let caret ;
+  let caret : regexFrag_interface ;
 
   // extract the caret fragment.  If not found, create the caret.
   const { found_index, found_item } = fragments_findCaret( fragArray, false ) ;
@@ -790,14 +810,14 @@ function fragments_insertCaret_atMarker( fragArray )
   }
   else
   {
-    caret = {special:'caret'} ;
+    caret = {special:'caret', name:'', text:''} ;
   }
 
   const { marker_index, marker } = fragments_findInsertMarker( fragArray ) ;
 
   // setup insert before index.
   let insert_index = 0 ;
-  if ( marker_index == -1 )
+  if ( marker_index == -1 || !marker )
     insert_index = -1 ;
   else if ( marker.rltv == 'before')
     insert_index = marker_index ;
@@ -819,7 +839,7 @@ function fragments_insertCaret_atMarker( fragArray )
 
 // ------------------------------ fragments_removeCaret ---------------------------
 // remove all the item.special = 'caret' fragments in frag array.
-function fragments_removeCaret( fragArray )
+function fragments_removeCaret( fragArray : regexFrag_interface[] )
 {
   while(true)
   {
@@ -844,7 +864,7 @@ function fragments_removeCaret( fragArray )
 // --------------------------- fragments_showCaret ---------------------
 // hide caret frag item in array of fragments.
 // deep: true false. if true, hide caret in componentArray of composite fragments.
-function fragments_showCaret(fragArray, deep)
+function fragments_showCaret(fragArray : regexFrag_interface[], deep : boolean)
 {
   deep = deep || false;
   for (const item of fragArray)
@@ -861,7 +881,7 @@ function fragments_showCaret(fragArray, deep)
 }
 
 // ------------------------------ fragments_toRegexPattern ------------------------
-function fragments_toRegexPattern(fragment_array)
+function fragments_toRegexPattern(fragment_array : regexFrag_interface[])
 {
   let pattern = '';
   fragment_array.forEach((item) =>
