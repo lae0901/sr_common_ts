@@ -217,10 +217,10 @@ function frag_mark_remove(frag : regexFrag_interface )
 
 // --------------------------- frag_newTextFrag -----------------------------------
 // addnProps - additional properties to add to the new frag object.
-function frag_newTextFrag( text : string, addnProps : regexFrag_interface )
+function frag_newTextFrag( text : string, addnProps : {} )
 {
   addnProps = addnProps || {} ;
-  const frag = {
+  const frag : regexFrag_interface = {
     text: '', name: '',
     textMask: '{{}}', nameMask: 'text: {{}}',
     varvlu: '',
@@ -434,7 +434,7 @@ export function regexPattern_toFragments(
 
     // store fragment in fragment list.
     fragArray.push(frag);
-    px += frag.lx;
+    px += frag.lx || 0;
 
     // fragment is a composite fragment. It is itself composed of regex fragments.
     // Parse the composite fragment and create componentArray.
@@ -640,7 +640,7 @@ function fragments_combineCaptureFragments( fragArray : regexFrag_interface[] , 
 // isBeginCapture fragment is found.
 function fragments_findCaptureBegin(fragArray : regexFrag_interface[] , end_ix : number )
 {
-  let begin_ix;
+  let begin_ix = 0 ;
   let begin_frag;
   const end_frag = fragArray[end_ix];
 
@@ -723,7 +723,7 @@ function fragments_assignInsertMarker(fragArray : regexFrag_interface[], index :
   // first, unmark all items.
   fragArray.forEach((item) =>
   {
-    item.insertMarker = null;
+    item.insertMarker = undefined;
   });
 
   let marker_index = index == -1 ? fragArray.length - 1 : index ;
