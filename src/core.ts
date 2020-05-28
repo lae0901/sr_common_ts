@@ -663,19 +663,23 @@ export function string_head(str: string, lx: number)
 }
 
 // ------------------------------- string_isQuoted --------------------------------
-export function string_isQuoted(text : string) : boolean
+export function string_isQuoted(text : string, quoteChar? : string) : boolean
 {
   let isQuoted = false;
   if (text.length >= 2)
   {
     const headChar = string_head(text, 1);
-    if ((headChar == '"') || (headChar == "'") || (headChar == '`') ||
-      (headChar == '/'))
+
+    if ( !quoteChar || quoteChar == headChar )
     {
-      const tailCh1 = string_tail(text, 1);
-      const tailCh2 = string_tail(text, 2);
-      if ((headChar == tailCh1) && (tailCh2.substr(0, 1) != '\\'))
-        isQuoted = true;
+      if ((headChar == '"') || (headChar == "'") || (headChar == '`') ||
+            (headChar == '/'))
+      {
+        const tailCh1 = string_tail(text, 1);
+        const tailCh2 = string_tail(text, 2);
+        if ((headChar == tailCh1) && (tailCh2.substr(0, 1) != '\\'))
+          isQuoted = true;
+      }
     }
   }
   return isQuoted;
