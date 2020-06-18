@@ -41,6 +41,5 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * npm update in projects which use this package
 
 ## testing 
-* press F5 to run task "launch hello.ts"
-* this task runs npm build. then calls src/tester.ts
-* see the outfiles property to see that lib/tester.js is actually run
+* npm run test
+* or press F5, run task "run tester"
