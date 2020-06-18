@@ -1,9 +1,9 @@
-import { file_isDir, dir_ensureExists, dir_mkdir } from './core';
+import { file_isDir, dir_ensureExists, dir_mkdir, dir_readdir } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
 // import { path_findFile, path_parts, rxp, regexPattern_toFragments } from './core';
-import { path_findFile, path_parts, rxp } from './core';
+import { path_findFile, path_parts, rxp, dir_readDirDeep } from './core';
 
 const folderPath = '/c:/github/tester';
 const fileName = 'app.vue';
@@ -32,19 +32,18 @@ if ( false )
 
 if ( false )
 {
+  // temporary directory. make sure does not exist.
+  const tempDir = os.tmpdir();
+  const testDir = path.join(tempDir, 'core_ts');
+  try
+  {
+    fs.rmdirSync(testDir, { recursive: true });
+  }
+  catch (e)
+  {
+  }
 
-// temporary directory. make sure does not exist.
-const tempDir = os.tmpdir();
-const testDir = path.join(tempDir, 'core_ts');
-try
-{
-  fs.rmdirSync(testDir, { recursive: true });
-}
-catch (e)
-{
-}
-
-runTest( testDir ) ;
+  runTest( testDir ) ;
 }
 
 async function runTest( testDir:string )
@@ -62,6 +61,9 @@ async function base_async(folderPath: string, fileName: string)
 // ------------------------------- async_main ---------------------------------
 async function async_main( )
 {
+  await dir_readDirDeep_test( ) ;
+  return ;
+
   regex_listFragments();
 
   const path1 = `c:/web/pwa/dark-sky/demo/src/steve.txt`;
@@ -80,4 +82,16 @@ function regex_listFragments()
   // {
   //   console.log( `frag name:${frag.name}  text:${frag.text}`);
   // }
+}
+
+// ----------------------------- dir_readDirDeep_test -----------------------------
+async function dir_readDirDeep_test()
+{
+  const dirPath = `c:\\github\\defn`;
+  const options = { ignoreDir: ['node_modules', 'git', '.git'], containsFile:['common','file-explorer'] };
+  const dirPathNames = await dir_readDirDeep(dirPath, options );
+  for( const dirPath of dirPathNames )
+  {
+    console.log(`${dirPath}`);
+  }
 }

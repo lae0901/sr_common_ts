@@ -1,11 +1,12 @@
 {
   "name": "sr_core_ts",
-  "version": "1.46.7",
+  "version": "1.46.8",
   "description": "core typescript functions",
   "main": "lib/core.js",
   "types": "lib/core.d.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "node ./lib/tester.js"
   },
   "files": [
     "/lib"
@@ -23,12 +24,12 @@
   "homepage": "https://github.com/lae0901/sr_core_ts#readme",
   "devDependencies": {
     "@types/jest": "^24.9.1",
-    "@types/node": "^13.13.6",
+    "@types/node": "^13.13.12",
     "jest": "^26.0.1",
     "prettier": "^2.0.5",
     "ts-jest": "^24.3.0",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.9.2"
+    "typescript": "^3.9.5"
   }
 }

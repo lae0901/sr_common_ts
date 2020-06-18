@@ -10,9 +10,12 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 
 ## array methods
 * array_front<T>( arr: T[] ) : T | null
+* boolean = stringArray_contains( arr, text )
 
 ## directory methods
 * {isDir, errmsg} = file_isDir(path)
+* boolean = dir_containsFile( dirPath, fileNameArr )
+* string[] = dir_readDirDeep(dirPath, {ignoreDir, containsFile})
 
 ## path methods
 * path_findFile( dirPath: string, fileName: string ) : Promise<{dirPath,remPath}> 

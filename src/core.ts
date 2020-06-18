@@ -19,6 +19,28 @@ export function array_front<T>(arr: T[]): T | null
   }
 }
 
+// ------------------------------- dir_containsFile -------------------------------
+// check if the directory contains a file name ( file name being a file or dir)
+export async function dir_containsFile( dirPath: string, fileNameArr: string[] ) : Promise<boolean>
+{
+  const promise = new Promise<boolean>((resolve, reject) =>
+  {
+    let contains = false ;
+    fs.readdir(dirPath, (err, items) =>
+    {
+      const found = items.find((item) =>
+      {
+        const containsItem = stringArray_contains(fileNameArr, item);
+        return containsItem ;
+      });
+      if ( found )
+        contains = true ;
+      resolve( contains ) ;
+    });
+  });
+  return promise;
+}
+
 // ------------------------------ dir_findFirstText -----------------------------
 export async function dir_findFirstText(dirPath: string, findText: string)
   : Promise<{ foundFilePath: string, foundLinn: number }>
@@ -106,6 +128,53 @@ export function dir_mkdir(dirPath: string): Promise<{exists:boolean,errmsg:strin
       resolve({exists, errmsg});
     });
   });
+  return promise;
+}
+
+interface iDirDeepOptions
+{
+  ignoreDir?: string[],
+  containsFile?: string[]
+}
+
+// -------------------------------- dir_readDirDeep --------------------------------
+// return deep list of directories contained within dirPath.
+// each directory returned is the full path of the directory.
+// use the ignoreDir parameter to ignore directories by their file name.
+export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : Promise<string[]>
+{
+  options = options || {} ;
+  const promise = new Promise<string[]>(async (resolve, reject) =>
+  {
+    const files = await dir_readdir(dirPath) ;
+    let foundDirs : string[] = [] ;
+    for( const file of files)
+    {
+      const filePath = path.join(dirPath, file) ;
+      const { isDir } = await file_isDir(filePath) ;
+      if (( isDir ) && !stringArray_contains( options.ignoreDir, file))
+      {
+        // check if the directory contains a specified file.
+        let skip = false ;
+        if ( options.containsFile )
+        {
+          const does_contain_file = await dir_containsFile(filePath, options.containsFile ) ;
+          if ( does_contain_file == false )
+            skip = true ;
+        }
+
+        // add to list of found directories.
+        if ( !skip )
+        {
+          foundDirs.push(filePath) ;
+        }
+
+        const subFoundDirs = await dir_readDirDeep( filePath, options ) ;
+        foundDirs.push(...subFoundDirs) ;
+      }
+    }
+    resolve(foundDirs) ;
+  }) ;
   return promise;
 }
 
@@ -846,3 +915,21 @@ export function string_wordBx(text: string, word: string, ix: number)
   return bx;
 }
 
+// ----------------------------- stringArray_contains -----------------------------
+// check if the array of strings contains the specified string.
+export function stringArray_contains(arr: string[] | undefined, text: string): boolean
+{
+  let contains = false;
+  if (!arr)
+    contains = false;
+  else
+  {
+    const foundItem = arr.find((item) =>
+    {
+      return (item == text);
+    });
+    if (foundItem)
+      contains = true;
+  }
+  return contains;
+}
