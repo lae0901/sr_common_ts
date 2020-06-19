@@ -1,4 +1,5 @@
-import { file_isDir, dir_ensureExists, dir_mkdir, dir_readdir } from './core';
+import { file_isDir, dir_ensureExists, dir_mkdir, dir_readdir, 
+          file_readText, file_writeNew } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -62,18 +63,35 @@ async function base_async(folderPath: string, fileName: string)
 // ------------------------------- async_main ---------------------------------
 async function async_main( )
 {
-  const { errmsg_arr, completion_arr } = string_test() ;
-  for( const line of completion_arr )
+  // string_test
   {
-    console.log(line) ;
+    const { errmsg_arr, completion_arr } = await string_test() ;
+    for( const line of completion_arr )
+    {
+      console.log(line) ;
+    }
+
+    for (const line of errmsg_arr)
+    {
+      console.error(line);
+    }
   }
 
-  for (const line of errmsg_arr)
+  // file_test
   {
-    console.error(line);
+    const { errmsg_arr, completion_arr } = await file_test();
+    for (const line of completion_arr)
+    {
+      console.log(line);
+    }
+
+    for (const line of errmsg_arr)
+    {
+      console.error(line);
+    }
   }
+
   return ;
-
 
   await dir_readDirDeep_test( ) ;
   return ;
@@ -111,7 +129,7 @@ async function dir_readDirDeep_test()
 }
 
 // ---------------------------------- string_test ----------------------------------
-function string_test( )
+async function string_test( )
 {
   const errmsg_arr : string[] = [] ;
   const completion_arr : string[] = [] ;
@@ -141,3 +159,45 @@ function string_test( )
 
   return {errmsg_arr, completion_arr};
 }
+
+// ---------------------------------- file_test ----------------------------------
+async function file_test()
+{
+  const errmsg_arr: string[] = [];
+  const completion_arr: string[] = [];
+  let method = '';
+  const testDir = path.join( os.tmpdir( ), 'sr_core_ts') ;
+
+  // create directory /tmp/sr_core_ts 
+  {
+    const { created, errmsg } = await dir_ensureExists(testDir);
+    const files = await dir_readdir(testDir) ;
+    completion_arr.push(`create dir ${testDir}. passed.`);
+  }
+
+  // file_writeNew
+  const testTextFile = path.join(testDir, 'textFile.txt');
+  const textContents = 'tester.txt\nline 2\napp store' ;
+  {
+    method = 'file_writeNew';
+    await file_writeNew(testTextFile, textContents) ;
+    completion_arr.push(`${method}. passed.`);
+  }
+
+  // file_readText
+  {
+    method = 'file_readText';
+    const {text} = await file_readText(testTextFile);
+    if ( text == textContents )
+    {
+      completion_arr.push(`${method}. passed. ${text}`);
+    }
+    else
+    {
+      errmsg_arr.push(`${method} test failed. ${text}`);
+    }
+  }
+
+  return { errmsg_arr, completion_arr };
+}
+

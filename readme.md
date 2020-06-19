@@ -19,6 +19,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 
 ## file methods
 * {data,errmsg} = await file_readFile(filePath) ;
+* {text,errmsg} = await file_readText(filePath) ;
 
 ## path methods
 * path_findFile( dirPath: string, fileName: string ) : Promise<{dirPath,remPath}> 
@@ -41,6 +42,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 ## publish instructions
 * increment version number in package.json
 * npm run build
+* npm run test
 * git add, commit, push to repo
 * npm publish
 * npm update in projects which use this package

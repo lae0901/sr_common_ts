@@ -368,6 +368,15 @@ export function file_stat(path: string): Promise<fs.Stats>
   return promise;
 }
 
+// --------------------------- file_readText ----------------------
+// return results of fs.readFile as string.
+export async function file_readText(filePath: string)
+{
+  const {data, errmsg } = await file_readFile(filePath) ;
+  const text = data.toString('utf8');
+  return { text, errmsg } ;
+}
+
 // ------------------------------ file_ensureExists ------------------------
 export async function file_ensureExists(path: string)
 {
