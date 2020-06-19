@@ -23,4 +23,4 @@ const { numColumns, numStar, sumPctWidth, sumFixedWidth } =
     rio.numColumns += 1;
 
     return rio;
-  }, { steve:{abc:string}[], numColumns: 0, numStar: 0, sumPctWidth: 0, sumFixedWidth: 0 });
+  }, { numColumns: 0, numStar: 0, sumPctWidth: 0, sumFixedWidth: 0 });
