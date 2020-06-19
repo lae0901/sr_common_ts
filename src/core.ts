@@ -790,6 +790,32 @@ export function string_matchGeneric(str: string, pattern: string): boolean
     return false;
 }
 
+// ----------------------- string_padLeft -----------------------
+// pad on the left until specified length.
+export function string_padLeft(inText:string, length:number, padChar:string)
+{
+  padChar = padChar || ' ';
+  let text = inText;
+  while (text.length < length)
+  {
+    text = padChar + text ;
+  }
+  return text;
+}
+
+// ------------------------- string_padRight ----------------------------
+// pad on the right with pad character.
+export function string_padRight(inText:string, padLx:number, padChar:string)
+{
+  padChar = padChar || ' ';
+  let text = inText;
+  while (text.length < padLx)
+  {
+    text += padChar;
+  }
+  return text;
+}
+
 // -------------------- string_replaceAll -----------------------
 // replace all occurance of findText with replaceText
 export function string_replaceAll( str:string, findText:string, replaceText:string )

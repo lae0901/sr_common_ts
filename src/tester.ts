@@ -3,7 +3,8 @@ import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
 // import { path_findFile, path_parts, rxp, regexPattern_toFragments } from './core';
-import { path_findFile, path_parts, rxp, dir_readDirDeep } from './core';
+import { string_padLeft, string_padRight, 
+        path_findFile, path_parts, rxp, dir_readDirDeep } from './core';
 
 const folderPath = '/c:/github/tester';
 const fileName = 'app.vue';
@@ -61,6 +62,19 @@ async function base_async(folderPath: string, fileName: string)
 // ------------------------------- async_main ---------------------------------
 async function async_main( )
 {
+  const { errmsg_arr, completion_arr } = string_test() ;
+  for( const line of completion_arr )
+  {
+    console.log(line) ;
+  }
+
+  for (const line of errmsg_arr)
+  {
+    console.error(line);
+  }
+  return ;
+
+
   await dir_readDirDeep_test( ) ;
   return ;
 
@@ -94,4 +108,36 @@ async function dir_readDirDeep_test()
   {
     console.log(`${dirPath}`);
   }
+}
+
+// ---------------------------------- string_test ----------------------------------
+function string_test( )
+{
+  const errmsg_arr : string[] = [] ;
+  const completion_arr : string[] = [] ;
+  let method = '' ;
+
+  // test the string_padLeft function.
+  {
+    method = 'string_padLeft' ;
+    const text = '123' ;
+    const paddedText = string_padLeft(text, 7, '0') ;
+    if ( paddedText != '0000123')
+      errmsg_arr.push(`${method} test failed. ${paddedText}`);
+    else 
+      completion_arr.push(`${method}. passed.`)
+  }
+
+  // test the string_padRight function.
+  {
+    method = 'string_padRight';
+    const text = '123';
+    const paddedText = string_padRight(text, 7, '0');
+    if (paddedText != '1230000')
+      errmsg_arr.push(`${method} test failed. ${paddedText}`);
+    else
+      completion_arr.push(`${method}. passed.`)
+  }  
+
+  return {errmsg_arr, completion_arr};
 }
