@@ -17,6 +17,9 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * boolean = dir_containsFile( dirPath, fileNameArr )
 * string[] = dir_readDirDeep(dirPath, {ignoreDir, containsFile})
 
+## file methods
+* {data,errmsg} = await file_readFile(filePath) ;
+
 ## path methods
 * path_findFile( dirPath: string, fileName: string ) : Promise<{dirPath,remPath}> 
 * path_splitFront( path: string, sep: string = '/' ) : {front: string, rem:string }

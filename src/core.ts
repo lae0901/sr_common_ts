@@ -309,6 +309,25 @@ export async function file_isDir(path: string)
   return promise;
 }
 
+// --------------------------- file_readFile ----------------------
+// return results of fs.readFile as array of text lines.
+export function file_readFile(filePath: string): Promise<{ data: Buffer, errmsg: string }>
+{
+  const promise = new Promise<{ data: Buffer, errmsg: string }>(async (resolve, reject) =>
+  {
+    let errmsg = '';
+    fs.readFile(filePath, (err, data) =>
+    {
+      if (err)
+      {
+        errmsg = err.message;
+      }
+      resolve({ data, errmsg });
+    });
+  });
+  return promise;
+}
+
 // --------------------------- file_readLines ----------------------
 // return results of fs.readFile as array of text lines.
 export function file_readLines(filePath: string): Promise<{ lines: string[], errmsg: string }>
