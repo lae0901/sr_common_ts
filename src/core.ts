@@ -373,7 +373,7 @@ export function file_stat(path: string): Promise<fs.Stats>
 export async function file_readText(filePath: string)
 {
   const {data, errmsg } = await file_readFile(filePath) ;
-  const text = data.toString('utf8');
+  const text = (data) ? data.toString('utf8') : '' ;
   return { text, errmsg } ;
 }
 
