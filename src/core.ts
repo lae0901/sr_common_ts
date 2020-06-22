@@ -222,6 +222,19 @@ export async function file_create(path: string) : Promise<string>
   return promise;
 }
 
+// ------------------------------ file_ensureExists ------------------------
+export async function file_ensureExists(path: string)
+{
+  let fileCreated = false;
+  const exists = await file_exists(path);
+  if (exists == false)
+  {
+    await file_create(path);
+    fileCreated = true;
+  }
+  return { fileCreated };
+}
+
 // -------------------------- file_exists ------------------------------
 export async function file_exists(path: string): Promise<boolean>
 {
@@ -377,16 +390,6 @@ export async function file_readText(filePath: string)
   return { text, errmsg } ;
 }
 
-// ------------------------------ file_ensureExists ------------------------
-export async function file_ensureExists(path: string)
-{
-  const exists = await file_exists(path);
-  if (exists == false)
-  {
-    await file_create(path);
-  }
-}
-
 // ----------------------------------- file_writeFile ------------------------------
 // write text to a new file.
 export function file_writeFile(filePath: string, text: string = ''): Promise<string>
@@ -430,6 +433,29 @@ export async function file_writeNew(path: string, text: string) : Promise<string
         });
       });
 
+    });
+  });
+  return promise;
+}
+
+// ---------------------------- file_unlink -----------------------------
+// unlink, delete, remove file from file system.
+export async function file_unlink(path: string ): Promise<{errmsg:string}>
+{
+  const promise = new Promise<{errmsg:string}>((resolve, reject) =>
+  {
+    let errmsg = '';
+    fs.unlink(path, (err) =>
+    {
+      if (err)
+      {
+        errmsg = err.message;
+        resolve({errmsg});
+      }
+      else
+      {
+        resolve({errmsg}) ;
+      }
     });
   });
   return promise;

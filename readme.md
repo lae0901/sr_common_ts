@@ -18,8 +18,10 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * string[] = dir_readDirDeep(dirPath, {ignoreDir, containsFile})
 
 ## file methods
+* { fileCreated } = await file_ensureExists(filePath) ;
 * {data,errmsg} = await file_readFile(filePath) ;
 * {text,errmsg} = await file_readText(filePath) ;
+* {errmsg} = await file_unlink( filePath ) ;
 
 ## path methods
 * path_findFile( dirPath: string, fileName: string ) : Promise<{dirPath,remPath}> 

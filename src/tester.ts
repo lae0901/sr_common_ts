@@ -1,4 +1,5 @@
 import { file_isDir, dir_ensureExists, dir_mkdir, dir_readdir, 
+          file_ensureExists, file_unlink,
           file_readText, file_writeNew } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
@@ -166,17 +167,17 @@ async function file_test()
   const errmsg_arr: string[] = [];
   const completion_arr: string[] = [];
   let method = '';
-  const testDir = path.join( os.tmpdir( ), 'sr_core_ts') ;
+  const tempTestDir = path.join( os.tmpdir( ), 'sr_core_ts') ;
 
   // create directory /tmp/sr_core_ts 
   {
-    const { created, errmsg } = await dir_ensureExists(testDir);
-    const files = await dir_readdir(testDir) ;
-    completion_arr.push(`create dir ${testDir}. passed.`);
+    const { created, errmsg } = await dir_ensureExists(tempTestDir);
+    const files = await dir_readdir(tempTestDir) ;
+    completion_arr.push(`create dir ${tempTestDir}. passed.`);
   }
 
   // file_writeNew
-  const testTextFile = path.join(testDir, 'textFile.txt');
+  const testTextFile = path.join(tempTestDir, 'textFile.txt');
   const textContents = 'tester.txt\nline 2\napp store' ;
   {
     method = 'file_writeNew';
@@ -195,6 +196,29 @@ async function file_test()
     else
     {
       errmsg_arr.push(`${method} test failed. ${text}`);
+    }
+  }
+
+  // make sure file abc.txt exists in testTempDir
+  {
+    method = 'file_ensureExists';
+    const abcFile = path.join(tempTestDir, 'abc.txt');
+    const { fileCreated } = await file_ensureExists( abcFile);
+    completion_arr.push(`${method}. passed. ${abcFile}`);
+  }
+
+  // run unlink to delete the just created file in testTempDir
+  {
+    method = 'file_unlink';
+    const abcFile = path.join(tempTestDir, 'abc.txt');
+    const {errmsg} = await file_unlink(abcFile);
+    if (errmsg.length == 0)
+    {
+      completion_arr.push(`${method}. passed. ${abcFile}`);
+    }
+    else
+    {
+      errmsg_arr.push(`${method} test failed. ${abcFile} ${errmsg}`);
     }
   }
 
