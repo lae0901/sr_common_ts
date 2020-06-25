@@ -322,6 +322,15 @@ export async function file_isDir(path: string)
   return promise;
 }
 
+// --------------------------- file_readAllText ----------------------
+// return results of fs.readFile as string.
+export async function file_readAllText(filePath: string)
+{
+  const { data, errmsg } = await file_readFile(filePath);
+  const text = (data) ? data.toString('utf8') : '';
+  return { text, errmsg };
+}
+
 // --------------------------- file_readFile ----------------------
 // return results of fs.readFile as array of text lines.
 export function file_readFile(filePath: string): Promise<{ data: Buffer, errmsg: string }>
@@ -383,11 +392,67 @@ export function file_stat(path: string): Promise<fs.Stats>
 
 // --------------------------- file_readText ----------------------
 // return results of fs.readFile as string.
+// get rid of this function. Use file_readAllText instead.
 export async function file_readText(filePath: string)
 {
   const {data, errmsg } = await file_readFile(filePath) ;
   const text = (data) ? data.toString('utf8') : '' ;
   return { text, errmsg } ;
+}
+
+// -------------------------------- file_close --------------------------------
+export function file_close( fd:number): Promise<{errmsg:string}>
+{
+  const promise = new Promise<{ errmsg: string }>((resolve, reject) =>
+  {
+    let errmsg = '';
+    fs.close( fd, ( ) =>
+    {
+      resolve({ errmsg });
+    });
+  });
+  return promise;
+}
+
+// -------------------------------- file_open --------------------------------
+export function file_open( path: string, flags: string | number): Promise<{ fd:number, errmsg: string }>
+{
+  const promise = new Promise<{ fd:number, errmsg: string }>((resolve, reject) =>
+  {
+    let errmsg = '';
+    fs.open(path, flags, (err, fd) =>
+    {
+      if (err)
+      {
+        errmsg = err.message;
+      }
+      resolve({fd, errmsg});
+    });
+  });
+  return promise;
+}
+
+// ---------------------------- file_unlink -----------------------------
+// unlink, delete, remove file from file system.
+export async function file_unlink(path: string): Promise<{ errmsg: string }>
+{
+  const promise = new Promise<{ errmsg: string }>((resolve, reject) =>
+  {
+    let errmsg = '';
+    fs.unlink(path, (err) =>
+    {
+      if (err)
+      {
+        errmsg = err.message;
+        resolve({ errmsg });
+      }
+      else
+      {
+        resolve({ errmsg });
+      }
+    });
+  });
+  return promise;
 }
 
 // ----------------------------------- file_writeFile ------------------------------
@@ -438,24 +503,18 @@ export async function file_writeNew(path: string, text: string) : Promise<string
   return promise;
 }
 
-// ---------------------------- file_unlink -----------------------------
-// unlink, delete, remove file from file system.
-export async function file_unlink(path: string ): Promise<{errmsg:string}>
+// -------------------------------- file_writeText --------------------------------
+export function file_writeText(fd: number, text: string): Promise<{ errmsg: string }>
 {
-  const promise = new Promise<{errmsg:string}>((resolve, reject) =>
+  const promise = new Promise<{ errmsg: string }>((resolve, reject) =>
   {
-    let errmsg = '';
-    fs.unlink(path, (err) =>
+    const buf = Buffer.alloc(text.length, text);
+    fs.write(fd, buf, 0, buf.length, null, (err) =>
     {
+      let errmsg = '';
       if (err)
-      {
-        errmsg = err.message;
-        resolve({errmsg});
-      }
-      else
-      {
-        resolve({errmsg}) ;
-      }
+        errmsg = `error writing file: ${err.message}`;
+      resolve({ errmsg });
     });
   });
   return promise;

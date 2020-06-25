@@ -1,12 +1,14 @@
-import { file_isDir, dir_ensureExists, dir_mkdir, dir_readdir, 
+import {  file_open, file_close, file_writeText,
+         file_isDir, dir_ensureExists, dir_mkdir, dir_readdir, 
           file_ensureExists, file_unlink,
-          file_readText, file_writeNew } from './core';
+          file_readAllText, file_writeNew } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
 // import { path_findFile, path_parts, rxp, regexPattern_toFragments } from './core';
 import { string_padLeft, string_padRight, 
         path_findFile, path_parts, rxp, dir_readDirDeep } from './core';
+import {testerResults_append, testerResults_consoleLog, testerResults_new } from './common/tester-core';
 
 const folderPath = '/c:/github/tester';
 const fileName = 'app.vue';
@@ -90,6 +92,13 @@ async function async_main( )
     {
       console.error(line);
     }
+  }
+
+  // primitive file test. create a file, write some text to it, close, then read
+  // entire contents and match against what was written.
+  {
+    const { results } = await primitive_file_test() ;
+    testerResults_consoleLog( results ) ;
   }
 
   return ;
@@ -185,10 +194,10 @@ async function file_test()
     completion_arr.push(`${method}. passed.`);
   }
 
-  // file_readText
+  // file_readAllText
   {
-    method = 'file_readText';
-    const {text} = await file_readText(testTextFile);
+    method = 'file_readAllText';
+    const {text} = await file_readAllText(testTextFile);
     if ( text == textContents )
     {
       completion_arr.push(`${method}. passed. ${text}`);
@@ -223,5 +232,75 @@ async function file_test()
   }
 
   return { errmsg_arr, completion_arr };
+}
+
+// ---------------------------------- primitive_file_test ----------------------------------
+// test primitive file functions.  open, write, close.
+async function primitive_file_test()
+{
+  const errmsg_arr: string[] = [];
+  const completion_arr: string[] = [];
+  let method = '';
+  const tempTestDir = path.join(os.tmpdir(), 'sr_core_ts');
+  const testTextFile = path.join(tempTestDir, 'primitive-textFile.txt');
+  const results = testerResults_new() ;
+
+  // create directory /tmp/sr_core_ts 
+  {
+    const { created, errmsg } = await dir_ensureExists(tempTestDir);
+    const files = await dir_readdir(tempTestDir);
+    testerResults_append( results, `create dir ${tempTestDir}`, errmsg ) ;
+  }
+
+  // open file for writing.
+  let fd : number ;
+  {
+    const {fd:num, errmsg} = await file_open( testTextFile, 'w' ) ;
+    fd = num;
+    testerResults_append(results, `open file for writing ${testTextFile}`, errmsg);
+  }
+
+  // write some text.
+  let accumWriteText = '' ;
+  {
+    const writeText = `String literal types allow you to specify the exact value a string must have.`;
+    method = 'file_writeText';
+    const { errmsg } = await file_writeText(fd, writeText ) ;
+    accumWriteText = writeText ;
+    testerResults_append(results, `write text to file ${testTextFile}`, errmsg, method);
+  }
+
+  // write some more text.
+  {
+    const writeText = ` In practice string literal types combine nicely`;
+    method = 'file_writeText';
+    const { errmsg } = await file_writeText(fd, writeText);
+    accumWriteText += writeText;
+    testerResults_append(results, `write more text to file ${testTextFile}`, errmsg, method);
+  }
+
+  // close the file.
+  {
+    const { errmsg } = await file_close(fd);
+    testerResults_append(results, `close file ${testTextFile}`, errmsg);
+  }
+
+  // file_readAllText
+  {
+    method = 'file_readAllText';
+    let { text: allText, errmsg } = await file_readAllText(testTextFile);
+    if ( !errmsg && ( allText != accumWriteText ))
+      errmsg = `read all text does not match write text ${accumWriteText}`;
+    testerResults_append( results, `readAllText match ${allText}`, errmsg, method );
+  }
+
+  // run unlink to delete the just created file in testTempDir
+  {
+    method = 'file_unlink';
+    const { errmsg } = await file_unlink(testTextFile);
+    testerResults_append(results, `remove file ${testTextFile}`, errmsg, method);
+  }
+
+  return { results };
 }
 
