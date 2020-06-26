@@ -5,10 +5,9 @@ import {  file_open, file_close, file_writeText,
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
-// import { path_findFile, path_parts, rxp, regexPattern_toFragments } from './core';
 import { string_padLeft, string_padRight, 
         path_findFile, path_parts, rxp, dir_readDirDeep } from './core';
-import {testerResults_append, testerResults_consoleLog, testerResults_new } from './common/tester-core';
+import {testResults_append, testResults_consoleLog, testResults_new } from 'sr_test_framework';
 
 const folderPath = '/c:/github/tester';
 const fileName = 'app.vue';
@@ -98,7 +97,7 @@ async function async_main( )
   // entire contents and match against what was written.
   {
     const { results } = await primitive_file_test() ;
-    testerResults_consoleLog( results ) ;
+    testResults_consoleLog( results ) ;
   }
 
   return ;
@@ -243,13 +242,13 @@ async function primitive_file_test()
   let method = '';
   const tempTestDir = path.join(os.tmpdir(), 'sr_core_ts');
   const testTextFile = path.join(tempTestDir, 'primitive-textFile.txt');
-  const results = testerResults_new() ;
+  const results = testResults_new() ;
 
   // create directory /tmp/sr_core_ts 
   {
     const { created, errmsg } = await dir_ensureExists(tempTestDir);
     const files = await dir_readdir(tempTestDir);
-    testerResults_append( results, `create dir ${tempTestDir}`, errmsg ) ;
+    testResults_append( results, `create dir ${tempTestDir}`, errmsg ) ;
   }
 
   // open file for writing.
@@ -257,7 +256,7 @@ async function primitive_file_test()
   {
     const {fd:num, errmsg} = await file_open( testTextFile, 'w' ) ;
     fd = num;
-    testerResults_append(results, `open file for writing ${testTextFile}`, errmsg);
+    testResults_append(results, `open file for writing ${testTextFile}`, errmsg);
   }
 
   // write some text.
@@ -267,7 +266,7 @@ async function primitive_file_test()
     method = 'file_writeText';
     const { errmsg } = await file_writeText(fd, writeText ) ;
     accumWriteText = writeText ;
-    testerResults_append(results, `write text to file ${testTextFile}`, errmsg, method);
+    testResults_append(results, `write text to file ${testTextFile}`, errmsg, method);
   }
 
   // write some more text.
@@ -276,13 +275,13 @@ async function primitive_file_test()
     method = 'file_writeText';
     const { errmsg } = await file_writeText(fd, writeText);
     accumWriteText += writeText;
-    testerResults_append(results, `write more text to file ${testTextFile}`, errmsg, method);
+    testResults_append(results, `write more text to file ${testTextFile}`, errmsg, method);
   }
 
   // close the file.
   {
     const { errmsg } = await file_close(fd);
-    testerResults_append(results, `close file ${testTextFile}`, errmsg);
+    testResults_append(results, `close file ${testTextFile}`, errmsg);
   }
 
   // file_readAllText
@@ -291,14 +290,14 @@ async function primitive_file_test()
     let { text: allText, errmsg } = await file_readAllText(testTextFile);
     if ( !errmsg && ( allText != accumWriteText ))
       errmsg = `read all text does not match write text ${accumWriteText}`;
-    testerResults_append( results, `readAllText match ${allText}`, errmsg, method );
+    testResults_append( results, `readAllText match ${allText}`, errmsg, method );
   }
 
   // run unlink to delete the just created file in testTempDir
   {
     method = 'file_unlink';
     const { errmsg } = await file_unlink(testTextFile);
-    testerResults_append(results, `remove file ${testTextFile}`, errmsg, method);
+    testResults_append(results, `remove file ${testTextFile}`, errmsg, method);
   }
 
   return { results };
