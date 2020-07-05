@@ -32,6 +32,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 
 ## string methods
 * string_dequote( str )
+* text = string_enquote( str, quoteChar )
 * string_head( str, lx)
 * string_isQuoted( str )
 * string_matchGeneric( str: string, pattern: string ) : boolean
@@ -46,6 +47,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 
 ## publish instructions
 * increment version number in package.json
+* make sure new functions are exported from core.ts
 * npm run build
 * npm run test
 * git add, commit, push to repo

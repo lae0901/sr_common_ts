@@ -829,6 +829,27 @@ export function string_dequote(text: string): string
   return dequoteText;
 }
 
+// -------------------------------- string_enquote --------------------------------
+// enclose the input string in quotes. 
+export function string_enquote( text:string, quoteChar:string ) :string
+{
+  quoteChar = quoteChar || '"';
+
+  // double up the backslash characters.
+  text = text.replace(/\\/g, '\\\\');   
+  
+  // backslash escape all quote chars
+  if ( quoteChar == '"')
+    text = text.replace(/"/g, '\\"');
+  else if ( quoteChar == "'")
+    text = text.replace(/'/g, "\\'");
+  else if (quoteChar == "`")
+    text = text.replace(/`/g, "\\`");
+
+  // return the quoted string.
+  return quoteChar + text + quoteChar ;
+}
+
 // -------------------------- string_head ----------------------
 // return the front of the string
 export function string_head(str: string, lx: number)

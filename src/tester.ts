@@ -5,7 +5,7 @@ import {  file_open, file_close, file_writeText,
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
-import { string_padLeft, string_padRight, 
+import { string_enquote, string_padLeft, string_padRight, 
         path_findFile, path_parts, rxp, dir_readDirDeep } from './core';
 import {testResults_append, testResults_consoleLog, testResults_new } from 'sr_test_framework';
 
@@ -65,18 +65,12 @@ async function base_async(folderPath: string, fileName: string)
 // ------------------------------- async_main ---------------------------------
 async function async_main( )
 {
+  const results = testResults_new( ) ;
+
   // string_test
   {
-    const { errmsg_arr, completion_arr } = await string_test() ;
-    for( const line of completion_arr )
-    {
-      console.log(line) ;
-    }
-
-    for (const line of errmsg_arr)
-    {
-      console.error(line);
-    }
+    const res = string_test() ;
+    results.push( ...res ) ;
   }
 
   // file_test
@@ -96,21 +90,11 @@ async function async_main( )
   // primitive file test. create a file, write some text to it, close, then read
   // entire contents and match against what was written.
   {
-    const { results } = await primitive_file_test() ;
-    testResults_consoleLog( results ) ;
+    const { results:res } = await primitive_file_test() ;
+    results.push(...res) ;
   }
 
-  return ;
-
-  await dir_readDirDeep_test( ) ;
-  return ;
-
-  regex_listFragments();
-
-  const path1 = `c:/web/pwa/dark-sky/demo/src/steve.txt`;
-  const parts = path_parts(path1);
-  const { dirPath, remPath } = await path_findFile(path1, 'package.json');
-  console.log(`dirPath:${dirPath} remPath:${remPath}`);
+  testResults_consoleLog( results ) ;
 }
 
 // --------------------------------- regex_listFragments ------------------------
@@ -138,35 +122,60 @@ async function dir_readDirDeep_test()
 }
 
 // ---------------------------------- string_test ----------------------------------
-async function string_test( )
+function string_test( )
 {
-  const errmsg_arr : string[] = [] ;
-  const completion_arr : string[] = [] ;
+  const results = testResults_new( ) ;
   let method = '' ;
 
   // test the string_padLeft function.
   {
     method = 'string_padLeft' ;
     const text = '123' ;
+    const expected = '0000123' ;
     const paddedText = string_padLeft(text, 7, '0') ;
-    if ( paddedText != '0000123')
-      errmsg_arr.push(`${method} test failed. ${paddedText}`);
+    if ( paddedText != expected)
+      testResults_append(results, '', `incorrect result. ${paddedText}. expected ${expected}`, method);
     else 
-      completion_arr.push(`${method}. passed.`)
+      testResults_append(results, `correct result. ${paddedText}.`, '', method);
   }
 
   // test the string_padRight function.
   {
     method = 'string_padRight';
     const text = '123';
+    const expected = '1230000';
     const paddedText = string_padRight(text, 7, '0');
-    if (paddedText != '1230000')
-      errmsg_arr.push(`${method} test failed. ${paddedText}`);
+    if (paddedText != expected)
+      testResults_append(results, '', `incorrect result. ${paddedText}. expected ${expected}`, method);
     else
-      completion_arr.push(`${method}. passed.`)
-  }  
+      testResults_append(results, `correct result. ${paddedText}.`, '', method);
+  }
 
-  return {errmsg_arr, completion_arr};
+  // enquote string. simple.
+  {
+    method = 'string_enquote';
+    const text = 'srcFiles' ;
+    const expected = '"srcFiles"';
+    const rv = string_enquote(text, '"');
+    if ( rv == expected)
+      testResults_append(results, `correct result. ${rv}`, '', method) ;
+    else
+      testResults_append(results, '', `incorrect result. ${rv}. expected ${expected}`, method);
+  }
+
+  // enquote string. string contains backslash characters, quote characters.
+  {
+    method = 'string_enquote';
+    const text = 'src"Fi\\les';
+    const expected = '"src\\\"Fi\\\\les"';
+    const rv = string_enquote(text, '"');
+    if (rv == expected)
+      testResults_append(results, `correct result. ${rv}`, '', method);
+    else
+      testResults_append(results, '', `incorrect result. ${rv}. expected ${expected}`, method);
+  }
+
+  return results ;
 }
 
 // ---------------------------------- file_test ----------------------------------
@@ -237,8 +246,6 @@ async function file_test()
 // test primitive file functions.  open, write, close.
 async function primitive_file_test()
 {
-  const errmsg_arr: string[] = [];
-  const completion_arr: string[] = [];
   let method = '';
   const tempTestDir = path.join(os.tmpdir(), 'sr_core_ts');
   const testTextFile = path.join(tempTestDir, 'primitive-textFile.txt');
