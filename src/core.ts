@@ -146,7 +146,7 @@ export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : P
   options = options || {} ;
   const promise = new Promise<string[]>(async (resolve, reject) =>
   {
-    const files = await dir_readdir(dirPath) ;
+    const {files, errmsg} = await dir_readdir(dirPath) ;
     let foundDirs : string[] = [] ;
     for( const file of files)
     {
@@ -180,19 +180,20 @@ export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : P
 
 // --------------------------- dir_readdir ----------------------
 // return results of fs.readdir as a promise.
-export function dir_readdir(dirPath: string): Promise<string[]>
+export function dir_readdir(dirPath: string): Promise<{files:string[],errmsg:string}>
 {
-  const promise = new Promise<string[]>(async (resolve, reject) =>
+  const promise = new Promise<{files:string[],errmsg:string}>(async (resolve, reject) =>
   {
     fs.readdir(dirPath, (err, files) =>
     {
       if (files)
       {
-        resolve(files);
+        resolve({files,errmsg:''});
       }
       else
       {
-        reject(err);
+        const errmsg = err ? err.message : '' ;
+        resolve({ files:[], errmsg });
       }
     });
   });

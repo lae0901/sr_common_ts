@@ -189,7 +189,7 @@ async function file_test()
   // create directory /tmp/sr_core_ts 
   {
     const { created, errmsg } = await dir_ensureExists(tempTestDir);
-    const files = await dir_readdir(tempTestDir) ;
+    const {files} = await dir_readdir(tempTestDir) ;
     completion_arr.push(`create dir ${tempTestDir}. passed.`);
   }
 
@@ -254,7 +254,7 @@ async function primitive_file_test()
   // create directory /tmp/sr_core_ts 
   {
     const { created, errmsg } = await dir_ensureExists(tempTestDir);
-    const files = await dir_readdir(tempTestDir);
+    const {files} = await dir_readdir(tempTestDir);
     testResults_append( results, `create dir ${tempTestDir}`, errmsg ) ;
   }
 
