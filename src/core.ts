@@ -704,7 +704,7 @@ export function path_toFileUri(path: string): string
 // -------------------------------- path_toUnixPath --------------------------------
 export function path_toUnixPath( path: string ) : string
 {
-  const unixPath = path.replaceAll(/\\/, '\/') ;
+  const unixPath = path.replace(/\\/g, '\/') ;
   return unixPath ;
 }
 

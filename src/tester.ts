@@ -1,7 +1,7 @@
 import {  file_open, file_close, file_writeText,
          file_isDir, dir_ensureExists, dir_mkdir, dir_readdir, 
           file_ensureExists, file_unlink,
-          file_readAllText, file_writeNew } from './core';
+          file_readAllText, file_writeNew, path_toUnixPath } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -73,6 +73,12 @@ async function async_main( )
     results.push( ...res ) ;
   }
 
+  // path_test
+  {
+    const res = path_test();
+    results.push(...res);
+  }
+
   // file_test
   {
     const { errmsg_arr, completion_arr } = await file_test();
@@ -121,6 +127,30 @@ async function dir_readDirDeep_test()
   }
 }
 
+// ---------------------------------- path_test ----------------------------------
+function path_test()
+{
+  const results = testResults_new();
+  let method = '';
+
+  // path_toUnixPath.
+  {
+    method = 'path_toUnixPath';
+    let passText = '';
+    let errmsg = '';
+    const text = '\\home\\srichter\\test.pdf';
+    const expected = '/home/srichter/test.pdf';
+    const unixPath = path_toUnixPath( text ) ;
+    if (unixPath != expected)
+      errmsg = `incorrect result. ${unixPath}. expected ${expected}`;
+    else
+      passText = `correct result. ${unixPath}.`;
+    testResults_append(results, passText, errmsg, method);
+  }
+
+  return results;
+}
+
 // ---------------------------------- string_test ----------------------------------
 function string_test( )
 {
@@ -130,49 +160,61 @@ function string_test( )
   // test the string_padLeft function.
   {
     method = 'string_padLeft' ;
+    let passText = '' ;
+    let errmsg = '' ;
     const text = '123' ;
     const expected = '0000123' ;
     const paddedText = string_padLeft(text, 7, '0') ;
     if ( paddedText != expected)
-      testResults_append(results, '', `incorrect result. ${paddedText}. expected ${expected}`, method);
+      errmsg = `incorrect result. ${paddedText}. expected ${expected}`;
     else 
-      testResults_append(results, `correct result. ${paddedText}.`, '', method);
+      passText = `correct result. ${paddedText}.`;
+    testResults_append(results, passText, errmsg, method);
   }
 
   // test the string_padRight function.
   {
     method = 'string_padRight';
+    let passText = '';
+    let errmsg = '';
     const text = '123';
     const expected = '1230000';
     const paddedText = string_padRight(text, 7, '0');
     if (paddedText != expected)
-      testResults_append(results, '', `incorrect result. ${paddedText}. expected ${expected}`, method);
+      errmsg = `incorrect result. ${paddedText}. expected ${expected}`;
     else
-      testResults_append(results, `correct result. ${paddedText}.`, '', method);
+      passText = `correct result. ${paddedText}.`;
+    testResults_append(results, passText, errmsg, method);
   }
 
   // enquote string. simple.
   {
     method = 'string_enquote';
+    let passText = '';
+    let errmsg = '';
     const text = 'srcFiles' ;
     const expected = '"srcFiles"';
     const rv = string_enquote(text, '"');
     if ( rv == expected)
-      testResults_append(results, `correct result. ${rv}`, '', method) ;
+      passText = `correct result. ${rv}` ;
     else
-      testResults_append(results, '', `incorrect result. ${rv}. expected ${expected}`, method);
+      errmsg = `incorrect result. ${rv}. expected ${expected}`;
+    testResults_append(results, passText, errmsg, method);
   }
 
   // enquote string. string contains backslash characters, quote characters.
   {
     method = 'string_enquote';
+    let passText = '';
+    let errmsg = '';
     const text = 'src"Fi\\les';
     const expected = '"src\\\"Fi\\\\les"';
     const rv = string_enquote(text, '"');
     if (rv == expected)
-      testResults_append(results, `correct result. ${rv}`, '', method);
+      passText = `correct result. ${rv}`;
     else
-      testResults_append(results, '', `incorrect result. ${rv}. expected ${expected}`, method);
+      errmsg = `incorrect result. ${rv}. expected ${expected}`;
+    testResults_append(results, passText, errmsg, method);
   }
 
   return results ;

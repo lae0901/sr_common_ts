@@ -29,6 +29,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 ## path methods
 * path_findFile( dirPath: string, fileName: string ) : Promise<{dirPath,remPath}> 
 * path_splitFront( path: string, sep: string = '/' ) : {front: string, rem:string }
+* path_toUnixPath( path: string ) : string
 
 ## string methods
 * string_dequote( str )
