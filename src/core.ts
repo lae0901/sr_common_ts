@@ -701,6 +701,13 @@ export function path_toFileUri(path: string): string
   return return_path;
 }
 
+// -------------------------------- path_toUnixPath --------------------------------
+export function path_toUnixPath( path: string ) : string
+{
+  const unixPath = path.replaceAll(/\\/, '\/') ;
+  return unixPath ;
+}
+
 // --------------------------- scan_charNeAll ------------------------------
 // scan in string until char not equal any of pattern chars.
 export function scan_charNeAll(text: string, bx: number, pattern: string): number
