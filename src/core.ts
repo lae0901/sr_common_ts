@@ -476,32 +476,44 @@ export function file_writeFile(filePath: string, text: string = ''): Promise<str
 }
 
 // ---------------------------- file_writeNew -----------------------------
-// replace contents of existing file. Or write text to new file.
-export async function file_writeNew(path: string, text: string) : Promise<string>
+// replace contents of existing file. Or write data to new file.
+export async function file_writeNew(path: string, data: string | Buffer ) : Promise<string>
 {
   const promise = new Promise<string>((resolve, reject) =>
   {
     let errmsg = '' ;
-    fs.open(path, 'w', function (err, fd)
-    {
-      if (err)
-      {
-        errmsg = err.message ;
-        resolve(errmsg) ;
-      }
 
-      const buf = Buffer.alloc(text.length, text);
-      // const buf = new Buffer(text) ;
-      fs.write(fd, buf, 0, buf.length, null, (err) =>
+    if ( Buffer.isBuffer(data))
+    {
+      fs.writeFile( path, data, 'binary', (err) =>
       {
-        if (err) reject('error writing file: ' + err);
-        fs.close(fd, () =>
+        if (err)
+          resolve(err.message);
+        else
+          resolve('');
+      });
+    }
+    else
+    {
+      fs.open(path, 'w', function (err, fd)
+      {
+        if (err)
         {
-          resolve( errmsg );
+          errmsg = err.message ;
+          resolve(errmsg) ;
+        }
+
+        const buf = Buffer.alloc(data.length, data);
+        fs.write(fd, buf, 0, buf.length, null, (err) =>
+        {
+          if (err) reject('error writing file: ' + err);
+          fs.close(fd, () =>
+          {
+            resolve( errmsg );
+          });
         });
       });
-
-    });
+    }
   });
   return promise;
 }
