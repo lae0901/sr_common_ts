@@ -4,8 +4,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { rxp, regex_exec } from './regex_core' ;
 import { regexPattern_toFragments } from './regex-frag' ;
+import { system_downloadsFolder } from './system-downloads';
 
 export {rxp, regex_exec, regexPattern_toFragments } ;
+export { system_downloadsFolder};
 
 // ------------------------- array_front -------------------------------------
 // return either null or the first item in the array.

@@ -9,6 +9,7 @@ import * as path from 'path';
 import { string_enquote, string_padLeft, string_padRight, 
         path_findFile, path_parts, rxp, dir_readDirDeep } from './core';
 import {testResults_append, testResults_consoleLog, testResults_new } from 'sr_test_framework';
+import { system_downloadsFolder } from './system-downloads';
 
 const folderPath = '/c:/github/tester';
 const fileName = 'app.vue';
@@ -99,6 +100,12 @@ async function async_main( )
   {
     const { results:res } = await primitive_file_test() ;
     results.push(...res) ;
+  }
+
+  // system_test
+  {
+    const res = system_test();
+    results.push(...res);
   }
 
   testResults_consoleLog( results ) ;
@@ -369,3 +376,24 @@ async function primitive_file_test()
   return { results };
 }
 
+// ---------------------------------- system_test ----------------------------------
+function system_test()
+{
+  const results = testResults_new();
+  let method = '';
+
+  // test the string_padLeft function.
+  {
+    method = 'system_downloadsFolder';
+    let passText = '';
+    let errmsg = '';
+    const folder = system_downloadsFolder( ) ;
+    if ( !folder )
+      errmsg = `downloads folder is empty.`;
+    else
+      passText = `got downloads folder ${folder}.`;
+    testResults_append(results, passText, errmsg, method);
+  }
+
+  return results;
+}

@@ -47,6 +47,9 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 ## regular expression methods
 * regexPattern_toFragments( pattern: string) : regexFrag_interface[]
 
+## system methods
+* system_downloadsFolder( ) : string
+
 ## publish instructions
 * increment version number in package.json
 * make sure new functions are exported from core.ts
