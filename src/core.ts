@@ -624,6 +624,14 @@ interface interface_pathPart {
   remPath:string // remain path. all parts that follow the path of this part.
 };
 
+// --------------------------------- path_joinUnix ---------------------------------
+export function path_joinUnix( path1:string, path2:string) : string
+{
+  let res = path.join(path1, path2) ;
+  res = path_toUnixPath(res) ;
+  return res ;
+}
+
 // ------------------------- path_parts -----------------------------------
 export function path_parts(str:string) : interface_pathPart[]
 {

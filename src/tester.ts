@@ -1,7 +1,8 @@
 import {  file_open, file_close, file_writeText,
          file_isDir, dir_ensureExists, dir_mkdir, dir_readdir, 
           file_ensureExists, file_unlink,
-          file_readAllText, file_writeNew, path_toUnixPath } from './core';
+          file_readAllText, file_writeNew, 
+          path_joinUnix, path_toUnixPath } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -141,6 +142,22 @@ function path_test()
     const text = '\\home\\srichter\\test.pdf';
     const expected = '/home/srichter/test.pdf';
     const unixPath = path_toUnixPath( text ) ;
+    if (unixPath != expected)
+      errmsg = `incorrect result. ${unixPath}. expected ${expected}`;
+    else
+      passText = `correct result. ${unixPath}.`;
+    testResults_append(results, passText, errmsg, method);
+  }
+
+  // path_joinUnix.
+  {
+    method = 'path_joinUnix';
+    let passText = '';
+    let errmsg = '';
+    const dirPath = '\\home\\srichter';
+    const fileName = 'test.pdf';
+    const expected = '/home/srichter/test.pdf';
+    const unixPath = path_joinUnix( dirPath, fileName );
     if (unixPath != expected)
       errmsg = `incorrect result. ${unixPath}. expected ${expected}`;
     else
