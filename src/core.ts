@@ -21,6 +21,16 @@ export function array_front<T>(arr: T[]): T | null
   }
 }
 
+// --------------------------------- date_toEpoch ---------------------------------
+// convert Date to unix epoch, which is number of seconds since 1970. 
+// use getTime function to get milliseconds since 1970. Then divide by 1000 to get
+// number of seconds.
+export function date_toEpoch( dt: Date ) : number
+{
+  const msecs = dt.getTime( ) ;
+  return msecs / 1000 ;
+}
+
 // ------------------------------- dir_containsFile -------------------------------
 // check if the directory contains a file name ( file name being a file or dir)
 export async function dir_containsFile( dirPath: string, fileNameArr: string[] ) : Promise<boolean>

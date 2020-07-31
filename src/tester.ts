@@ -2,7 +2,7 @@ import {  file_open, file_close, file_writeText,
          file_isDir, dir_ensureExists, dir_mkdir, dir_readdir, 
           file_ensureExists, file_unlink,
           file_readAllText, file_writeNew, 
-          path_joinUnix, path_toUnixPath } from './core';
+          path_joinUnix, path_toUnixPath, date_toEpoch } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -75,9 +75,9 @@ async function async_main( )
     results.push( ...res ) ;
   }
 
-  // path_test
+  // date_test
   {
-    const res = path_test();
+    const res = date_test();
     results.push(...res);
   }
 
@@ -93,6 +93,12 @@ async function async_main( )
     {
       console.error(line);
     }
+  }
+
+  // path_test
+  {
+    const res = path_test();
+    results.push(...res);
   }
 
   // primitive file test. create a file, write some text to it, close, then read
@@ -257,6 +263,30 @@ function string_test( )
   }
 
   return results ;
+}
+
+// ---------------------------------- date_test ----------------------------------
+function date_test()
+{
+  const results = testResults_new();
+  let method = '';
+
+  // test the date_toEpoch function.
+  {
+    method = 'date_toEpoch';
+    let passText = '';
+    let errmsg = '';
+    const dt = new Date(1595273994 * 1000) ;
+    const expected = 1595273994;
+    const epoch = date_toEpoch(dt);
+    if (epoch != expected)
+      errmsg = `incorrect result. ${epoch}. expected ${expected}`;
+    else
+      passText = `correct result. epoch ${epoch}.`;
+    testResults_append(results, passText, errmsg, method);
+  }
+
+  return results;
 }
 
 // ---------------------------------- file_test ----------------------------------
