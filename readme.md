@@ -33,6 +33,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * path_toUnixPath( path: string ) : string
 
 ## string methods
+* string_assignSubstr( str, start, length, vlu ) : string
 * string_dequote( str )
 * text = string_enquote( str, quoteChar )
 * string_head( str, lx)

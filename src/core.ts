@@ -816,6 +816,38 @@ export function scan_revSepWord(text: string, pos: number, wsChars: string):
   return (wordText) ? { text: wordText, bx } : null;
 }
 
+// ------------------------------ string_assignSubstr ------------------------------
+// assign text to substr location within target string.  Returns new string that 
+// contains the assigned value.
+export function string_assignSubstr(str: string, 
+          start: number, length: number, vlu: string): string
+{
+  let before_text = '';
+  let after_text = '';
+
+  // length runs to end of string.
+  if (length == -1)
+  {
+    length = str.length - start;
+  }
+
+  // length of text before text to be assigned.
+  const before_length = start;
+  
+  // length and start of text that follows what is assigned.
+  const after_start = start + length;
+  const after_length = str.length - after_start;
+
+  // the text of the string before and after the assigned to location.
+  if (before_length > 0)
+    before_text = str.substr(0, before_length);
+  if (after_length > 0)
+    after_text = str.substr(after_start, after_length);
+
+  const result = before_text + vlu + after_text;
+  return result;
+}
+
 // -------------------------------- string_contains -------------------------------
 export function string_contains(str: string, pattern: string): boolean
 {

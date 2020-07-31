@@ -6,7 +6,7 @@ import {  file_open, file_close, file_writeText,
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
-import { string_enquote, string_padLeft, string_padRight, 
+import { string_assignSubstr, string_enquote, string_padLeft, string_padRight, 
         path_findFile, path_parts, rxp, dir_readDirDeep } from './core';
 import {testResults_append, testResults_consoleLog, testResults_new } from 'sr_test_framework';
 import { system_downloadsFolder } from './system-downloads';
@@ -238,6 +238,21 @@ function string_test( )
       passText = `correct result. ${rv}`;
     else
       errmsg = `incorrect result. ${rv}. expected ${expected}`;
+    testResults_append(results, passText, errmsg, method);
+  }
+
+  // string_assignSubstr
+  {
+    method = 'string_assignSubstr';
+    let passText = '';
+    let errmsg = '';
+    const text = 'src"Fi\\les';
+    const expected = 'srcToshles';
+    const rv = string_assignSubstr(text, 3, 4, 'Tosh');
+    if (rv == expected)
+      passText = `correct result. ${rv}`;
+    else
+      errmsg = `incorrect result. got ${rv}. expected ${expected}`;
     testResults_append(results, passText, errmsg, method);
   }
 
