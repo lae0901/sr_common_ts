@@ -9,6 +9,43 @@ import { system_downloadsFolder } from './system-downloads';
 export {rxp, regex_exec, regexPattern_toFragments } ;
 export { system_downloadsFolder};
 
+// --------------------------------- array_compare ---------------------------------
+export function array_compare<T>( arr1: T[], arr2: T[]) : number 
+{
+  let res = 0 ;
+  let ix = 0 ;
+  while(true)
+  {
+    if ((ix >= arr1.length) && (ix >= arr2.length))
+    {
+      res = 0 ;  // array items match.
+      break ;
+    }
+    else if ( ix >= arr2.length )
+    {
+      res = 1 ;  // a > b. more items in arr1.
+      break ;
+    }
+    else if ( ix >= arr1.length )
+    {
+      res = -1 ;
+      break ;
+    }
+    else if ( arr1[ix] < arr2[ix])
+    {
+      res = -1 ;
+      break ;
+    }
+    else if (arr1[ix] > arr2[ix])
+    {
+      res = 1;
+      break;
+    }
+    ix += 1 ;
+  }
+  return res ;
+}
+
 // -------------------------------- array_copyItems --------------------------------
 // return array containing items copied from input array.
 export function array_copyItems<T>(arr: T[], from: number, count: number): T[]

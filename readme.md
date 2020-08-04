@@ -9,6 +9,8 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 ```
 
 ## array methods
+* array_compare<T>( arr1, arr2 )
+* toarr = array_copyItems( arr, start, length )
 * array_front<T>( arr: T[] ) : T | null
 * boolean = stringArray_contains( arr, text )
 
