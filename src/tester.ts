@@ -2,7 +2,7 @@ import {  file_open, file_close, file_writeText,
          file_isDir, dir_ensureExists, dir_mkdir, dir_readdir, 
           file_ensureExists, file_unlink,
           file_readAllText, file_writeNew, 
-          path_joinUnix, path_toUnixPath, date_toEpoch } from './core';
+          path_joinUnix, path_toUnixPath, date_toEpoch, array_copyItems } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -75,6 +75,12 @@ async function async_main( )
     results.push( ...res ) ;
   }
 
+  // array_test
+  {
+    const res = array_test();
+    results.push(...res);
+  }
+
   // date_test
   {
     const res = date_test();
@@ -115,6 +121,90 @@ async function async_main( )
   }
 
   testResults_consoleLog( results ) ;
+}
+
+// ---------------------------------- array_test ----------------------------------
+function array_test()
+{
+  const results = testResults_new();
+  let method = '';
+
+  // test the array_copyItems function.
+  {
+    method = 'array_copyItems';
+    let passText = '';
+    let errmsg = '';
+    const text = '123';
+    const expected = '0000123';
+    const paddedText = array_copyItems(text, 7, '0');
+    if (paddedText != expected)
+      errmsg = `incorrect result. ${paddedText}. expected ${expected}`;
+    else
+      passText = `correct result. ${paddedText}.`;
+    testResults_append(results, passText, errmsg, method);
+  }
+
+  // test the string_padRight function.
+  {
+    method = 'string_padRight';
+    let passText = '';
+    let errmsg = '';
+    const text = '123';
+    const expected = '1230000';
+    const paddedText = string_padRight(text, 7, '0');
+    if (paddedText != expected)
+      errmsg = `incorrect result. ${paddedText}. expected ${expected}`;
+    else
+      passText = `correct result. ${paddedText}.`;
+    testResults_append(results, passText, errmsg, method);
+  }
+
+  // enquote string. simple.
+  {
+    method = 'string_enquote';
+    let passText = '';
+    let errmsg = '';
+    const text = 'srcFiles';
+    const expected = '"srcFiles"';
+    const rv = string_enquote(text, '"');
+    if (rv == expected)
+      passText = `correct result. ${rv}`;
+    else
+      errmsg = `incorrect result. ${rv}. expected ${expected}`;
+    testResults_append(results, passText, errmsg, method);
+  }
+
+  // enquote string. string contains backslash characters, quote characters.
+  {
+    method = 'string_enquote';
+    let passText = '';
+    let errmsg = '';
+    const text = 'src"Fi\\les';
+    const expected = '"src\\\"Fi\\\\les"';
+    const rv = string_enquote(text, '"');
+    if (rv == expected)
+      passText = `correct result. ${rv}`;
+    else
+      errmsg = `incorrect result. ${rv}. expected ${expected}`;
+    testResults_append(results, passText, errmsg, method);
+  }
+
+  // string_assignSubstr
+  {
+    method = 'string_assignSubstr';
+    let passText = '';
+    let errmsg = '';
+    const text = 'src"Fi\\les';
+    const expected = 'srcToshles';
+    const rv = string_assignSubstr(text, 3, 4, 'Tosh');
+    if (rv == expected)
+      passText = `correct result. ${rv}`;
+    else
+      errmsg = `incorrect result. got ${rv}. expected ${expected}`;
+    testResults_append(results, passText, errmsg, method);
+  }
+
+  return results;
 }
 
 // --------------------------------- regex_listFragments ------------------------

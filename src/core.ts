@@ -9,6 +9,22 @@ import { system_downloadsFolder } from './system-downloads';
 export {rxp, regex_exec, regexPattern_toFragments } ;
 export { system_downloadsFolder};
 
+// -------------------------------- array_copyItems --------------------------------
+// return array containing items copied from input array.
+export function array_copyItems<T>(arr: T[], from: number, count: number): T[]
+{
+  const toItems: T[] = [];
+  let ix = from;
+  while ((ix < arr.length) && (count > 0))
+  {
+    const item = arr[ix];
+    toItems.push(item);
+    ix += 1;
+    count -= 1;
+  }
+  return toItems;
+}
+
 // ------------------------- array_front -------------------------------------
 // return either null or the first item in the array.
 export function array_front<T>(arr: T[]): T | null
