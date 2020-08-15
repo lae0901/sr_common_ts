@@ -443,13 +443,16 @@ export function file_readLines(filePath: string): Promise<{ lines: string[], err
 
 // ------------------------ file_stat ----------------------------
 // return promise of fileSystem stat info of a file.
-export function file_stat(path: string): Promise<fs.Stats>
+export function file_stat(path: string): Promise<{stats:fs.Stats,errmsg:string}>
 {
-  const promise = new Promise<fs.Stats>((resolve, reject) =>
+  const promise = new Promise<{stats:fs.Stats,errmsg:string}>((resolve, reject) =>
   {
     fs.stat(path, (err, stats) =>
     {
-      resolve(stats);
+      let errmsg = '' ;
+      if ( err )
+        errmsg = err.message ;
+      resolve({stats, errmsg});
     })
   });
 

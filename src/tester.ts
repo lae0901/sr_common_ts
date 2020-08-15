@@ -2,7 +2,7 @@ import {  file_open, file_close, file_writeText,
          file_isDir, dir_ensureExists, dir_mkdir, dir_readdir, 
           file_ensureExists, file_unlink,
           file_readAllText, file_writeNew, 
-          path_joinUnix, path_toUnixPath, date_toEpoch, array_copyItems, array_compare } from './core';
+          path_joinUnix, path_toUnixPath, date_toEpoch, array_copyItems, array_compare, file_stat } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -89,16 +89,8 @@ async function async_main( )
 
   // file_test
   {
-    const { errmsg_arr, completion_arr } = await file_test();
-    for (const line of completion_arr)
-    {
-      console.log(line);
-    }
-
-    for (const line of errmsg_arr)
-    {
-      console.error(line);
-    }
+    const res = await file_test();
+    results.push(...res);
   }
 
   // path_test
@@ -323,8 +315,7 @@ function date_test()
 // ---------------------------------- file_test ----------------------------------
 async function file_test()
 {
-  const errmsg_arr: string[] = [];
-  const completion_arr: string[] = [];
+  const results = testResults_new();
   let method = '';
   const tempTestDir = path.join( os.tmpdir( ), 'sr_core_ts') ;
 
@@ -332,7 +323,9 @@ async function file_test()
   {
     const { created, errmsg } = await dir_ensureExists(tempTestDir);
     const {files} = await dir_readdir(tempTestDir) ;
-    completion_arr.push(`create dir ${tempTestDir}. passed.`);
+    method = 'dir_readdir';
+    let passText = `create dir ${tempTestDir}. passed.`;
+    testResults_append(results, passText, '', method);
   }
 
   // file_writeNew
@@ -341,47 +334,71 @@ async function file_test()
   {
     method = 'file_writeNew';
     await file_writeNew(testTextFile, textContents) ;
-    completion_arr.push(`${method}. passed.`);
+    let passText = `write text ${textContents}`;
+    testResults_append(results, passText, '', method);
   }
 
   // file_readAllText
   {
     method = 'file_readAllText';
     const {text} = await file_readAllText(testTextFile);
+    let failText = '' ;
+    let passText = '' ;
     if ( text == textContents )
     {
-      completion_arr.push(`${method}. passed. ${text}`);
+      passText = `text read ${text}`;
     }
     else
     {
-      errmsg_arr.push(`${method} test failed. ${text}`);
+      failText = `read text failed. ${text}`;
     }
+    testResults_append(results, passText, failText, method);
   }
 
   // make sure file abc.txt exists in testTempDir
   {
     method = 'file_ensureExists';
+    let failText = '';
+    let passText = '';
     const abcFile = path.join(tempTestDir, 'abc.txt');
     const { fileCreated } = await file_ensureExists( abcFile);
-    completion_arr.push(`${method}. passed. ${abcFile}`);
+    passText = `file exists. ${abcFile}`;
+    testResults_append(results, passText, failText, method);
+  }
+
+  // read stats of the file.
+  {
+    method = 'file_stat' ;
+    let failText = '';
+    let passText = '';
+    const abcFile = path.join(tempTestDir, 'abc.txt');
+    const { stats, errmsg } = await file_stat(abcFile);
+    if ( errmsg )
+      failText = `file stats error. file ${abcFile} ${errmsg}`;
+    else
+      passText = `got file stats. ${abcFile}`;
+    testResults_append(results, passText, failText, method);
   }
 
   // run unlink to delete the just created file in testTempDir
   {
     method = 'file_unlink';
+    let failText = '';
+    let passText = '';
     const abcFile = path.join(tempTestDir, 'abc.txt');
     const {errmsg} = await file_unlink(abcFile);
     if (errmsg.length == 0)
     {
-      completion_arr.push(`${method}. passed. ${abcFile}`);
+      passText = `file deleted. ${abcFile}`;
     }
     else
     {
-      errmsg_arr.push(`${method} test failed. ${abcFile} ${errmsg}`);
+      failText = `delete file failed. ${abcFile} ${errmsg}`;
     }
+    testResults_append(results, passText, failText, method);
   }
 
-  return { errmsg_arr, completion_arr };
+  return results ;
 }
 
 // ---------------------------------- primitive_file_test ----------------------------------
