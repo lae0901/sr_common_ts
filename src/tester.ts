@@ -2,7 +2,7 @@ import {  file_open, file_close, file_writeText,
          file_isDir, dir_ensureExists, dir_mkdir, dir_readdir, 
           file_ensureExists, file_unlink,
           file_readAllText, file_writeNew, 
-          path_joinUnix, path_toUnixPath, date_toEpoch, array_copyItems, array_compare, file_stat } from './core';
+          path_joinUnix, path_toUnixPath, date_toEpoch, array_copyItems, array_compare, file_stat, base64Builder_new } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -10,6 +10,7 @@ import { string_assignSubstr, string_enquote, string_padLeft, string_padRight,
         path_findFile, path_parts, rxp, dir_readDirDeep } from './core';
 import {testResults_append, testResults_consoleLog, testResults_new } from 'sr_test_framework';
 import { system_downloadsFolder } from './system-downloads';
+import { base64Builder_append, base64Builder_final } from './base64';
 
 const folderPath = '/c:/github/tester';
 const fileName = 'app.vue';
@@ -109,6 +110,12 @@ async function async_main( )
   // system_test
   {
     const res = system_test();
+    results.push(...res);
+  }
+
+  // base64_test
+  {
+    const res = base64_test();
     results.push(...res);
   }
 
@@ -490,3 +497,30 @@ function system_test()
 
   return results;
 }
+
+// ---------------------------------- base64_test ----------------------------------
+function base64_test()
+{
+  const results = testResults_new();
+  let method = '';
+
+  // test the base64Builder function.
+  {
+    method = 'base64Builder';
+    let passText = '';
+    let failText = '';
+    const builder = base64Builder_new() ;
+    base64Builder_append( builder, 'abc' ) ;
+    base64Builder_append( builder, '123' ) ;
+    const base64_text = base64Builder_final( builder ) ;
+    const expected_text = 'YWJjMTIz';
+    if ( base64_text != expected_text)
+      failText = `base46 encode results do not match. ${base64_text} expected: ${expected_text}`;
+    else
+      passText = `base46 encode results match. ${base64_text}`;
+    testResults_append(results, passText, failText, method);
+  }
+
+  return results;
+}
+
