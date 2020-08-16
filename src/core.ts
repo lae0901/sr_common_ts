@@ -5,12 +5,9 @@ import * as path from 'path';
 import { rxp, regex_exec } from './regex_core' ;
 import { regexPattern_toFragments } from './regex-frag' ;
 import { system_downloadsFolder } from './system-downloads';
-import { iBase64Builder, base64Builder_append, base64Builder_final, 
-          base64Builder_new  } from './base64' ;
 
 export {rxp, regex_exec, regexPattern_toFragments } ;
 export { system_downloadsFolder};
-export { iBase64Builder, base64Builder_append, base64Builder_final, base64Builder_new } ;
 
 // --------------------------------- array_compare ---------------------------------
 export function array_compare<T>( arr1: T[], arr2: T[]) : number 
