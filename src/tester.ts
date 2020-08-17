@@ -2,7 +2,7 @@ import {  file_open, file_close, file_writeText,
          file_isDir, dir_ensureExists, dir_mkdir, dir_readdir, 
           file_ensureExists, file_unlink,
           file_readAllText, file_writeNew, 
-          path_joinUnix, path_toUnixPath, date_toEpoch, array_copyItems, array_compare, file_stat } from './core';
+          path_joinUnix, path_toUnixPath, date_toEpoch, array_copyItems, array_compare, file_stat, file_utimes } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -366,6 +366,11 @@ async function file_test()
     testResults_append(results, passText, failText, method);
   }
 
+  // file_stat, file_utimes
+  {
+
+  }
+
   // read stats of the file.
   {
     method = 'file_stat' ;
@@ -378,6 +383,49 @@ async function file_test()
     else
       passText = `got file stats. ${abcFile}`;
     testResults_append(results, passText, failText, method);
+  }
+
+  // file_utimes
+  {
+    method = 'file_utimes';
+    let aspect = '' ;
+    let failText = '';
+    let passText = '';
+    const filePath = path.join(tempTestDir, 'abc.txt');
+    const { stats, errmsg } = await file_stat(filePath);
+    if ( !errmsg )
+    {
+      const { mtimeMs, atimeMs } = stats ;
+      const mtime = Math.round(mtimeMs / 1000 ) - 5 ;
+      const atime = Math.round( atimeMs / 1000) ;
+      aspect = 'set utimes' ;
+      const errmsg_utimes = await file_utimes( filePath, atime, mtime ) ;
+      if (errmsg_utimes)
+        failText = `file utimes error. file ${filePath} ${errmsg_utimes}`;
+      else
+        passText = `set file mtime. ${filePath}`;
+      testResults_append(results, passText, failText, {method,aspect});
+
+      // run stat to read back mtime. check that mtime matches the value it was set to.
+      const { stats: after_stats, errmsg: stat_errmsg } = await file_stat(filePath);
+      failText = '' ;
+      passText = '' ;
+      if ( stat_errmsg )
+        failText = `file_stat error after file_utimes. ${filePath} ${stat_errmsg}`;
+      else if ( after_stats.mtimeMs / 1000 != mtime )
+        failText = `mtime does not match value it was changed to. ${filePath} mtime ${mtime}`;
+      else
+        passText = `mtime set correctly. ${filePath} mtime ${mtime}`;
+      aspect = 'check utimes';
+      testResults_append(results, passText, failText, {method, aspect});
+    }
+
+    if (errmsg)
+      failText = `file stats error. file ${filePath} ${errmsg}`;
+    else
+      passText = `got file stats. ${filePath}`;
+    testResults_append(results, passText, failText, method);
+
   }
 
   // run unlink to delete the just created file in testTempDir

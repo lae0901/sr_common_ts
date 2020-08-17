@@ -1,6 +1,6 @@
 {
   "name": "sr_core_ts",
-  "version": "1.46.26",
+  "version": "1.46.27",
   "description": "core typescript functions",
   "main": "lib/core.js",
   "types": "lib/core.d.ts",
@@ -27,7 +27,7 @@
     "@types/node": "^13.13.15",
     "jest": "^26.4.0",
     "prettier": "^2.0.5",
-    "sr_test_framework": "^1.0.3",
+    "sr_test_framework": "^1.0.4",
     "ts-jest": "^24.3.0",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",

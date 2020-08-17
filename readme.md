@@ -27,6 +27,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * {data,errmsg} = await file_readFile(filePath) ;
 * {errmsg} = await file_unlink( filePath ) ;
 * { errmsg } = await file_writeText( fd, text ) ;
+* errmsg = await file_utimes( filePath, atime, utime ) ;
 
 ## path methods
 * path_findFile( dirPath: string, fileName: string ) : Promise<{dirPath,remPath}> 

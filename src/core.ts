@@ -524,6 +524,26 @@ export async function file_unlink(path: string): Promise<{ errmsg: string }>
   return promise;
 }
 
+// ---------------------------------- file_utimes ---------------------------------
+// set atime and mtime ( access and modified ) times of a file.
+// Times are specified as unix epoch time. The number of seconds since a UTC 
+// starting time in 1970.
+export async function file_utimes(filePath: string, atime: number, mtime: number):
+              Promise<string>
+{
+  const promise = new Promise<string>((resolve, reject) =>
+  {
+    fs.utimes(filePath, atime, mtime, (err) =>
+    {
+      if (err)
+        resolve(err.message);
+      else
+        resolve('');
+    });
+  });
+  return promise;
+}
+
 // ----------------------------------- file_writeFile ------------------------------
 // write text to a new file.
 export function file_writeFile(filePath: string, text: string = ''): Promise<string>
