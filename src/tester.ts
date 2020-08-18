@@ -193,7 +193,7 @@ function path_test()
     const dirPath = '\\home\\srichter';
     const fileName = 'test.pdf';
     const expected = '/home/srichter/test.pdf';
-    const unixPath = path_joinUnix( dirPath, fileName );
+    const unixPath = path_joinUnix( path_toUnixPath(dirPath), fileName );
     if (unixPath != expected)
       errmsg = `incorrect result. ${unixPath}. expected ${expected}`;
     else

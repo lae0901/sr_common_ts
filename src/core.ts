@@ -725,11 +725,32 @@ interface interface_pathPart {
 };
 
 // --------------------------------- path_joinUnix ---------------------------------
+// combine the two paths with "/" between them. 
+// code mod: remove code which used path_toUnixPath on the resulting joined path.
+//           reason being that a windows backslash is a valid file name character
+//           in unix. So cannot blindly convert all backslash to unix path sep
+//           character.
 export function path_joinUnix( path1:string, path2:string) : string
 {
-  let res = path.join(path1, path2) ;
-  res = path_toUnixPath(res) ;
-  return res ;
+  // look for the first path separator in path1. 
+  // const { found_char } = scan_charEqAny(path1, 0, '/\\');
+
+  // windows separator character. convert to unix.
+  // if ( found_char == '\\')
+  // {
+  //   path1 = path_toUnixPath(path1) ;
+  // }
+  
+  if ( !path1 )
+    return path2 ;
+  else if ( !path2 )
+    return path1 ;
+  else
+    return `${path1}/${path2}`;
+
+  // let res = path.join(path1, path2) ;
+  // res = path_toUnixPath(res) ;
+  // return res ;
 }
 
 // ------------------------- path_parts -----------------------------------
@@ -816,8 +837,31 @@ export function path_toUnixPath( path: string ) : string
   return unixPath ;
 }
 
+// --------------------------- scan_charEqAny ------------------------------
+// scan in string until char equal any of pattern chars.
+export function scan_charEqAny(text: string, bx: number, pattern: string): 
+              { found_index:number, found_char:string }
+{
+  let ix = bx;
+  let found_char = '';
+  let found_index = -1 ;
+  while (ix < text.length)
+  {
+    const ch1 = text.substr(ix, 1);
+    const fx = pattern.indexOf(ch1);
+    if (fx >= 0)
+    {
+      found_index = ix ;
+      found_char = ch1 ;
+      break ;
+    }
+    ix += 1;
+  }
+  return { found_index, found_char } ;
+}
+
 // --------------------------- scan_charNeAll ------------------------------
-// scan in string until char not equal any of pattern chars.
+// scan in string until char not equal all of pattern chars.
 export function scan_charNeAll(text: string, bx: number, pattern: string): number
 {
   let ix = bx;

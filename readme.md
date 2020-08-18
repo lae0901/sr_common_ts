@@ -36,6 +36,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * path_toUnixPath( path: string ) : string
 
 ## string methods
+* {found_char, found_index } = scan_charEqAny(text,start,pattern)
 * string_assignSubstr( str, start, length, vlu ) : string
 * string_dequote( str )
 * text = string_enquote( str, quoteChar )
