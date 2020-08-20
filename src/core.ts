@@ -199,13 +199,16 @@ export function dir_mkdir(dirPath: string): Promise<{exists:boolean,errmsg:strin
 interface iDirDeepOptions
 {
   ignoreDir?: string[],
-  containsFile?: string[]
+  containsFile?: string[],
+  includeRoot?: boolean
 }
 
 // -------------------------------- dir_readDirDeep --------------------------------
 // return deep list of directories contained within dirPath.
 // each directory returned is the full path of the directory.
 // use the ignoreDir parameter to ignore directories by their file name.
+// includeRoot: include this root directory in the returned list of directories.
+//              ( only if directory passes include tests, like contains file. )
 export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : Promise<string[]>
 {
   options = options || {} ;
@@ -213,6 +216,22 @@ export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : P
   {
     const {files, errmsg} = await dir_readdir(dirPath) ;
     let foundDirs : string[] = [] ;
+
+    // include this root dir in list of result directories.
+    if ( options.includeRoot )
+    {
+      // check if the directory contains a specified file.
+      let skip = false;
+      if (options.containsFile)
+      {
+        const does_contain_file = await dir_containsFile( dirPath, options.containsFile);
+        if (does_contain_file == false)
+          skip = true;
+      }
+      if (!skip)
+        foundDirs.push(dirPath) ;
+    }
+
     for( const file of files)
     {
       const filePath = path.join(dirPath, file) ;
@@ -234,7 +253,9 @@ export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : P
           foundDirs.push(filePath) ;
         }
 
-        const subFoundDirs = await dir_readDirDeep( filePath, options ) ;
+        // search for deep directories in this sub directory.
+        const subOptions = {...options, includeRoot:false} ;
+        const subFoundDirs = await dir_readDirDeep( filePath, subOptions ) ;
         foundDirs.push(...subFoundDirs) ;
       }
     }
