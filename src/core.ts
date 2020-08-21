@@ -736,6 +736,17 @@ export async function path_findFile( dirPath: string, fileName: string )
   return {dirPath:foundDirPath, remPath:foundRemPath} ;
 }
 
+// ---------------------------- path_fromBaseNameArray ----------------------------
+export function path_fromBaseNameArray(items: string[]): string 
+{
+  let itemPath = '';
+  for (const item of items)
+  {
+    itemPath = path.join(itemPath, item);
+  }
+  return itemPath;
+}
+
 interface interface_pathPart {
   root:string,  // root of the path.  drive letter  or slash.
   base:string,  // filename.ext
@@ -829,6 +840,42 @@ export function path_splitFront(path: string, sep: string = '/'): { front: strin
 
   return { front, rem };
 }
+
+// ------------------------------ path_splitRootPath ------------------------------
+export function path_splitRootPath(in_path: string, rootPath: string): string
+{
+  const items = path_toBaseNameArray(in_path);
+  const root_items = path_toBaseNameArray(rootPath);
+
+  // the remaining items of path after the root path.
+  const from = root_items.length;
+  const rem_items = items.slice(from);
+  const rem_path = path_fromBaseNameArray(rem_items);
+
+  return rem_path;
+}
+
+// ----------------------------- path_toBaseNameArray -----------------------------
+// split the path into array of basename.
+export function path_toBaseNameArray(in_path: string): string[]
+{
+  let pathItems: string[] = [];
+  let curPath = in_path;
+  while (true)
+  {
+    const baseName = path.basename(curPath);
+    if (!baseName)
+    {
+      pathItems.unshift(curPath);
+      break;
+    }
+    pathItems.unshift(baseName);
+    curPath = path.dirname(curPath);
+  }
+
+  return pathItems;
+}
+
 
 // ------------------------------ path_toFileUri ----------------------------------
 // convert file path to string ready to be parsed by 

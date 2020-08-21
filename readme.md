@@ -31,8 +31,11 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 
 ## path methods
 * path_findFile( dirPath: string, fileName: string ) : Promise<{dirPath,remPath}> 
+* toPath = path_fromBaseNameArray( arr: string[] )
 * path_joinUnix( path1: string, path2: string ) : string
 * path_splitFront( path: string, sep: string = '/' ) : {front: string, rem:string }
+* remPath = path_splitRootPath( inPath: string, rootPath: string )
+* arr = path_toBaseNameArray( path: string )
 * path_toUnixPath( path: string ) : string
 
 ## string methods

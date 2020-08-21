@@ -2,7 +2,7 @@ import {  file_open, file_close, file_writeText,
          file_isDir, dir_ensureExists, dir_mkdir, dir_readdir, 
           file_ensureExists, file_unlink,
           file_readAllText, file_writeNew, 
-          path_joinUnix, path_toUnixPath, date_toEpoch, array_copyItems, array_compare, file_stat, file_utimes } from './core';
+          path_joinUnix, path_toUnixPath, date_toEpoch, array_copyItems, array_compare, file_stat, file_utimes, path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -198,6 +198,52 @@ function path_test()
       errmsg = `incorrect result. ${unixPath}. expected ${expected}`;
     else
       passText = `correct result. ${unixPath}.`;
+    testResults_append(results, passText, errmsg, method);
+  }
+
+  // path_splitRootPath.
+  {
+    method = 'path_splitRootPath';
+    let passText = '';
+    let errmsg = '';
+    const fullPath = '/web/home/srichter/gcc/abc.pdf';
+    const rootPath = '/web/home';
+    const expected = 'srichter/gcc/abc.pdf';
+    let remPath = path_splitRootPath( fullPath, rootPath );
+    remPath = path_toUnixPath(remPath) ;
+    if (remPath != expected)
+      errmsg = `incorrect result. remPath: ${remPath}. expected ${expected}`;
+    else
+      passText = `correct result. ${remPath}.`;
+    testResults_append(results, passText, errmsg, method);
+  }
+
+  // path_toBaseNameArray.
+  {
+    method = 'path_toBaseNameArray';
+    let passText = '';
+    let errmsg = '';
+    const fullPath = '/web/home/srichter/gcc/abc.pdf';
+    const arr = path_toBaseNameArray(fullPath);
+    if (( arr.length == 6) && (arr[1] == 'web') && (arr[5] == 'abc.pdf'))
+      passText = `correct result. ${arr}.`;
+    else
+      errmsg = `incorrect result. number items ${arr.length}. expected 5.`;
+    testResults_append(results, passText, errmsg, method);
+  }
+
+  // path_fromBaseNameArray.
+  {
+    method = 'path_fromBaseNameArray';
+    let passText = '';
+    let errmsg = '';
+    const fullPath = '/web/home/srichter/gcc/abc.pdf';
+    const arr = path_toBaseNameArray(fullPath);
+    const toFullPath = path_toUnixPath(path_fromBaseNameArray(arr)) ;
+    if ( fullPath == toFullPath )
+      passText = `correct result. ${toFullPath}.`;
+    else
+      errmsg = `incorrect result. result ${toFullPath}. expected ${fullPath}`;
     testResults_append(results, passText, errmsg, method);
   }
 
