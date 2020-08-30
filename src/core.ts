@@ -1,4 +1,4 @@
-// src/core.ts
+// sr_core_ts/src/core.ts
 
 import * as fs from 'fs';
 import * as path from 'path';
