@@ -196,11 +196,16 @@ export function dir_mkdir(dirPath: string): Promise<{exists:boolean,errmsg:strin
   return promise;
 }
 
+// -------------------------------- iDirDeepOptions --------------------------------
+// containsHaltDeep: true false. when folder found that contains file, do not 
+//                   continue looking in sub folders of that folder for more folders
+//                   that also contain the file.
 interface iDirDeepOptions
 {
-  ignoreDir?: string[],
-  containsFile?: string[],
-  includeRoot?: boolean
+  ignoreDir?: string[];
+  containsFile?: string[];
+  includeRoot?: boolean;
+  containsHaltDeep?: boolean;
 }
 
 // -------------------------------- dir_readDirDeep --------------------------------
@@ -212,6 +217,9 @@ interface iDirDeepOptions
 export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : Promise<string[]>
 {
   options = options || {} ;
+  const containsHaltDeep = options.containsHaltDeep || false ;
+  let doContinue = true ;
+
   const promise = new Promise<string[]>(async (resolve, reject) =>
   {
     const {files, errmsg} = await dir_readdir(dirPath) ;
@@ -226,37 +234,51 @@ export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : P
       {
         const does_contain_file = await dir_containsFile( dirPath, options.containsFile);
         if (does_contain_file == false)
+        {
           skip = true;
+          if ( containsHaltDeep )
+            doContinue = false ;
+        }
       }
       if (!skip)
         foundDirs.push(dirPath) ;
     }
 
-    for( const file of files)
+    if ( doContinue )
     {
-      const filePath = path.join(dirPath, file) ;
-      const { isDir } = await file_isDir(filePath) ;
-      if (( isDir ) && !stringArray_contains( options.ignoreDir, file))
+      for( const file of files)
       {
-        // check if the directory contains a specified file.
-        let skip = false ;
-        if ( options.containsFile )
+        const filePath = path.join(dirPath, file) ;
+        const { isDir } = await file_isDir(filePath) ;
+        if (( isDir ) && !stringArray_contains( options.ignoreDir, file))
         {
-          const does_contain_file = await dir_containsFile(filePath, options.containsFile ) ;
-          if ( does_contain_file == false )
-            skip = true ;
-        }
+          let continue_deep = true ;
 
-        // add to list of found directories.
-        if ( !skip )
-        {
-          foundDirs.push(filePath) ;
-        }
+          // check if the directory contains a specified file.
+          let skip = false ;
+          if ( options.containsFile )
+          {
+            const does_contain_file = await dir_containsFile(filePath, options.containsFile ) ;
+            if ( does_contain_file == false )
+              skip = true ;
+            if ( does_contain_file && containsHaltDeep )
+              continue_deep = false ;
+          }
 
-        // search for deep directories in this sub directory.
-        const subOptions = {...options, includeRoot:false} ;
-        const subFoundDirs = await dir_readDirDeep( filePath, subOptions ) ;
-        foundDirs.push(...subFoundDirs) ;
+          // add to list of found directories.
+          if ( !skip )
+          {
+            foundDirs.push(filePath) ;
+          }
+
+          // search for deep directories in this sub directory.
+          if ( continue_deep )
+          {
+            const subOptions = { ...options, includeRoot: false };
+            const subFoundDirs = await dir_readDirDeep(filePath, subOptions);
+            foundDirs.push(...subFoundDirs);
+          }
+        }
       }
     }
     resolve(foundDirs) ;
