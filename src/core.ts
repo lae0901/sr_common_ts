@@ -234,8 +234,9 @@ export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : P
       {
         const does_contain_file = await dir_containsFile( dirPath, options.containsFile);
         if (does_contain_file == false)
-        {
           skip = true;
+        else 
+        {
           if ( containsHaltDeep )
             doContinue = false ;
         }
