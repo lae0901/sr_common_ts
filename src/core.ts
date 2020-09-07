@@ -74,6 +74,31 @@ export function array_front<T>(arr: T[]): T | null
   }
 }
 
+// --------------------------------- date_fromISO ------------------------------------
+// build Date object from yy, mm, dd parts of ISO date.
+// iso_time: time of day in hh:mm:ss form.
+export function date_fromISO(iso:string, iso_time?:string)
+{
+  let dt;
+  const yr = Number(iso.substr(0, 4));
+  const mm = Number(iso.substr(5, 2)) - 1;
+  const dd = Number(iso.substr(8, 2));
+
+  if (iso_time)
+  {
+    const hr = Number(iso_time.substr(0, 2));
+    const min = Number(iso_time.substr(3, 2));
+    const sec = Number(iso_time.substr(6, 2));
+    dt = new Date(yr, mm, dd, hr, min, sec);
+  }
+  else
+  {
+    dt = new Date(yr, mm, dd);
+  }
+
+  return dt;
+}
+
 // --------------------------------- date_toEpoch ---------------------------------
 // convert Date to unix epoch, which is number of seconds since 1970. 
 // use getTime function to get milliseconds since 1970. Then divide by 1000 to get
