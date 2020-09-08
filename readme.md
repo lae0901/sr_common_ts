@@ -52,6 +52,10 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * string_startsWith( str, text | string[])
 * string_substrLenient( str, bx, lx )
 
+## date methods
+* epoch = date_toEpoch( Date )
+* dt = date_fromISO('2020-05-15', '14:22:15')
+
 ## regular expression methods
 * regexPattern_toFragments( pattern: string) : regexFrag_interface[]
 

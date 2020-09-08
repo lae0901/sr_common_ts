@@ -2,7 +2,11 @@ import {  file_open, file_close, file_writeText,
          file_isDir, dir_ensureExists, dir_mkdir, dir_readdir, 
           file_ensureExists, file_unlink,
           file_readAllText, file_writeNew, 
-          path_joinUnix, path_toUnixPath, date_toEpoch, array_copyItems, array_compare, file_stat, file_utimes, path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray } from './core';
+          path_joinUnix, path_toUnixPath, 
+          date_toEpoch, date_fromISO,
+          array_copyItems, array_compare, 
+          file_stat, file_utimes, 
+          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -352,10 +356,13 @@ function date_test()
 
   {
     method = 'date_fromISO';
-    const desc = `ISO date and time to Date object`;
-    const dt = new Date(1595273994 * 1000);
-    const expected = 1595273994;
-    const testResult = date_toEpoch(dt);
+    const iso_date = '2019-02-15';
+    const iso_time = '15:25:18';
+    const desc = `ISO date and time ${iso_date} ${iso_time} to Date object`;
+    const dt = date_fromISO(iso_date, iso_time) ;
+    const mtime = date_toEpoch(dt) ;
+    const expected = 1550262318 ;
+    const testResult = mtime ;
     testResults_append(results, { method, expected, testResult, desc });
   }
 
