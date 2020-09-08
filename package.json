@@ -27,7 +27,7 @@
     "@types/node": "^13.13.16",
     "jest": "^26.4.2",
     "prettier": "^2.1.1",
-    "sr_test_framework": "^1.0.4",
+    "sr_test_framework": "^1.0.6",
     "ts-jest": "^24.3.0",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",

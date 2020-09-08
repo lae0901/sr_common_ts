@@ -343,16 +343,20 @@ function date_test()
   // test the date_toEpoch function.
   {
     method = 'date_toEpoch';
-    let passText = '';
-    let errmsg = '';
+    const desc = `convert date to epoch`;
     const dt = new Date(1595273994 * 1000) ;
     const expected = 1595273994;
-    const epoch = date_toEpoch(dt);
-    if (epoch != expected)
-      errmsg = `incorrect result. ${epoch}. expected ${expected}`;
-    else
-      passText = `correct result. epoch ${epoch}.`;
-    testResults_append(results, passText, errmsg, method);
+    const testResult = date_toEpoch(dt);
+    testResults_append(results, {method, expected, testResult, desc }) ;
+  }
+
+  {
+    method = 'date_fromISO';
+    const desc = `ISO date and time to Date object`;
+    const dt = new Date(1595273994 * 1000);
+    const expected = 1595273994;
+    const testResult = date_toEpoch(dt);
+    testResults_append(results, { method, expected, testResult, desc });
   }
 
   return results;
