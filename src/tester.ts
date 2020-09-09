@@ -6,7 +6,7 @@ import {  file_open, file_close, file_writeText,
           date_toEpoch, date_fromISO,
           array_copyItems, array_compare, 
           file_stat, file_utimes, 
-          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray } from './core';
+          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -363,6 +363,15 @@ function date_test()
     const mtime = date_toEpoch(dt) ;
     const expected = 1550262318 ;
     const testResult = mtime ;
+    testResults_append(results, { method, expected, testResult, desc });
+  }
+
+  {
+    method = 'date_toISO';
+    const desc = `convert date to ISO form`;
+    const dt = new Date(2020,4,22) ;
+    const expected = '2020-05-22';
+    const testResult = date_toISO( dt ) ;
     testResults_append(results, { method, expected, testResult, desc });
   }
 

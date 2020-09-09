@@ -55,6 +55,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 ## date methods
 * epoch = date_toEpoch( Date )
 * dt = date_fromISO('2020-05-15', '14:22:15')
+* text = date_toISO( dt )
 
 ## regular expression methods
 * regexPattern_toFragments( pattern: string) : regexFrag_interface[]

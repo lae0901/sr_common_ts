@@ -74,6 +74,13 @@ export function array_front<T>(arr: T[]): T | null
   }
 }
 
+// ---------------------------- date_currentISO -------------------------------
+export function date_currentISO()
+{
+  let dt = new Date();
+  return date_toISO(dt);
+}
+
 // --------------------------------- date_fromISO ------------------------------------
 // build Date object from yy, mm, dd parts of ISO date.
 // iso_time: time of day in hh:mm:ss form.
@@ -107,6 +114,17 @@ export function date_toEpoch( dt: Date ) : number
 {
   const msecs = dt.getTime( ) ;
   return msecs / 1000 ;
+}
+
+// --------------------- date_toISO -----------------------------
+// convert date to ISO format. yyyy-mm=dd
+export function date_toISO( d: Date)
+{
+  function pad(n:number) { return n < 10 ? '0' + n : n.toString( ) }
+
+  return d.getFullYear() + '-'
+    + pad(d.getMonth() + 1) + '-'
+    + pad(d.getDate());
 }
 
 // ------------------------------- dir_containsFile -------------------------------
