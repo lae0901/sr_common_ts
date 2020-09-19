@@ -249,16 +249,20 @@ export function dir_mkdir(dirPath: string): Promise<{exists:boolean,errmsg:strin
   return promise;
 }
 
-// -------------------------------- iDirDeepOptions --------------------------------
-// containsHaltDeep: true false. when folder found that contains file, do not 
-//                   continue looking in sub folders of that folder for more folders
-//                   that also contain the file.
+// -------------------------------- iDirDeepOptions -------------------------------
 interface iDirDeepOptions
 {
   ignoreDir?: string[];
   containsFile?: string[];
   includeRoot?: boolean;
+
+  // containsHaltDeep: true false. When folder found that contains file, do not 
+  // continue looking in sub folders of that folder for more folders that also 
+  // contain the file.
   containsHaltDeep?: boolean;
+
+  // how deep to folder tree to search for initial folder that contains file.
+  containsMaxDepth?: number;
 }
 
 // -------------------------------- dir_readDirDeep --------------------------------
@@ -266,11 +270,12 @@ interface iDirDeepOptions
 // each directory returned is the full path of the directory.
 // use the ignoreDir parameter to ignore directories by their file name.
 // includeRoot: include this root directory in the returned list of directories.
-//              ( only if directory passes include tests, like contains file. )
+//              ( only if root directory passes include tests, like contains file. )
 export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : Promise<string[]>
 {
   options = options || {} ;
   const containsHaltDeep = options.containsHaltDeep || false ;
+  let containsMaxDepth = options.containsMaxDepth ;
   let doContinue = true ;
 
   const promise = new Promise<string[]>(async (resolve, reject) =>
@@ -290,6 +295,7 @@ export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : P
           skip = true;
         else 
         {
+          containsMaxDepth = undefined ;
           if ( containsHaltDeep )
             doContinue = false ;
         }
@@ -307,28 +313,43 @@ export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : P
         if (( isDir ) && !stringArray_contains( options.ignoreDir, file))
         {
           let continue_deep = true ;
+          let sub_containsMaxDepth = containsMaxDepth;
 
           // check if the directory contains a specified file.
-          let skip = false ;
+          let does_contain_file = false ;
+          let doPush = true ;
           if ( options.containsFile )
           {
-            const does_contain_file = await dir_containsFile(filePath, options.containsFile ) ;
+            does_contain_file = await dir_containsFile(filePath, options.containsFile ) ;
             if ( does_contain_file == false )
-              skip = true ;
+              doPush = false ;
             if ( does_contain_file && containsHaltDeep )
               continue_deep = false ;
           }
 
           // add to list of found directories.
-          if ( !skip )
+          if ( doPush )
           {
             foundDirs.push(filePath) ;
+          }
+
+          // do not continue deep if this folder does not match contain rule and
+          // conainsMaxDepth has been reached.
+          if ( continue_deep && sub_containsMaxDepth != undefined )
+          {
+            if ( does_contain_file )  // once folder contains file, containsMaxDepth no longer applies.
+              sub_containsMaxDepth = undefined;
+            else if ( sub_containsMaxDepth <= 1 )
+              continue_deep = false ;
           }
 
           // search for deep directories in this sub directory.
           if ( continue_deep )
           {
-            const subOptions = { ...options, includeRoot: false };
+            if ( sub_containsMaxDepth )
+              sub_containsMaxDepth -= 1 ;
+            const subOptions = { ...options, includeRoot: false, 
+                                  containsMaxDepth: sub_containsMaxDepth };
             const subFoundDirs = await dir_readDirDeep(filePath, subOptions);
             foundDirs.push(...subFoundDirs);
           }

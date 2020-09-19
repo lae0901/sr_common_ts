@@ -17,7 +17,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 ## directory methods
 * {isDir, errmsg} = file_isDir(path)
 * boolean = dir_containsFile( dirPath, fileNameArr )
-* string[] = dir_readDirDeep(dirPath, {ignoreDir, containsFile, includeRoot, containsHaltDeep })
+* string[] = dir_readDirDeep(dirPath, {ignoreDir, containsFile, includeRoot, containsHaltDeep, containsMaxDepth })
 
 ## file methods
 * { errmsg } = await file_close( fd ) ;
@@ -66,6 +66,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 ## publish instructions
 * increment version number in package.json
 * make sure new functions are exported from core.ts
+* update readme.md to document new function or feature
 * npm run build
 * npm run test
 * git add, commit, push to repo
