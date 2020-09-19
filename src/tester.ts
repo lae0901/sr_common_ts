@@ -6,7 +6,7 @@ import {  file_open, file_close, file_writeText,
           date_toEpoch, date_fromISO,
           array_copyItems, array_compare, 
           file_stat, file_utimes, 
-          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO } from './core';
+          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -91,6 +91,12 @@ async function async_main( )
     results.push(...res);
   }
 
+  // dir_test
+  {
+    const res = await dir_test();
+    results.push(...res);
+  }
+
   // file_test
   {
     const res = await file_test();
@@ -154,18 +160,6 @@ function regex_listFragments()
   // {
   //   console.log( `frag name:${frag.name}  text:${frag.text}`);
   // }
-}
-
-// ----------------------------- dir_readDirDeep_test -----------------------------
-async function dir_readDirDeep_test()
-{
-  const dirPath = `c:\\github\\defn`;
-  const options = { ignoreDir: ['node_modules', 'git', '.git'], containsFile:['common','file-explorer'] };
-  const dirPathNames = await dir_readDirDeep(dirPath, options );
-  for( const dirPath of dirPathNames )
-  {
-    console.log(`${dirPath}`);
-  }
 }
 
 // ---------------------------------- path_test ----------------------------------
@@ -373,6 +367,62 @@ function date_test()
     const expected = '2020-05-22';
     const testResult = date_toISO( dt ) ;
     testResults_append(results, { method, expected, testResult, desc });
+  }
+
+  return results;
+}
+
+// ---------------------------------- dir_test ----------------------------------
+async function dir_test()
+{
+  const results = testResults_new();
+  const tempTestDir = path.join(os.tmpdir(), 'sr_core_ts');
+
+  // create directory /tmp/sr_core_ts 
+  {
+    const { created, errmsg } = await dir_ensureExists(tempTestDir);
+    const { files, errmsg:errmsg_read } = await dir_readdir(tempTestDir);
+    const method = 'dir_ensureExists';
+    const expected = 'created';
+    const aspect = 'create temp dir';
+    const testResult = !errmsg_read ? 'created' : errmsg_read ;
+    testResults_append(results, { expected, method, aspect, testResult });
+  }
+
+  // count number of directories
+  {
+    const dirPath = `c:\\github\\defn`;
+    const options = { ignoreDir: ['node_modules', 'git', '.git'], containsFile: ['common', 'file-explorer'] };
+    const dirPathNames = await dir_readDirDeep(dirPath, options);
+    const expected = 2;
+    const method = 'dir_readDirDeep' ;
+    const aspect = 'containsFile' ;
+    const testResult = dirPathNames.length ;
+    testResults_append( results, {expected, method, aspect, testResult });
+  }
+
+  // count number of directories - tsconfig.json
+  {
+    const dirPath = `c:\\github`;
+    const options : iDirDeepOptions = 
+          { ignoreDir: ['node_modules', 'git', '.git'], containsMaxDepth:1, 
+            containsFile: ['tslint.json', 'index.ts', 'preview.jpg'] };
+    const dirPathNames = await dir_readDirDeep(dirPath, options);
+    const expected = 4;
+    const method = 'dir_readDirDeep';
+    const aspect = 'containsMaxDepth';
+    const testResult = dirPathNames.length;
+    testResults_append(results, { expected, method, aspect, testResult });
+  }
+
+  // delete directory tempTestDir 
+  {
+    const { errmsg } = await dir_rmdir(tempTestDir, {recursive:true});
+    const method = 'dir_rmdir';
+    const expected = 'removed';
+    const desc = 'delete temp dir';
+    const testResult = !errmsg ? 'removed' : errmsg;
+    testResults_append(results, { expected, method, desc, testResult });
   }
 
   return results;

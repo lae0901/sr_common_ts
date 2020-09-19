@@ -18,6 +18,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * {isDir, errmsg} = file_isDir(path)
 * boolean = dir_containsFile( dirPath, fileNameArr )
 * string[] = dir_readDirDeep(dirPath, {ignoreDir, containsFile, includeRoot, containsHaltDeep, containsMaxDepth })
+* {errmsg} = await dir_rmdir( dirPath, {recursive})
 
 ## file methods
 * { errmsg } = await file_close( fd ) ;

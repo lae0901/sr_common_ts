@@ -249,8 +249,30 @@ export function dir_mkdir(dirPath: string): Promise<{exists:boolean,errmsg:strin
   return promise;
 }
 
+// ----------------------------------- dir_rmdir ------------------------------
+// remove directory. use recursive option to also remove contents.
+export function dir_rmdir(dirPath: string, options?:{recursive?:boolean}): Promise<{ errmsg: string }>
+{
+  options = options || {} ;
+  const recursive = options.recursive || false;
+  const promise = new Promise<{ errmsg: string }>(async (resolve, reject) =>
+  {
+    let errmsg = '';
+
+    fs.rmdir(dirPath, {recursive}, (err) =>
+    {
+      if (err)
+      {
+        errmsg = err.message;
+      }
+      resolve({ errmsg });
+    });
+  });
+  return promise;
+}
+
 // -------------------------------- iDirDeepOptions -------------------------------
-interface iDirDeepOptions
+export interface iDirDeepOptions
 {
   ignoreDir?: string[];
   containsFile?: string[];
