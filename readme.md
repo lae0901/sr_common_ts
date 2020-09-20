@@ -14,6 +14,10 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * array_front<T>( arr: T[] ) : T | null
 * boolean = stringArray_contains( arr, text )
 
+## object methods
+* object_apply( obj1, obj2 )
+* const isEqual = object_compareEqual( obj1, obj2 )
+
 ## directory methods
 * {isDir, errmsg} = file_isDir(path)
 * boolean = dir_containsFile( dirPath, fileNameArr )

@@ -6,7 +6,7 @@ import {  file_open, file_close, file_writeText,
           date_toEpoch, date_fromISO,
           array_copyItems, array_compare, 
           file_stat, file_utimes, 
-          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions } from './core';
+          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -122,6 +122,12 @@ async function async_main( )
     results.push(...res);
   }
 
+  // object_test
+  {
+    const res = object_test();
+    results.push(...res);
+  }
+
   testResults_consoleLog( results ) ;
 }
 
@@ -130,21 +136,16 @@ function array_test()
 {
   const results = testResults_new();
   let method = '';
+  const category = 'array' ;
 
   // test the array_copyItems function.
   {
     method = 'array_copyItems';
-    let passText = '';
-    let errmsg = '';
     const arr = ['123', 'array', 53, 'test', 'babel'];
     const expected = [53, 'test', 'babel'];
-    const toArr = array_copyItems(arr, 2, 4);
-    const cr = array_compare(expected, toArr) ;
-    if (cr != 0)
-      errmsg = `copy array error. ${toArr}. expected ${expected}`;
-    else
-      passText = `correct result. ${toArr}.`;
-    testResults_append(results, passText, errmsg, method);
+    const testResult = array_copyItems(arr, 2, 4);
+    const desc = 'copy array items';
+    testResults_append( results, {category, expected, testResult, desc, method});
   }
 
   return results;
@@ -160,6 +161,54 @@ function regex_listFragments()
   // {
   //   console.log( `frag name:${frag.name}  text:${frag.text}`);
   // }
+}
+
+// ---------------------------------- object_test ----------------------------------
+function object_test()
+{
+  const results = testResults_new();
+  let method = '';
+  const category = 'object';
+
+  // test the object_compareEqual function.
+  {
+    method = 'object_compareEqual';
+    const obj1 = { names: ['123', 'array'], age: 53, textLines:['test', 'babel']};
+    const obj2 = { names: ['123', 'array'], age: 53, textLines:['test', 'babel']};
+    const expected = true;
+    const testResult = object_compareEqual( obj1, obj2);
+    const desc = 'compare object equality';
+    const aspect = 'objects match' ;
+    testResults_append(results, { category, expected, testResult, desc, method, aspect });
+  }
+
+  // test the object_compareEqual function.
+  {
+    method = 'object_compareEqual';
+    const obj1 = { names: ['123', 'array'], age: 53, textLines: ['test', 'babel'] };
+    const obj2 = { names: ['123', 'array'], textLines: ['test', 'babel'] };
+    const expected = false;
+    const testResult = object_compareEqual(obj1, obj2);
+    const desc = 'compare object equality';
+    const aspect = 'objects do not match';
+    testResults_append(results, { category, expected, testResult, desc, method, aspect });
+  }
+
+  // object_apply.
+  {
+    method = 'object_apply';
+    const obj1 = { names: ['123', 'array'], age: 53, textLines: ['test', 'babel'] };
+    const obj2 = { addr1: 'one bank street', city:'rockaway' };
+    object_apply( obj1, obj2 ) ;
+    const expected_obj = { names: ['123', 'array'], age: 53, textLines: ['test', 'babel'],
+                       addr1: 'one bank street', city: 'rockaway' };
+    const expected = true ;
+    const testResult = object_compareEqual(obj1, expected_obj);
+    const desc = 'apply properties to object';
+    testResults_append(results, { category, expected, testResult, desc, method });
+  }
+
+  return results;
 }
 
 // ---------------------------------- path_test ----------------------------------

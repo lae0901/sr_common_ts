@@ -790,6 +790,71 @@ export function lines_findFirst(lines: string[], findText: string, options?: { s
   return { linn, coln };
 }
 
+// --------------------------------- object_apply ---------------------------------
+// apply properties from the from object to the to object.
+// use object_apply in place of the spread operator when you do not want to create 
+// a new resulting object. 
+// object_apply( obj1, {name:'xxx', numOrders:3})
+// is different from:
+// const res = object_apply( obj1, {name:'xxx', numOrders:3})
+export function object_apply(toObj: { [key: string]: any }, fromObj: { [key: string]: any }) :
+    {[key:string]: any}
+{
+  for (const prop in fromObj)
+  {
+    toObj[prop] = fromObj[prop];
+  }
+  return toObj ;
+}
+
+// ------------------------------ object_compareEqual ------------------------------
+// property by property, deep compare of two objects. 
+// return is equal or not.
+export function object_compareEqual(
+        obj1: { [key: string]: any }, obj2: {[key: string]: any}) : boolean
+{
+  let isEqual = true ;
+  const keys1 = Object.keys(obj1) ;
+  const keys2 = Object.keys(obj2) ;
+
+  // compare each property in obj1 to corresponding property in obj2.
+  for( const key of keys1 )
+  {
+    const vlu1 = obj1[key] ;
+    const vlu2 = obj2[key] ;
+
+    if ( Array.isArray(vlu1) && Array.isArray(vlu2) )
+    {
+      const cr = array_compare(vlu1, vlu2) ;
+      isEqual = ( cr == 0) ;
+    }
+    else if ( typeof vlu1 == 'object' && typeof vlu2 == 'object')
+    {
+      isEqual = object_compareEqual(vlu1, vlu2) ;
+    }
+    else
+    {
+      isEqual = (vlu1 == vlu2) ;
+    }
+
+    // property is not equal. break out.
+    if ( !isEqual )
+      break ;
+  }
+
+  // all properties in obj1 match those in obj2.
+  // Check for any properties in obj2 that are not in obj1.
+  if ( isEqual )
+  {
+    if ( keys1.length != keys2.length )
+      isEqual = false ;
+    else if ( array_compare(keys1, keys2) != 0 )
+      isEqual = false ;
+  }
+
+  return isEqual ;
+}
+
 // --------------------------- object_indexerItems ------------------------
 // return an array containing the indexer properties of the object.
 export function object_indexerItems(obj: {[key: string]: any}): any[]
