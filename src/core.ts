@@ -62,15 +62,19 @@ export function array_copyItems<T>(arr: T[], from: number, count: number): T[]
   return toItems;
 }
 
-// // ------------------------------- array_findAndSplice ----------------------------
-// // find index of item in array where func(item) == true. Then use splice to remove
-// // that found item.
-// function array_findAndSplice(arr:any[], func : Function )
-// {
-//   const fx = arr.findIndex(func);
-//   if (fx != -1)
-//     arr.splice(fx, 1);
-// }
+// ------------------------------- array_findAndSplice ----------------------------
+// find index of item in array where func(item) == true. Then use splice to remove
+// that found item.
+// return true if item was found and removed.
+export function array_findAndSplice<T>(arr: T[],
+  predicate: (value: T, index: number, obj: T[]) => unknown) : boolean
+{
+  const fx = arr.findIndex(predicate);
+  if (fx != -1)
+    arr.splice(fx, 1);
+
+  return (fx != -1);
+}
 
 // ------------------------- array_front -------------------------------------
 // return either null or the first item in the array.

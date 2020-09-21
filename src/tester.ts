@@ -6,7 +6,7 @@ import {  file_open, file_close, file_writeText,
           date_toEpoch, date_fromISO,
           array_copyItems, array_compare, 
           file_stat, file_utimes, 
-          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply } from './core';
+          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, array_findAndSplice } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -147,6 +147,21 @@ function array_test()
     const desc = 'copy array items';
     testResults_append( results, {category, expected, testResult, desc, method});
   }
+
+  // test the array_copyItems function.
+  {
+    method = 'array_findAndSplice';
+    const arr = ['123', 'array', 53, 'test', 'babel'];
+    const expected = [ '123', 53, 'test', 'babel'];
+    const spliced = array_findAndSplice(arr, (item) =>
+    {
+      return item == 'array' ;
+    });
+    
+    const desc = 'find and remove item from array';
+    testResults_append(results, { category, expected, testResult:arr, desc, method });
+  }
+
 
   return results;
 }
