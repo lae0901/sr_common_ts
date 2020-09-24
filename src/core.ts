@@ -9,37 +9,47 @@ import { system_downloadsFolder } from './system-downloads';
 export {rxp, regex_exec, regexPattern_toFragments } ;
 export { system_downloadsFolder};
 
-// --------------------------------- array_compare ---------------------------------
-export function array_compare<T>( arr1: T[], arr2: T[]) : number 
+// --------------------------------- array_compareEqual -------------------------
+export function array_compareEqual<T>( arr1: T[], arr2: T[]) : boolean 
 {
-  let res = 0 ;
+  let res = true ;
   let ix = 0 ;
   while(true)
   {
     if ((ix >= arr1.length) && (ix >= arr2.length))
     {
-      res = 0 ;  // array items match.
+      res = true ;  // array items match.
       break ;
     }
     else if ( ix >= arr2.length )
     {
-      res = 1 ;  // a > b. more items in arr1.
+      res = false ;  // a > b. more items in arr1.
       break ;
     }
     else if ( ix >= arr1.length )
     {
-      res = -1 ;
+      res = false ;
       break ;
     }
-    else if ( arr1[ix] < arr2[ix])
+    else
     {
-      res = -1 ;
-      break ;
-    }
-    else if (arr1[ix] > arr2[ix])
-    {
-      res = 1;
-      break;
+      const vlu1 = arr1[ix] ;
+      const vlu2 = arr2[ix] ;
+
+      if (Array.isArray(vlu1) && Array.isArray(vlu2))
+      {
+        res = array_compareEqual(vlu1, vlu2);
+      }
+      else if (typeof vlu1 == 'object' && typeof vlu2 == 'object')
+      {
+        res = object_compareEqual(vlu1, vlu2);
+      }
+      else
+      {
+        res = (vlu1 === vlu2);
+      }
+      if ( !res )
+        break ;
     }
     ix += 1 ;
   }
@@ -829,8 +839,7 @@ export function object_compareEqual(
 
     if ( Array.isArray(vlu1) && Array.isArray(vlu2) )
     {
-      const cr = array_compare(vlu1, vlu2) ;
-      isEqual = ( cr == 0) ;
+      isEqual = array_compareEqual(vlu1, vlu2) ;
     }
     else if ( typeof vlu1 == 'object' && typeof vlu2 == 'object')
     {
@@ -838,7 +847,7 @@ export function object_compareEqual(
     }
     else
     {
-      isEqual = (vlu1 == vlu2) ;
+      isEqual = (vlu1 === vlu2) ;
     }
 
     // property is not equal. break out.
@@ -852,7 +861,7 @@ export function object_compareEqual(
   {
     if ( keys1.length != keys2.length )
       isEqual = false ;
-    else if ( array_compare(keys1, keys2) != 0 )
+    else if ( array_compareEqual(keys1, keys2) == false )
       isEqual = false ;
   }
 

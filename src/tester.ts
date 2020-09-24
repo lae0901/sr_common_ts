@@ -4,7 +4,7 @@ import {  file_open, file_close, file_writeText,
           file_readAllText, file_writeNew, 
           path_joinUnix, path_toUnixPath, 
           date_toEpoch, date_fromISO,
-          array_copyItems, array_compare, 
+          array_copyItems, array_compareEqual, 
           file_stat, file_utimes, 
           path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, array_findAndSplice } from './core';
 import * as os from 'os';
@@ -160,6 +160,30 @@ function array_test()
     
     const desc = 'find and remove item from array';
     testResults_append(results, { category, expected, testResult:arr, desc, method });
+  }
+
+  // test the array_compareEqual function. arrays are equal.
+  {
+    method = 'array_compareEqual';
+    const aspect = 'arrays are equal';
+    const arr1 = ['123', 'array', 53, {age:25, name:'abc'}, ['22', 89, 'jack'], 'test', 'babel'];
+    const arr2 = ['123', 'array', 53, {age:25, name:'abc'}, ['22', 89, 'jack'], 'test', 'babel'];
+    const expected = true;
+    const testResult = array_compareEqual( arr1, arr2 ) ;
+    const desc = 'compare arrays for equality';
+    testResults_append(results, { category, expected, testResult, desc, method, aspect });
+  }
+
+  // test the array_compareEqual function. arrays not equal.
+  {
+    method = 'array_compareEqual';
+    const aspect = 'arrays not equal';
+    const arr1 = ['123', 'array', 53, { age: 25, name: 'abc' }, ['22', 89, 'jack'], 'test', 'babel'];
+    const arr2 = ['123', 'array', 53, { age: 27, name: 'abc' }, ['22', 89, 'jack'], 'test', 'babel'];
+    const expected = false;
+    const testResult = array_compareEqual(arr1, arr2);
+    const desc = 'compare arrays for equality';
+    testResults_append(results, { category, expected, testResult, desc, method, aspect });
   }
 
 
