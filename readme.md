@@ -16,6 +16,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * boolean = stringArray_contains( arr, text )
 
 ## object methods
+* any_toString( val )
 * object_apply( obj1, obj2 )
 * const isEqual = object_compareEqual( obj1, obj2 )
 

@@ -6,7 +6,7 @@ import {  file_open, file_close, file_writeText,
           date_toEpoch, date_fromISO,
           array_copyItems, array_compareEqual, 
           file_stat, file_utimes, 
-          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, array_findAndSplice } from './core';
+          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, array_findAndSplice, any_toString } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -128,7 +128,33 @@ async function async_main( )
     results.push(...res);
   }
 
+  // any_test
+  {
+    const res = any_test( ) ;
+    results.push(...res);
+  }
+
   testResults_consoleLog( results ) ;
+}
+
+// ----------------------------------- any_test -----------------------------------
+function any_test( )
+{
+  const results = testResults_new();
+  let method = '';
+  const category = 'any_ methods';
+
+  // test the array_copyItems function.
+  {
+    method = 'any_toString';
+    const val = {name:'bob', salary:252.33 } ;
+    const expected = '{name:bob, salary:252.33}';
+    const actual = any_toString(val) ;
+    const desc = 'object to string';
+    testResults_append(results, { category, expected, actual, desc, method });
+  }
+
+  return results ;
 }
 
 // ---------------------------------- array_test ----------------------------------
@@ -185,7 +211,6 @@ function array_test()
     const desc = 'compare arrays for equality';
     testResults_append(results, { category, expected, testResult, desc, method, aspect });
   }
-
 
   return results;
 }

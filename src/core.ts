@@ -9,6 +9,58 @@ import { system_downloadsFolder } from './system-downloads';
 export {rxp, regex_exec, regexPattern_toFragments } ;
 export { system_downloadsFolder};
 
+// --------------------------------- any_toString ---------------------------------
+// value to string. Objects have values of their properties printed. 
+export function any_toString(val: any, skipProps?: string[])
+{
+  let text = '';
+  if (typeof (val) == 'string')
+    text = val;
+  else if (typeof (val) == 'number')
+    text = val.toString();
+  else if (Array.isArray(val))
+  {
+    text = '[';
+    for (let ix = 0; ix < val.length; ++ix)
+    {
+      const item = val[ix];
+      if (ix > 0)
+        text += ', ';
+      text += any_toString(item);
+    }
+    text += ']';
+  }
+  else if (typeof (val) == 'object')
+  {
+    text = '{';
+    const keys = Object.keys(val);
+    let keyProcessed = false;
+    for (let ix = 0; ix < keys.length; ++ix)
+    {
+      const key = keys[ix];
+      let skip = false;
+      if (skipProps && skipProps.indexOf(key) != -1)
+        skip = true;
+
+      if (!skip)
+      {
+        if (keyProcessed)
+        {
+          text += ', ';
+        }
+        text += `${key}:${any_toString(val[key])}`;
+        keyProcessed = true;
+      }
+    }
+    text += '}';
+  }
+  else
+  {
+    text = val.toString();
+  }
+  return text;
+}
+
 // --------------------------------- array_compareEqual -------------------------
 export function array_compareEqual<T>( arr1: T[], arr2: T[]) : boolean 
 {
