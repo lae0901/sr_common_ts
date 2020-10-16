@@ -14,7 +14,11 @@ export { system_downloadsFolder};
 export function any_toString(val: any, skipProps?: string[])
 {
   let text = '';
-  if (typeof (val) == 'string')
+  if ( typeof val == 'undefined')
+    text = 'undefined' ;
+  else if ( val == null )
+    text = 'null ;'
+  else if (typeof (val) == 'string')
     text = val;
   else if (typeof (val) == 'number')
     text = val.toString();
