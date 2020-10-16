@@ -23,14 +23,8 @@
   },
   "homepage": "https://github.com/lae0901/sr_core_ts#readme",
   "devDependencies": {
-    "@types/jest": "^24.9.1",
     "@types/node": "^13.13.26",
-    "jest": "^26.5.3",
-    "prettier": "^2.1.2",
     "sr_test_framework": "^1.0.12",
-    "ts-jest": "^24.3.0",
-    "tslint": "^5.20.1",
-    "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.9.7"
   }
 }
