@@ -6,7 +6,7 @@ import {  file_open, file_close, file_writeText,
           date_toEpoch, date_fromISO,
           array_copyItems, array_compareEqual, 
           file_stat, file_utimes, 
-          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, array_findAndSplice, any_toString } from './core';
+          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, array_findAndSplice, any_toString, file_rename, path_rename } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -312,6 +312,15 @@ function path_test()
     testResults_append(results, passText, errmsg, method);
   }
 
+  // path_rename
+  {
+    const method = 'path_rename' ;
+    const input_path = '/home/srichter/test.pdf';
+    const actual = path_rename( input_path, { dirPath:'/home/pricelist', ext:'.txt'});
+    const expected = '\\home\\pricelist\\test.txt' ;
+    testResults_append( results, {method, expected, actual });
+  }
+
   // path_splitRootPath.
   {
     method = 'path_splitRootPath';
@@ -558,7 +567,7 @@ async function file_test()
   }
 
   // file_writeNew
-  const testTextFile = path.join(tempTestDir, 'textFile.txt');
+  let testTextFile = path.join(tempTestDir, 'textFile.txt');
   const textContents = 'tester.txt\nline 2\napp store' ;
   {
     method = 'file_writeNew';
@@ -567,21 +576,34 @@ async function file_test()
     testResults_append(results, passText, '', method);
   }
 
+  // file_rename to ext .xxx
+  {
+    const method = 'file_rename' ;
+    const expected = 'C:\\Users\\srich\\AppData\\Local\\Temp\\sr_core_ts\\textFile.xxx' ;
+    const {errmsg, toPath}  = await file_rename( testTextFile, {ext:'.xxx'} ) ;
+    const actual = toPath ;
+    const aspect = 'rename to .xxx';
+    testResults_append( results, {method, actual, expected, aspect});
+    testTextFile = toPath ;
+  }
+
+  // file_rename back to ext .txt
+  {
+    const method = 'file_rename';
+    const expected = 'C:\\Users\\srich\\AppData\\Local\\Temp\\sr_core_ts\\textFile.txt';
+    const { errmsg, toPath } = await file_rename(testTextFile, { ext: '.txt' });
+    const actual = toPath;
+    const aspect = 'rename to back to .txt';
+    testResults_append(results, { method, actual, expected, aspect });
+    testTextFile = toPath;
+  }
+
   // file_readAllText
   {
     method = 'file_readAllText';
-    const {text} = await file_readAllText(testTextFile);
-    let failText = '' ;
-    let passText = '' ;
-    if ( text == textContents )
-    {
-      passText = `text read ${text}`;
-    }
-    else
-    {
-      failText = `read text failed. ${text}`;
-    }
-    testResults_append(results, passText, failText, method);
+    const {text:actual} = await file_readAllText(testTextFile);
+    const expected = 'tester.txt\nline 2\napp store';
+    testResults_append(results, {method, actual, expected});
   }
 
   // make sure file abc.txt exists in testTempDir

@@ -32,6 +32,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * { fd, errmsg } = await file_open( filePath, flags ) ;
 * {text,errmsg} = await file_readAllText(filePath) ;
 * {data,errmsg} = await file_readFile(filePath) ;
+* {toPath,errmsg} = await file_rename( oldPath, {ext,path,dirPath, baseNameNoExt, baseName});
 * {errmsg} = await file_unlink( filePath ) ;
 * { errmsg } = await file_writeText( fd, text ) ;
 * errmsg = await file_utimes( filePath, atime, utime ) ;
@@ -40,6 +41,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * path_findFile( dirPath: string, fileName: string ) : Promise<{dirPath,remPath}> 
 * toPath = path_fromBaseNameArray( arr: string[] )
 * path_joinUnix( path1: string, path2: string ) : string
+* toPath = path_rename( oldPath, {ext,path,dirPath, baseNameNoExt, baseName})
 * path_splitFront( path: string, sep: string = '/' ) : {front: string, rem:string }
 * remPath = path_splitRootPath( inPath: string, rootPath: string )
 * arr = path_toBaseNameArray( path: string )

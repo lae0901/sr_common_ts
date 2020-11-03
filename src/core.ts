@@ -651,6 +651,29 @@ export function file_readLines(filePath: string): Promise<{ lines: string[], err
   return promise;
 }
 
+// -------------------------- file_rename ------------------------------
+// rename the file. return errmsg thru a resolved Promise.
+// to arg is an object. Use to specify the full path to rename/move to,
+// the directory to move to, the extension to rename the file to.
+export async function file_rename( oldPath: string, to: rename_path_to ) 
+            : Promise<{toPath:string,errmsg:string}>
+{
+  // using the to arg, setup name of rename file.
+  let toPath = path_rename( oldPath, to ) ;
+
+  const promise = new Promise<{toPath:string,errmsg:string}>((resolve, reject) =>
+  {
+    fs.rename( oldPath, toPath, (err) =>
+    {
+      let errmsg = '' ;
+      if ( err != null )
+        errmsg = err.message ;
+      resolve( {toPath, errmsg });
+    });
+  });
+  return promise;
+}
+
 // ------------------------ file_stat ----------------------------
 // return promise of fileSystem stat info of a file.
 export function file_stat(path: string): Promise<{stats:fs.Stats,errmsg:string}>
@@ -1071,6 +1094,60 @@ export function path_removeQueryString(str: string): string
   else
     return str;
 }
+
+// -------------------------------- rename_path_to --------------------------------
+interface rename_path_to {
+  path?: string;
+  dirPath?: string;
+  ext?: string;
+  baseName?: string;
+  baseNameNoExt?: string;
+}
+
+// -------------------------- path_rename ------------------------------
+// rename the input path. Apply the dirPath, ext, baseName, baseNameNoExt
+// properties of the to arg.
+export function path_rename(oldPath: string, to: rename_path_to ) : string 
+{
+  // using the to arg, setup name of rename file.
+  let toPath = oldPath;
+
+  // rename entire path
+  if ( to.path )
+  {
+    toPath = to.path ;
+  }
+
+  // change dirPath of the input path.
+  if ( to.dirPath )
+  {
+    toPath = path.join( to.dirPath, path.basename(toPath)) ;
+  }
+
+  // change name of extension.
+  if ( to.ext )
+  {
+    const ext = path.extname(toPath) ;
+    const baseName_noExt = path.basename(toPath, ext ) ;
+    toPath = path.join( path.dirname(toPath), baseName_noExt + to.ext );
+  }
+
+  // change basename of the input path.
+  if ( to.baseName )
+  {
+    toPath = path.join( path.dirname(toPath), to.baseName ) ;
+  }
+
+  // change basename of input path, but keep the extension.
+  if ( to.baseNameNoExt )
+  {
+    const ext = path.extname(toPath);
+    toPath = path.join( path.dirname(toPath), to.baseNameNoExt + ext ) ;
+  }
+
+  return toPath ;
+}
+
 
 // ---------------------------------- path_splitFront ----------------------------------
 // split a path from the front.  Returning the front item and the remaining items.
