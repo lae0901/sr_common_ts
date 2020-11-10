@@ -134,7 +134,7 @@ async function async_main( )
     results.push(...res);
   }
 
-  testResults_consoleLog( results ) ;
+  await testResults_consoleLog( results ) ;
 }
 
 // ----------------------------------- any_test -----------------------------------
@@ -527,8 +527,8 @@ async function dir_test()
   {
     const dirPath = `c:\\github`;
     const options : iDirDeepOptions = 
-          { ignoreDir: ['node_modules', 'git', '.git'], containsMaxDepth:1, 
-            containsFile: ['tslint.json', 'index.ts', 'preview.jpg'] };
+          { ignoreDir: ['node_modules', 'git', '.git'], containsMaxDepth:2, 
+            containsFile: ['tslint.json', 'tester-core.ts', 'index.ts', 'preview.jpg'] };
     const dirPathNames = await dir_readDirDeep(dirPath, options);
     const expected = 4;
     const method = 'dir_readDirDeep';
