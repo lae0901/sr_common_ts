@@ -69,6 +69,9 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 ## regular expression methods
 * regexPattern_toFragments( pattern: string) : regexFrag_interface[]
 
+## print methods
+* openTextLinesInBrowser( textStream, filePath, isMarkdown )
+
 ## system methods
 * system_downloadsFolder( ) : string
 

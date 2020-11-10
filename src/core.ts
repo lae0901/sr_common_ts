@@ -5,9 +5,11 @@ import * as path from 'path';
 import { rxp, regex_exec } from './regex_core' ;
 import { regexPattern_toFragments } from './regex-frag' ;
 import { system_downloadsFolder } from './system-downloads';
+import { openTextLinesInBrowser } from './open-in-browser';
 
 export {rxp, regex_exec, regexPattern_toFragments } ;
 export { system_downloadsFolder};
+export { openTextLinesInBrowser } ;
 
 // --------------------------------- any_toString ---------------------------------
 // value to string. Objects have values of their properties printed. 
@@ -1172,21 +1174,46 @@ export function path_splitFront(path: string, sep: string = '/'): { front: strin
 }
 
 // ------------------------------ path_splitRootPath ------------------------------
-export function path_splitRootPath(in_path: string, rootPath: string): string
+/**
+ * split the input path on the segments of the path which match the input rootPath.
+ * @param in_path 
+ * @param rootPath 
+ * @returns : {match_path, rem_path } match_path is input path that matches the 
+ * root path. rem_path is remaining parts of input path.
+ */
+export function path_splitRootPath(in_path: string, rootPath: string)
 {
   const items = path_toBaseNameArray(in_path);
   const root_items = path_toBaseNameArray(rootPath);
 
-  // the remaining items of path after the root path.
-  const from = root_items.length;
-  const rem_items = items.slice(from);
-  const rem_path = path_fromBaseNameArray(rem_items);
+  // number of segments which match root path segments
+  let segCx = 0 ;
+  for( let ix = 0 ; ix < root_items.length ; ++ix )
+  {
+    if ( ix >= items.length )
+      break ;
+    if ( items[ix] != root_items[ix])
+      break ;
+    segCx += 1 ;
+  }
 
-  return rem_path;
+  // the remaining items of path after the root path.
+  const match_items = items.slice(0, segCx ) ;
+  const rem_items = items.slice( segCx ) ;
+
+  const matchPath = path_fromBaseNameArray(match_items);
+  const remPath = path_fromBaseNameArray(rem_items);
+
+  return {matchPath, remPath};
 }
 
 // ----------------------------- path_toBaseNameArray -----------------------------
-// split the path into array of basename.
+/**
+ * split path into array of segments. ( Each segment the return value of 
+ * path.basename function. ) The return array items contain the path segments
+ * ordered from left to right.
+ * @param in_path The path to be parsed in array
+ */
 export function path_toBaseNameArray(in_path: string): string[]
 {
   let pathItems: string[] = [];

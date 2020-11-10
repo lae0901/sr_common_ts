@@ -329,7 +329,7 @@ function path_test()
     const fullPath = '/web/home/srichter/gcc/abc.pdf';
     const rootPath = '/web/home';
     const expected = 'srichter/gcc/abc.pdf';
-    let remPath = path_splitRootPath( fullPath, rootPath );
+    let { matchPath, remPath } = path_splitRootPath( fullPath, rootPath );
     remPath = path_toUnixPath(remPath) ;
     if (remPath != expected)
       errmsg = `incorrect result. remPath: ${remPath}. expected ${expected}`;
@@ -523,7 +523,7 @@ async function dir_test()
     testResults_append( results, {expected, method, aspect, testResult });
   }
 
-  // count number of directories - tsconfig.json
+  // count number of directories that contain list of files
   {
     const dirPath = `c:\\github`;
     const options : iDirDeepOptions = 
@@ -533,8 +533,9 @@ async function dir_test()
     const expected = 4;
     const method = 'dir_readDirDeep';
     const aspect = 'containsMaxDepth';
-    const testResult = dirPathNames.length;
-    testResults_append(results, { expected, method, aspect, testResult });
+    const actual = dirPathNames.length;
+    const desc = 'count number dirs that contain list of files.' ;
+    testResults_append(results, { expected, method, aspect, actual, desc });
   }
 
   // delete directory tempTestDir 
