@@ -477,6 +477,25 @@ export function dir_readdir(dirPath: string): Promise<{files:string[],errmsg:str
   return promise;
 }
 
+// ----------------------------------- file_copy -----------------------------------
+/**
+ * Copy file.
+ * @param from path of file to copy
+ * @param to path of destination file
+ */
+export function file_copy( from:string, to:string ) : Promise<string>
+{
+  const promise = new Promise<string>((resolve, reject ) =>
+  {
+    fs.copyFile(from, to, (err) =>
+    {
+      const errmsg = err ? err.message : '' ;
+      resolve(errmsg) ;
+    });
+  });
+  return promise ;
+}
+
 // ---------------------------- file_create -----------------------------
 export async function file_create(path: string) : Promise<string>
 {

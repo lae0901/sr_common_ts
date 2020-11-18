@@ -28,6 +28,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 
 ## file methods
 * { errmsg } = await file_close( fd ) ;
+* errmsg = await file_copy( source, dest ) ;
 * { fileCreated } = await file_ensureExists(filePath) ;
 * { fd, errmsg } = await file_open( filePath, flags ) ;
 * {text,errmsg} = await file_readAllText(filePath) ;
