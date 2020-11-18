@@ -6,7 +6,7 @@ import {  file_open, file_close, file_writeText,
           date_toEpoch, date_fromISO,
           array_copyItems, array_compareEqual, 
           file_stat, file_utimes, 
-          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, array_findAndSplice, any_toString, file_rename, path_rename } from './core';
+          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, array_findAndSplice, any_toString, file_rename, path_rename, file_copy, file_exists } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -530,7 +530,7 @@ async function dir_test()
           { ignoreDir: ['node_modules', 'git', '.git'], containsMaxDepth:2, 
             containsFile: ['tslint.json', 'tester-core.ts', 'index.ts', 'preview.jpg'] };
     const dirPathNames = await dir_readDirDeep(dirPath, options);
-    const expected = 4;
+    const expected = 5;
     const method = 'dir_readDirDeep';
     const aspect = 'containsMaxDepth';
     const actual = dirPathNames.length;
@@ -597,6 +597,26 @@ async function file_test()
     const aspect = 'rename to back to .txt';
     testResults_append(results, { method, actual, expected, aspect });
     testTextFile = toPath;
+  }
+
+  // file_copy textFile.txt to steveFile.txt
+  {
+    let toTextFile = path.join( path.dirname(testTextFile), 'steveFile.txt') ;
+    const method = 'file_copy';
+    const expected = '';
+    const actual = await file_copy(testTextFile, toTextFile ) ;
+    const aspect = 'copy textFile.txt to steveFile.txt';
+    testResults_append(results, { method, actual, expected, aspect });
+  }
+
+  // check that steveFile.txt exists
+  {
+    let toTextFile = path.join(path.dirname(testTextFile), 'steveFile.txt');
+    const method = 'file_exists';
+    const aspect = 'check after copy' ;
+    const expected = true;
+    const actual = await file_exists( toTextFile);
+    testResults_append(results, { method, actual, expected, aspect });
   }
 
   // file_readAllText
