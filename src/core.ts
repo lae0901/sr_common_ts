@@ -931,38 +931,37 @@ export function object_compareEqual(
   const keys1 = Object.keys(obj1) ;
   const keys2 = Object.keys(obj2) ;
 
+  // the two objects do not have the same number of properties. not equal.
+  if ( keys1.length != keys2.length )
+    isEqual = false ;
+
   // compare each property in obj1 to corresponding property in obj2.
-  for( const key of keys1 )
-  {
-    const vlu1 = obj1[key] ;
-    const vlu2 = obj2[key] ;
-
-    if ( Array.isArray(vlu1) && Array.isArray(vlu2) )
-    {
-      isEqual = array_compareEqual(vlu1, vlu2) ;
-    }
-    else if ( typeof vlu1 == 'object' && typeof vlu2 == 'object')
-    {
-      isEqual = object_compareEqual(vlu1, vlu2) ;
-    }
-    else
-    {
-      isEqual = (vlu1 === vlu2) ;
-    }
-
-    // property is not equal. break out.
-    if ( !isEqual )
-      break ;
-  }
-
-  // all properties in obj1 match those in obj2.
-  // Check for any properties in obj2 that are not in obj1.
   if ( isEqual )
   {
-    if ( keys1.length != keys2.length )
-      isEqual = false ;
-    else if ( array_compareEqual(keys1, keys2) == false )
-      isEqual = false ;
+    for( const key of keys1 )
+    {
+      const vlu1 = obj1[key] ;
+      const vlu2 = obj2[key] ;
+
+      if ( vlu2 == undefined )  // property in obj1, but not in obj2.
+        isEqual = false ;
+      else if ( Array.isArray(vlu1) && Array.isArray(vlu2) )
+      {
+        isEqual = array_compareEqual(vlu1, vlu2) ;
+      }
+      else if ( typeof vlu1 == 'object' && typeof vlu2 == 'object')
+      {
+        isEqual = object_compareEqual(vlu1, vlu2) ;
+      }
+      else
+      {
+        isEqual = (vlu1 === vlu2) ;
+      }
+
+      // property is not equal. break out.
+      if ( !isEqual )
+        break ;
+    }
   }
 
   return isEqual ;
