@@ -59,6 +59,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * text = string_padLeft(text, length, pad) ;
 * text = string_padRight(text, length, pad) ;
 * string_replaceAll( str, find, replace)
+* words = string_splitWords( str ) ;
 * string_startsWith( str, text | string[])
 * string_substrLenient( str, bx, lx )
 

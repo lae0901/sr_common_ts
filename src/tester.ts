@@ -455,8 +455,13 @@ function string_test( )
   {
     method = 'string_splitWords' ;
     const text = ` call string_split( arg1, 25 )`;
-    const actual = string_splitWords(text) ;
-    const expected = [{bx:1,text:'call', delim:''}];
+    const actual = string_splitWords(text).map((item) =>
+    {
+      const {text, delim} = item ;
+      return {text, delim} ;
+    }) ;
+    const expected = [{text:'call', delim:''}, {text:'string_split', delim:'('},
+                      {text:'arg1', delim:','}, {text:'25', delim:')'}];
     testResults_append( results, { method, actual, expected });
   }
 
@@ -539,7 +544,7 @@ async function dir_test()
           { ignoreDir: ['node_modules', 'git', '.git'], containsMaxDepth:2, 
             containsFile: ['tslint.json', 'tester-core.ts', 'index.ts', 'preview.jpg'] };
     const dirPathNames = await dir_readDirDeep(dirPath, options);
-    const expected = 5;
+    const expected = 6;
     const method = 'dir_readDirDeep';
     const aspect = 'containsMaxDepth';
     const actual = dirPathNames.length;

@@ -1616,19 +1616,35 @@ export interface iStringWord
   text:string;
   delim:string;
 }
+
 // ------------------------------- string_splitWords -------------------------------
+/**
+ * split string into array of words. Each word consisting of position in the string,
+ * value of the word, and the text of delim that follows the word.
+ * @param str String to split into words.
+ * @returns array of words. Each word being an object that implements the iStringWord interface.
+ */
 export function string_splitWords(str: string)
 {
   const words: iStringWord[] = [] ;
   const regex = /(\s*)(\w+)\s*(\W?)/g;
   let lastIndex = 0 ;
+  let pv_lastIndex = -1 ;
   while(true)
   {
+    // make sure not looping.
+    if ( pv_lastIndex >= lastIndex )
+      break ;
+
+    // start regex match after the last match.
     regex.lastIndex = lastIndex ;
+    pv_lastIndex = lastIndex;
+
     const match = regex.exec(str) ;
     if ( !match )
       break;
 
+    // store match in array of words.
     {
       const ws = match[1] ? match[1] : '' ;
       const bx = match.index + ws.length ;
