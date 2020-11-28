@@ -1609,6 +1609,41 @@ export function string_rtrim(str:string): string
     return str.replace(/\s+$/, "");
 }
 
+// ---------------------------------- iStringWord ----------------------------------
+export interface iStringWord
+{
+  bx:number;
+  text:string;
+  delim:string;
+}
+// ------------------------------- string_splitWords -------------------------------
+export function string_splitWords(str: string)
+{
+  const words: iStringWord[] = [] ;
+  const regex = /(\s*)(\w+)\s*(\W?)/g;
+  let lastIndex = 0 ;
+  while(true)
+  {
+    regex.lastIndex = lastIndex ;
+    const match = regex.exec(str) ;
+    if ( !match )
+      break;
+
+    {
+      const ws = match[1] ? match[1] : '' ;
+      const bx = match.index + ws.length ;
+      const text = match[2] ;
+      const delim = match[3] ? match[3] : '' ;
+      words.push({bx, text, delim});
+
+      lastIndex = bx + text.length + delim.length;
+    }
+  }
+
+  return words ;
+}
+
+
 // -------------------------------- string_startsWith -------------------------
 // test that the starting text of text matches startText.
 export function string_startsWith(text: string, startText: string | string[] ): boolean

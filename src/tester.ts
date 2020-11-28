@@ -6,7 +6,7 @@ import {  file_open, file_close, file_writeText,
           date_toEpoch, date_fromISO,
           array_copyItems, array_compareEqual, 
           file_stat, file_utimes, 
-          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, array_findAndSplice, any_toString, file_rename, path_rename, file_copy, file_exists } from './core';
+          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, array_findAndSplice, any_toString, file_rename, path_rename, file_copy, file_exists, string_splitWords } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -449,6 +449,15 @@ function string_test( )
     else
       errmsg = `incorrect result. got ${rv}. expected ${expected}`;
     testResults_append(results, passText, errmsg, method);
+  }
+
+  // string_splitWords
+  {
+    method = 'string_splitWords' ;
+    const text = ` call string_split( arg1, 25 )`;
+    const actual = string_splitWords(text) ;
+    const expected = [{bx:1,text:'call', delim:''}];
+    testResults_append( results, { method, actual, expected });
   }
 
   return results ;
