@@ -695,6 +695,42 @@ export async function file_rename( oldPath: string, to: rename_path_to )
   return promise;
 }
 
+// --------------------------------- file_resolve ---------------------------------
+/**
+ * Search for fileName starting in dirPath and then deep directories of the root
+ * directory.
+ * @param dirPath root path in which to start search for file.
+ * @param fileName File name to search for.
+ */
+export async function file_resolve( dirPath: string, fileName:string )
+{
+  let resolvePath = '' ;
+  const filePath = path.join(dirPath, fileName ) ;
+  const exists = await file_exists(filePath) ;
+  if ( exists )
+  {
+    resolvePath = filePath ;
+  }
+
+  if ( !resolvePath )
+  {
+    const { files } = await dir_readdir(dirPath);
+    for (const itemName of files)
+    {
+      const itemPath = path.join(dirPath, itemName);
+      const { isDir } = await file_isDir(itemPath);
+      if (isDir)
+      {
+        resolvePath = await file_resolve(itemPath, fileName ) ;
+        if ( resolvePath )
+          break ;
+      }
+    }
+  }
+
+  return resolvePath ;
+}
+
 // ------------------------ file_stat ----------------------------
 // return promise of fileSystem stat info of a file.
 export function file_stat(path: string): Promise<{stats:fs.Stats,errmsg:string}>
