@@ -6,7 +6,7 @@ import {  file_open, file_close, file_writeText,
           date_toEpoch, date_fromISO,
           array_copyItems, array_compareEqual, 
           file_stat, file_utimes, 
-          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, array_findAndSplice, any_toString, file_rename, path_rename, file_copy, file_exists, string_splitWords } from './core';
+          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, array_findAndSplice, any_toString, file_rename, path_rename, file_copy, file_exists, string_splitWords, file_resolve } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -711,7 +711,16 @@ async function file_test()
     else
       passText = `got file stats. ${filePath}`;
     testResults_append(results, passText, failText, method);
+  }
 
+  // resolve to file abc.txt in tempTestDir
+  {
+    method = 'file_resolve' ;
+    const fileName = 'abc.txt' ;
+    const dirPath = path.dirname( tempTestDir ) ;
+    const actual = await file_resolve( dirPath, fileName ) ;
+    const expected = path.join( tempTestDir, fileName ) ;
+    testResults_append( results, { method, actual, expected});
   }
 
   // run unlink to delete the just created file in testTempDir

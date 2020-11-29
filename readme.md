@@ -34,6 +34,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * {text,errmsg} = await file_readAllText(filePath) ;
 * {data,errmsg} = await file_readFile(filePath) ;
 * {toPath,errmsg} = await file_rename( oldPath, {ext,path,dirPath, baseNameNoExt, baseName});
+* filePath = await file_resolve( dirPath, fileName ) ;
 * {errmsg} = await file_unlink( filePath ) ;
 * { errmsg } = await file_writeText( fd, text ) ;
 * errmsg = await file_utimes( filePath, atime, utime ) ;
