@@ -57,6 +57,7 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * string_head( str, lx)
 * string_isQuoted( str )
 * string_matchGeneric( str: string, pattern: string ) : boolean
+* randomText = string_random( length ) 
 * text = string_padLeft(text, length, pad) ;
 * text = string_padRight(text, length, pad) ;
 * string_replaceAll( str, find, replace)

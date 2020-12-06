@@ -1602,6 +1602,25 @@ export function string_padRight(inText:string, padLx:number, padChar:string)
   return text;
 }
 
+// --------------------------------- string_random ---------------------------------
+/**
+ * generate a random string of characters. 
+ * @param length number of random characters.
+ */
+export function string_random( length:number )
+{
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++)
+  {
+    const randomRangeSize = i == 0 ? 52 : charactersLength ;
+    const randomIndex = Math.floor(Math.random() * randomRangeSize ) ;
+    result += characters.charAt( randomIndex );
+  }
+  return result;
+}
+
 // -------------------- string_replaceAll -----------------------
 // replace all occurance of findText with replaceText
 export function string_replaceAll( str:string, findText:string, replaceText:string )

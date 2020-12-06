@@ -6,7 +6,7 @@ import {  file_open, file_close, file_writeText,
           date_toEpoch, date_fromISO,
           array_copyItems, array_compareEqual, 
           file_stat, file_utimes, 
-          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, array_findAndSplice, any_toString, file_rename, path_rename, file_copy, file_exists, string_splitWords, file_resolve } from './core';
+          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, array_findAndSplice, any_toString, file_rename, path_rename, file_copy, file_exists, string_splitWords, file_resolve, string_random } from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -379,16 +379,10 @@ function string_test( )
   // test the string_padLeft function.
   {
     method = 'string_padLeft' ;
-    let passText = '' ;
-    let errmsg = '' ;
     const text = '123' ;
     const expected = '0000123' ;
-    const paddedText = string_padLeft(text, 7, '0') ;
-    if ( paddedText != expected)
-      errmsg = `incorrect result. ${paddedText}. expected ${expected}`;
-    else 
-      passText = `correct result. ${paddedText}.`;
-    testResults_append(results, passText, errmsg, method);
+    const actual = string_padLeft(text, 7, '0') ;
+    testResults_append(results, {method, expected, actual});
   }
 
   // test the string_padRight function.
@@ -404,6 +398,15 @@ function string_test( )
     else
       passText = `correct result. ${paddedText}.`;
     testResults_append(results, passText, errmsg, method);
+  }
+
+  // generate string of random characters. 
+  {
+    method = 'string_random';
+    const expected = 8;
+    const text = string_random( 8 ) ;
+    const actual = text.length ;
+    testResults_append(results, { method, expected, actual });
   }
 
   // enquote string. simple.

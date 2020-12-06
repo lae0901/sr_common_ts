@@ -1,6 +1,6 @@
 {
   "name": "sr_core_ts",
-  "version": "1.46.47",
+  "version": "1.46.48",
   "description": "core typescript functions",
   "main": "lib/core.js",
   "types": "lib/core.d.ts",
@@ -23,9 +23,9 @@
   },
   "homepage": "https://github.com/lae0901/sr_core_ts#readme",
   "devDependencies": {
-    "@types/marked": "^1.2.0",
-    "@types/node": "^13.13.33",
-    "sr_test_framework": "^1.0.17",
+    "@types/marked": "^1.2.1",
+    "@types/node": "^13.13.34",
+    "sr_test_framework": "^1.0.18",
     "typescript": "4.0.5"
   },
   "dependencies": {

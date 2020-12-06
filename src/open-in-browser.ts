@@ -3,26 +3,43 @@ import * as os from 'os';
 import * as path from 'path';
 import * as marked from 'marked';
 import { dir_ensureExists, file_readAllText, file_readFile, file_writeNew, file_writeText } from 'sr_core_ts';
+import { string_random } from './core';
+
+
+// ---------------------------------- iReportInfo ----------------------------
+interface iReportInfo
+{
+  title: string;
+  shortTitle?: string;
+  filePath?: string;
+}
 
 // -------------------------- openTextLinesInBrowser --------------------------
-export async function openTextLinesInBrowser( textStream: string, filePath:string, isMarkdown = false)
+export async function openTextLinesInBrowser( textStream: string, 
+                reportInfo:iReportInfo | string, 
+                isMarkdown = false)
 {
   let html = '';
   let toHtml: { tempDir: string, htmlPath: string } | undefined;
   let errmsg = '' ;
 
+  if ( typeof(reportInfo) == 'string')
+  {
+    reportInfo = {title:reportInfo};
+  }
+  const reportFileName = reportInfo.filePath ? path.basename(reportInfo.filePath) : string_random(8) ;
+
   // replace tabs with spaces.
   textStream = textStream.replace(/\t/g, '  ');
 
-  const basename = path.basename(filePath) ;
   if ( isMarkdown )
   {
-    html = markdown_toHtml(filePath, textStream);
+    html = markdown_toHtml( reportInfo, textStream);
   }
   else
   {
     const lines = textStream.split('\n');
-    html = sourceFile_toHtml(filePath, lines)
+    html = sourceFile_toHtml( reportInfo, lines)
   }
 
   try
@@ -30,7 +47,7 @@ export async function openTextLinesInBrowser( textStream: string, filePath:strin
     // write the html of web page into file in temporary folder.
     const tempDir = path.join(os.tmpdir(), 'open-in-browser');
     const { created, errmsg } = await dir_ensureExists(tempDir);
-    const htmlPath = path.join(tempDir, basename + '.html');
+    const htmlPath = path.join(tempDir, reportFileName + '.html');
     await file_writeNew(htmlPath, html);
     toHtml = { tempDir, htmlPath };
 
@@ -119,9 +136,10 @@ function htmlShell_bootstrap()
 }
 
 // ------------------------------- sourceFile_toHtml -------------------------------
-function sourceFile_toHtml(filePath: string, lines: string[])
+function sourceFile_toHtml( titleText: iReportInfo, lines: string[])
 {
-  const basename = path.basename(filePath);
+  const longTitleText = titleText.title ;
+  const shortTitleText = titleText.shortTitle ? titleText.shortTitle : longTitleText ;
   const styleText =
     `
 div#srcmbrEdit span {
@@ -146,7 +164,7 @@ div#srcmbrEdit span:before
   `;
 
   // body html - will be inserted into html shell.
-  let body_html = `<h5>${filePath} <span class="ml-3">${new Date().toLocaleString()}</span></h5><hr>`;
+  let body_html = `<h5>${longTitleText} <span class="ml-3">${new Date().toLocaleString()}</span></h5><hr>`;
 
   // build html from source lines.
   body_html += `<div id="srcmbrEdit">`;
@@ -163,7 +181,7 @@ div#srcmbrEdit span:before
   const shell = htmlShell_bootstrap();
   const findReplaceArr: iFindReplaceItem[] = [
     { find: '{{style text}}', replace: styleText },
-    { find: '{{page title}}', replace: basename },
+    { find: '{{page title}}', replace: shortTitleText },
     { find: '{{body html}}', replace: body_html }
   ];
   const html = htmlShell_insert(shell, findReplaceArr);
@@ -172,8 +190,11 @@ div#srcmbrEdit span:before
 }
 
 // -------------------------------- markdown_toHtml --------------------------------
-function markdown_toHtml(basename: string, markdown_text: string)
+function markdown_toHtml( titleText: iReportInfo, markdown_text: string)
 {
+  const longTitleText = titleText.title;
+  const shortTitleText = titleText.shortTitle ? titleText.shortTitle : longTitleText;
+
   // convert markdown to html.
   const markdown_html = marked(markdown_text);
 
@@ -189,7 +210,7 @@ pre {
   const shell = htmlShell_bootstrap();
   const findReplaceArr: iFindReplaceItem[] = [
     { find: '{{style text}}', replace: styleText },
-    { find: '{{page title}}', replace: basename },
+    { find: '{{page title}}', replace: shortTitleText },
     { find: '{{body html}}', replace: markdown_html }
   ];
   const html = htmlShell_insert(shell, findReplaceArr);
