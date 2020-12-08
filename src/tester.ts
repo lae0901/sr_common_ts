@@ -531,11 +531,11 @@ async function dir_test()
   // count number of directories
   {
     const dirPath = `c:\\github\\defn`;
-    const options = { ignoreDir: ['node_modules', 'git', '.git'], containsFile: ['common', 'file-explorer'] };
+    const options = { ignoreDir: ['node_modules', 'git', '.git'], containsItem: ['common', 'file-explorer'] };
     const dirPathNames = await dir_readDirDeep(dirPath, options);
     const expected = 2;
     const method = 'dir_readDirDeep' ;
-    const aspect = 'containsFile' ;
+    const aspect = 'containsItem' ;
     const testResult = dirPathNames.length ;
     testResults_append( results, {expected, method, aspect, testResult });
   }
@@ -545,7 +545,7 @@ async function dir_test()
     const dirPath = `c:\\github`;
     const options : iDirDeepOptions = 
           { ignoreDir: ['node_modules', 'git', '.git'], containsMaxDepth:2, 
-            containsFile: ['tslint.json', 'tester-core.ts', 'index.ts', 'preview.jpg'] };
+            containsItem: ['tslint.json', 'tester-core.ts', 'index.ts', 'preview.jpg'] };
     const dirPathNames = await dir_readDirDeep(dirPath, options);
     const expected = 6;
     const method = 'dir_readDirDeep';

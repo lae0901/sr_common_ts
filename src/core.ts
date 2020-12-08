@@ -209,9 +209,13 @@ export function date_toISO( d: Date)
     + pad(d.getDate());
 }
 
-// ------------------------------- dir_containsFile -------------------------------
-// check if the directory contains a file name ( file name being a file or dir)
-export async function dir_containsFile( dirPath: string, fileNameArr: string[] ) : Promise<boolean>
+// ------------------------------- dir_containsItem -------------------------------
+/**
+ * check if the directory contains an item, that is, file or directory.
+ * @param dirPath path of directory to check.
+ * @param itemNameArr array of item names to check that the directory contains.
+ */
+export async function dir_containsItem( dirPath: string, itemNameArr: string[] ) : Promise<boolean>
 {
   const promise = new Promise<boolean>((resolve, reject) =>
   {
@@ -220,7 +224,7 @@ export async function dir_containsFile( dirPath: string, fileNameArr: string[] )
     {
       const found = items.find((item) =>
       {
-        const containsItem = stringArray_contains(fileNameArr, item);
+        const containsItem = stringArray_contains(itemNameArr, item);
         return containsItem ;
       });
       if ( found )
@@ -347,7 +351,7 @@ export function dir_rmdir(dirPath: string, options?:{recursive?:boolean}): Promi
 export interface iDirDeepOptions
 {
   ignoreDir?: string[];
-  containsFile?: string[];
+  containsItem?: string[];
   includeRoot?: boolean;
 
   // containsHaltDeep: true false. When folder found that contains file, do not 
@@ -365,7 +369,8 @@ export interface iDirDeepOptions
 // use the ignoreDir parameter to ignore directories by their file name.
 // includeRoot: include this root directory in the returned list of directories.
 //              ( only if root directory passes include tests, like contains file. )
-export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : Promise<string[]>
+export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : 
+          Promise<string[]>
 {
   options = options || {} ;
   const containsHaltDeep = options.containsHaltDeep || false ;
@@ -382,9 +387,9 @@ export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : P
     {
       // check if the directory contains a specified file.
       let skip = false;
-      if (options.containsFile)
+      if (options.containsItem)
       {
-        const does_contain_file = await dir_containsFile( dirPath, options.containsFile);
+        const does_contain_file = await dir_containsItem( dirPath, options.containsItem);
         if (does_contain_file == false)
           skip = true;
         else 
@@ -412,9 +417,9 @@ export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : P
           // check if the directory contains a specified file.
           let does_contain_file = false ;
           let doPush = true ;
-          if ( options.containsFile )
+          if ( options.containsItem )
           {
-            does_contain_file = await dir_containsFile(filePath, options.containsFile ) ;
+            does_contain_file = await dir_containsItem(filePath, options.containsItem ) ;
             if ( does_contain_file == false )
               doPush = false ;
             if ( does_contain_file && containsHaltDeep )

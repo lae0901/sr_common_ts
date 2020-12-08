@@ -22,8 +22,8 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 
 ## directory methods
 * {isDir, errmsg} = file_isDir(path)
-* boolean = dir_containsFile( dirPath, fileNameArr )
-* string[] = dir_readDirDeep(dirPath, {ignoreDir, containsFile, includeRoot, containsHaltDeep, containsMaxDepth })
+* boolean = dir_containsFile( dirPath, itemNameArr )
+* string[] = dir_readDirDeep(dirPath, {ignoreDir, containsItem, includeRoot, containsHaltDeep, containsMaxDepth })
 * {errmsg} = await dir_rmdir( dirPath, {recursive})
 
 ## file methods
