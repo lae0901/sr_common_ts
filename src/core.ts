@@ -96,7 +96,7 @@ export function array_compareEqual<T>( arr1: T[], arr2: T[]) : boolean
 
       if (Array.isArray(vlu1) && Array.isArray(vlu2))
       {
-        res = array_compareEqual(vlu1, vlu2);
+        res = array_compareEqual(vlu1 as string[], vlu2 as string[]);
       }
       else if (typeof vlu1 == 'object' && typeof vlu2 == 'object')
       {
@@ -1719,7 +1719,6 @@ export function string_splitWords(str: string)
   return words ;
 }
 
-
 // -------------------------------- string_startsWith -------------------------
 // test that the starting text of text matches startText.
 export function string_startsWith(text: string, startText: string | string[] ): boolean
@@ -1838,4 +1837,66 @@ export function stringArray_contains(arr: string[] | undefined, text: string): b
       contains = true;
   }
   return contains;
+}
+
+// ------------------------- stringArr_toDistinctAndSorted -------------------------
+/**
+ * use Map object to convert input array of strings into distinct and sorted list of
+ * string items.
+ * @param arr input array of string
+ */
+export function stringArr_toDistinctAndSorted(arr: string[])
+{
+  const mappedArr = arr.reduce((rio, item) =>
+  {
+    if (!rio.has(item))
+      rio.set(item, '');
+    return rio;
+  }, new Map<string, string>());
+  const distinctArr = Array.from(mappedArr.keys());
+  return distinctArr.sort((a,b) =>
+  {
+    if (a < b)
+      return -1;
+    else if (a == b )
+      return 0;
+    else
+      return 1;
+  });
+}
+
+// -------------------------- stringWords_wordAtPosition --------------------------
+/**
+ * search array of words returned by `string_splitWords` function for the word 
+ * located at the specified position. 
+ * @param wordsArr array of words. This array returned by string_splitWords 
+ * function.
+ * @param pos Position in the string. Search for the word located at this specified 
+ * position.
+ * @returns object containing found word, prev word, next word and index of the 
+ * word in the array of words.
+ */
+export function stringWords_wordAtPosition(wordsArr: iStringWord[], pos: number)
+{
+  let found: iStringWord | undefined;
+  let prev: iStringWord | undefined;
+  let next: iStringWord | undefined;
+  let arrayIndex = -1;
+
+  for (let ix = 0; ix < wordsArr.length; ++ix)
+  {
+    const word = wordsArr[ix];
+    const word_ex = word.bx + word.text.length;
+    if ((word.bx <= pos) && (pos < word_ex))
+    {
+      found = word;
+      if (ix > 0)
+        prev = wordsArr[ix - 1];
+      if ((ix + 1) < wordsArr.length)
+        next = wordsArr[ix + 1];
+      arrayIndex = ix;
+      break;
+    }
+  }
+  return { found, prev, next, arrayIndex };
 }

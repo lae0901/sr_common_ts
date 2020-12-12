@@ -6,7 +6,12 @@ import {  file_open, file_close, file_writeText,
           date_toEpoch, date_fromISO,
           array_copyItems, array_compareEqual, 
           file_stat, file_utimes, 
-          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, array_findAndSplice, any_toString, file_rename, path_rename, file_copy, file_exists, string_splitWords, file_resolve, string_random } from './core';
+          path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, 
+          dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, 
+          array_findAndSplice, any_toString, file_rename, path_rename, file_copy, file_exists, 
+          string_splitWords, file_resolve, string_random, stringArr_toDistinctAndSorted, 
+          stringWords_wordAtPosition, 
+          iStringWord} from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -77,6 +82,12 @@ async function async_main( )
   {
     const res = string_test() ;
     results.push( ...res ) ;
+  }
+
+  // stringWords_test
+  {
+    const res = stringWords_test();
+    results.push(...res);
   }
 
   // array_test
@@ -370,6 +381,40 @@ function path_test()
   return results;
 }
 
+
+// ---------------------------------- stringWords_test ----------------------------------
+function stringWords_test()
+{
+  const results = testResults_new();
+
+  // string_splitWords
+  {
+    const method = 'string_splitWords';
+    const text = ` call string_split( arg1, 25 )`;
+    const actual = string_splitWords(text).map((item) =>
+    {
+      const { text, delim } = item;
+      return { text, delim };
+    });
+    const expected = [{ text: 'call', delim: '' }, { text: 'string_split', delim: '(' },
+    { text: 'arg1', delim: ',' }, { text: '25', delim: ')' }];
+    testResults_append(results, { method, actual, expected });
+  }
+
+  // stringWords_wordAtPosition
+  {
+    const method = 'stringWords_wordAtPosition' ;
+    const text = ` call string_split( arg1, 25 )`;
+    const words = string_splitWords(text) ;
+    const {found:actual} = stringWords_wordAtPosition( words, 7 ) ;
+    const expected : iStringWord = { bx:6, text:'string_split', delim:'(' } ;
+    testResults_append(results, { method, actual, expected });
+  }
+
+  return results;
+}
+
+
 // ---------------------------------- string_test ----------------------------------
 function string_test( )
 {
@@ -454,18 +499,13 @@ function string_test( )
     testResults_append(results, passText, errmsg, method);
   }
 
-  // string_splitWords
+  // stringArr_toDistinctAndSorted
   {
-    method = 'string_splitWords' ;
-    const text = ` call string_split( arg1, 25 )`;
-    const actual = string_splitWords(text).map((item) =>
-    {
-      const {text, delim} = item ;
-      return {text, delim} ;
-    }) ;
-    const expected = [{text:'call', delim:''}, {text:'string_split', delim:'('},
-                      {text:'arg1', delim:','}, {text:'25', delim:')'}];
-    testResults_append( results, { method, actual, expected });
+    method = 'stringArr_toDistinctAndSorted' ;
+    const inputArr = ['Joe', 'Sue', 'Bob', 'Joe'];
+    const actual = stringArr_toDistinctAndSorted( inputArr ) ;
+    const expected = ['Bob', 'Joe', 'Sue'];
+    testResults_append( results, {method, actual, expected});
   }
 
   return results ;
