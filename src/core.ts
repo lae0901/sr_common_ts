@@ -1099,27 +1099,22 @@ interface interface_pathPart {
 //           reason being that a windows backslash is a valid file name character
 //           in unix. So cannot blindly convert all backslash to unix path sep
 //           character.
-export function path_joinUnix( path1:string, path2:string) : string
+export function path_joinUnix( path1:string, path2:string, path3?:string) : string
 {
-  // look for the first path separator in path1. 
-  // const { found_char } = scan_charEqAny(path1, 0, '/\\');
-
-  // windows separator character. convert to unix.
-  // if ( found_char == '\\')
-  // {
-  //   path1 = path_toUnixPath(path1) ;
-  // }
-  
+  let unixPath = '' ;
   if ( !path1 )
-    return path2 ;
+    unixPath = path2 || '' ;
   else if ( !path2 )
-    return path1 ;
+    unixPath = path1 ;
   else
-    return `${path1}/${path2}`;
+    unixPath = `${path1}/${path2}`;
 
-  // let res = path.join(path1, path2) ;
-  // res = path_toUnixPath(res) ;
-  // return res ;
+  if ( path3 )
+  {
+    unixPath = `${unixPath}/${path3}`;
+  }
+
+  return unixPath ;
 }
 
 // ------------------------- path_parts -----------------------------------

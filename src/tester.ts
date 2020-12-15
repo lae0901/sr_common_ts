@@ -310,17 +310,23 @@ function path_test()
   // path_joinUnix.
   {
     method = 'path_joinUnix';
-    let passText = '';
-    let errmsg = '';
     const dirPath = '\\home\\srichter';
     const fileName = 'test.pdf';
     const expected = '/home/srichter/test.pdf';
-    const unixPath = path_joinUnix( path_toUnixPath(dirPath), fileName );
-    if (unixPath != expected)
-      errmsg = `incorrect result. ${unixPath}. expected ${expected}`;
-    else
-      passText = `correct result. ${unixPath}.`;
-    testResults_append(results, passText, errmsg, method);
+    const actual = path_joinUnix( path_toUnixPath(dirPath), fileName );
+    testResults_append(results, {method, expected, actual});
+  }
+
+  // path_joinUnix.
+  {
+    method = 'path_joinUnix';
+    const aspect = 'three path arguments' ;
+    const dirPath = '\\home\\srichter';
+    const subFolder = 'autocoder' ;
+    const fileName = 'test.pdf';
+    const expected = '/home/srichter/autocoder/test.pdf';
+    const actual = path_joinUnix(path_toUnixPath(dirPath), subFolder, fileName);
+    testResults_append(results, { method, expected, actual, aspect });
   }
 
   // path_rename
