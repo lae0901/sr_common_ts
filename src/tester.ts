@@ -524,13 +524,6 @@ function string_test( )
     testResults_append(results, { method, actual, expected });
   }
 
-  {
-    const libl = 'autocoder couri7  qgpl  autocoder' ;
-    const liblArr = libl.split(' ') ;
-    const liblArr2 = libl.split(/\s+/) ;
-    const ee = 3 ;
-  }
-
   return results ;
 }
 
