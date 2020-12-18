@@ -11,7 +11,8 @@ import {  file_open, file_close, file_writeText,
           array_findAndSplice, any_toString, file_rename, path_rename, file_copy, file_exists, 
           string_splitWords, file_resolve, string_random, stringArr_toDistinctAndSorted, 
           stringWords_wordAtPosition, 
-          iStringWord} from './core';
+          iStringWord,
+          stringArr_toDistinct} from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -512,6 +513,15 @@ function string_test( )
     const actual = stringArr_toDistinctAndSorted( inputArr ) ;
     const expected = ['Bob', 'Joe', 'Sue'];
     testResults_append( results, {method, actual, expected});
+  }
+
+  // stringArr_toDistinct
+  {
+    method = 'stringArr_toDistinct';
+    const inputArr = ['Joe', 'acwww', 'Sue', 'Bob', 'acwww', 'Joe'];
+    const actual = stringArr_toDistinct(inputArr);
+    const expected = ['Joe', 'acwww', 'Sue', 'Bob'];
+    testResults_append(results, { method, actual, expected });
   }
 
   return results ;

@@ -1834,6 +1834,24 @@ export function stringArray_contains(arr: string[] | undefined, text: string): b
   return contains;
 }
 
+// ------------------------- stringArr_toDistinct -------------------------
+/**
+ * use Map object to convert input array of strings into distinct list of
+ * string items.
+ * @param arr input array of string
+ */
+export function stringArr_toDistinct(arr: string[])
+{
+  const map = new Map<string,string>( ) ;
+  for( const item of arr )
+  {
+    if ( !map.has(item))
+      map.set(item, '' ) ;
+  }
+  const distinctArr = Array.from(map.keys());
+  return distinctArr ;
+}
+
 // ------------------------- stringArr_toDistinctAndSorted -------------------------
 /**
  * use Map object to convert input array of strings into distinct and sorted list of
@@ -1849,11 +1867,11 @@ export function stringArr_toDistinctAndSorted(arr: string[])
     return rio;
   }, new Map<string, string>());
   const distinctArr = Array.from(mappedArr.keys());
-  return distinctArr.sort((a,b) =>
+  return distinctArr.sort((a, b) =>
   {
     if (a < b)
       return -1;
-    else if (a == b )
+    else if (a == b)
       return 0;
     else
       return 1;

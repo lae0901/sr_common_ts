@@ -63,7 +63,8 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * string_replaceAll( str, find, replace)
 * string_startsWith( str, text | string[])
 * string_substrLenient( str, bx, lx )
-* stringArr_toDistinctAndSorted( arr )
+* distinctArr = stringArr_toDistinct( arr )
+* distinctArr = stringArr_toDistinctAndSorted( arr )
 
 ## string words methods
 * words = string_splitWords( str ) ;
