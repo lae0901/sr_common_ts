@@ -1029,6 +1029,24 @@ export function object_indexerItems(obj: {[key: string]: any}): any[]
   return indexer;
 }
 
+// --------------------------------- object_properties ----------------------------
+/**
+ * extract and return specified list of properties of object. If the input object 
+ * does not contain the property, the property is still added to the return object,
+ * but the value is undefined.
+ * @param obj 
+ * @param propNameArr 
+ */
+export function object_properties( obj: {[key:string]:any } | undefined, propNameArr:string[] )
+{
+  const to_obj : {[key:string]:any} = {} ;
+  for( const propName of propNameArr )
+  {
+    to_obj[propName] = obj ? obj[propName] : undefined ;
+  }
+  return to_obj ;
+}
+
 // ------------------------- object_toQueryString ---------------------------------
 export function object_toQueryString( obj:{} )
 {
@@ -1668,8 +1686,17 @@ export function string_rtrim(str:string): string
 export interface iStringWord
 {
   bx:number;
+
+  /** whitespace before the text. */
+  wsBefore?:boolean;
+
   text:string;
-  delim:string;
+  /**
+   * whitespace after the text
+   */
+  wsAfter?:boolean;
+  
+  delim?:string;
 }
 
 // ------------------------------- string_splitWords -------------------------------
@@ -1682,10 +1709,11 @@ export interface iStringWord
 export function string_splitWords(str: string)
 {
   const words: iStringWord[] = [] ;
-  const regex = /(\s*)(\w+)\s*(\W?)/g;
+  const regex = /(\s*)(\w+)?(\s*)(\W?)/g;
   let lastIndex = 0 ;
   let pv_lastIndex = -1 ;
-  while(true)
+  const xx = str.length ;
+  while( lastIndex < str.length)
   {
     // make sure not looping.
     if ( pv_lastIndex >= lastIndex )
@@ -1701,17 +1729,60 @@ export function string_splitWords(str: string)
 
     // store match in array of words.
     {
-      const ws = match[1] ? match[1] : '' ;
-      const bx = match.index + ws.length ;
-      const text = match[2] ;
-      const delim = match[3] ? match[3] : '' ;
-      words.push({bx, text, delim});
+      const wsb = match[1] ? match[1] : '' ;
+      const wsBefore = !!wsb;
+      const bx = match.index + wsb.length ;
+      const text = match[2] ? match[2] : '' ;
+      const wsa = match[3] ? match[3] : '';
+      const wsAfter = !!wsa ;
+      const delim = match[4] ? match[4] : '' ;
+      words.push({bx, wsBefore, text, wsAfter, delim});
 
-      lastIndex = bx + text.length + delim.length;
+      lastIndex = bx + text.length + wsa.length + delim.length;
     }
   }
 
   return words ;
+}
+
+// ------------------------ string_splitWhitespaceWords --------------------
+/**
+ * split words on whitespace only. no delimeters. 
+ * @param str 
+ */
+export function string_splitWhitespaceWords(str: string)
+{
+  const words: iStringWord[] = [];
+  const regex = /(\s*)(\S+)/g;
+  let lastIndex = 0;
+  let pv_lastIndex = -1;
+  while (true)
+  {
+    // make sure not looping.
+    if (pv_lastIndex >= lastIndex)
+      break;
+
+    // start regex match after the last match.
+    regex.lastIndex = lastIndex;
+    pv_lastIndex = lastIndex;
+
+    const match = regex.exec(str);
+    if (!match)
+      break;
+
+    // store match in array of words.
+    {
+      const ws = match[1] ? match[1] : '';
+      const wsBefore = !!ws;
+      const bx = match.index + ws.length;
+      const text = match[2] ;
+      words.push({ bx, wsBefore, text });
+
+      lastIndex = bx + text.length;
+    }
+  }
+
+  return words;
 }
 
 // -------------------------------- string_startsWith -------------------------

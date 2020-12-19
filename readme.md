@@ -67,8 +67,18 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * distinctArr = stringArr_toDistinctAndSorted( arr )
 
 ## string words methods
-* words = string_splitWords( str ) ;
-* stringWords_wordAtPosition( words, pos )
+
+`words = string_splitWords( str )`
+
+Split string into array of words. Each word stores the text of the word, the delimeter, start position, whether there is whitespace before or after the word.  Each word object implements the `iStringWord` interface.
+
+`words = string_splitWhitespaceWords( str )`
+
+Split string into array of words, where the words are split on whitespace only.
+
+`word = stringWords_wordAtPosition( words, pos )`
+
+Using the input array of `iStringWord` words returned by `string_splitWords`, return the word that is found at the specified position.
 
 ## date methods
 * epoch = date_toEpoch( Date )

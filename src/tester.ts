@@ -12,7 +12,9 @@ import {  file_open, file_close, file_writeText,
           string_splitWords, file_resolve, string_random, stringArr_toDistinctAndSorted, 
           stringWords_wordAtPosition, 
           iStringWord,
-          stringArr_toDistinct} from './core';
+          stringArr_toDistinct,
+          object_properties,
+          string_splitWhitespaceWords} from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -397,13 +399,14 @@ function stringWords_test()
   // string_splitWords
   {
     const method = 'string_splitWords';
-    const text = ` call string_split( arg1, 25 )`;
+    const text = ` : call string_split( arg1, 25 )`;
     const actual = string_splitWords(text).map((item) =>
     {
       const { text, delim } = item;
       return { text, delim };
     });
-    const expected = [{ text: 'call', delim: '' }, { text: 'string_split', delim: '(' },
+    const expected = [{text:'', delim:':'},  { text: 'call', delim: '' }, 
+    { text: 'string_split', delim: '(' },
     { text: 'arg1', delim: ',' }, { text: '25', delim: ')' }];
     testResults_append(results, { method, actual, expected });
   }
@@ -413,8 +416,19 @@ function stringWords_test()
     const method = 'stringWords_wordAtPosition' ;
     const text = ` call string_split( arg1, 25 )`;
     const words = string_splitWords(text) ;
-    const {found:actual} = stringWords_wordAtPosition( words, 7 ) ;
-    const expected : iStringWord = { bx:6, text:'string_split', delim:'(' } ;
+    const {found} = stringWords_wordAtPosition( words, 7 ) ;
+    const actual = object_properties( found, ['bx', 'text', 'delim'] );
+    const expected = { bx:6, text:'string_split', delim:'(' } ;
+    testResults_append(results, { method, actual, expected });
+  }
+
+  // string_splitWhitespaceWords
+  {
+    const method = 'string_splitWhitespaceWords';
+    const text = ` : call :steve_split( arg1, 25 )`;
+    const rv = string_splitWhitespaceWords(text);
+    const actual = { numItems:rv.length, thirdWord: rv[2].text  };
+    const expected = {numItems:6, thirdWord:':steve_split('};
     testResults_append(results, { method, actual, expected });
   }
 
