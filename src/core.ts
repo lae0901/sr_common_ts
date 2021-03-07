@@ -1443,6 +1443,52 @@ export function scan_revSepWord(text: string, pos: number, wsChars: string):
   return (wordText) ? { text: wordText, bx } : null;
 }
 
+// ----------------------------- scan_unquotedPattern -----------------------------
+/**
+ * scan text, looking for regex pattern that is outside of quoted text.
+ * @param text - text to scan
+ * @param bx - position in text to start the scan.
+ * @param pattern - regex pattern to scan for.
+ * @returns index and text of the found pattern.
+ */
+export function scan_unquotedPattern(text: string, bx: number, pattern: string)
+{
+  let findBx = -1 ;
+  let foundText: string | undefined;
+
+  // regex expression.  looking for quoted string or the scan for text.
+  // repeat the match until the pattern is found.
+  const fullPattern = '(' + pattern + ')' + '|(' + rxp.doubleQuoteQuoted +
+    ')|(' + rxp.singleQuoteQuoted + ')';
+  const regex = new RegExp( fullPattern, 'g');
+
+  while (true)
+  {
+    regex.lastIndex = bx;
+    const match = regex.exec(text);
+
+    if (!match)
+    {
+      findBx = -1 ;
+      break;
+    }
+    else if ( typeof match[1] != 'undefined')
+    {
+      foundText = match[1];
+      findBx = match.index;
+      break;
+    }
+    else
+    {
+      const doubleQuotedText = match[2] || '';
+      const singleQuotedText = match[3] || '';
+      bx = match.index + singleQuotedText.length + doubleQuotedText.length;
+    }
+  }
+
+  return { index:findBx, text:foundText };
+}
+
 // ------------------------------ string_assignSubstr ------------------------------
 // assign text to substr location within target string.  Returns new string that 
 // contains the assigned value.

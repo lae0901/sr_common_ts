@@ -14,7 +14,8 @@ import {  file_open, file_close, file_writeText,
           iStringWord,
           stringArr_toDistinct,
           object_properties,
-          string_splitWhitespaceWords} from './core';
+          string_splitWhitespaceWords,
+          scan_unquotedPattern} from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -120,6 +121,12 @@ async function async_main( )
   // path_test
   {
     const res = path_test();
+    results.push(...res);
+  }
+
+  // scan_test
+  {
+    const res = scan_test();
     results.push(...res);
   }
 
@@ -284,6 +291,23 @@ function object_test()
     const testResult = object_compareEqual(obj1, expected_obj);
     const desc = 'apply properties to object';
     testResults_append(results, { category, expected, testResult, desc, method });
+  }
+
+  return results;
+}
+
+// ----------------------------------- scan_test -----------------------------------
+function scan_test( )
+{
+  const results = testResults_new();
+
+  // scan_unquotedPattern
+  {
+    const scanText = `repeating match hit will "<div>" check for < div> the next or`;
+    const method = 'scan_unquotedPattern';
+    const expected = {index:43, text:'< div>'};
+    const actual = scan_unquotedPattern( scanText, 0, '<\\s*div\\s*>');
+    testResults_append(results, { method, expected, actual });
   }
 
   return results;

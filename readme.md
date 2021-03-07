@@ -49,6 +49,21 @@ import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
 * arr = path_toBaseNameArray( path: string )
 * path_toUnixPath( path: string ) : string
 
+## scan methods
+
+`scan_unquotedPattern` - scan for pattern outside of quoted text. 
+
+Primary use is when scanning for control character in text of a statement. But skip when that control character is within quotes in the statement. 
+
+```
+{index, text} = scan_unquotedPattern( text, bx, pattern )
+```
+
+```
+const scanText = `repeating match hit will "<div>" check for < div> the next or`;
+const { index, text } = scan_unquotedPattern( scanText, 0, '<\\s*div\\s*>');
+```
+
 ## string methods
 * {found_char, found_index } = scan_charEqAny(text,start,pattern)
 * string_assignSubstr( str, start, length, vlu ) : string
