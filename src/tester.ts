@@ -15,7 +15,8 @@ import {  file_open, file_close, file_writeText,
           stringArr_toDistinct,
           object_properties,
           string_splitWhitespaceWords,
-          scan_unquotedPattern} from './core';
+          scan_unquotedPattern,
+          string_substrLenient} from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -37,33 +38,10 @@ const fileName = 'app.vue';
   const parts = path_parts(path1);
 }
 
+regex_orDemo( ) ;
+
 // run main function that is declared as async. 
 async_main( ) ;
-
-if ( false )
-{
-  const cwdOSRoot = path.parse(process.cwd()).root;
-  const fileOSRoot = path.parse(__dirname).root;
-  console.log(`os root:${cwdOSRoot}  fileRoot:${fileOSRoot}`);
-
-  base_async(folderPath, fileName);
-}
-
-if ( false )
-{
-  // temporary directory. make sure does not exist.
-  const tempDir = os.tmpdir();
-  const testDir = path.join(tempDir, 'core_ts');
-  try
-  {
-    fs.rmdirSync(testDir, { recursive: true });
-  }
-  catch (e)
-  {
-  }
-
-  runTest( testDir ) ;
-}
 
 async function runTest( testDir:string )
 {
@@ -234,6 +212,45 @@ function array_test()
   }
 
   return results;
+}
+
+function regex_orDemo( )
+{
+  let errmsg = '' ;
+  
+  {
+    const regex = /(\s*)((<\/)|({{)|(}})|(<[\w]))/g;
+    const text = '    <sp}}an>{{customer}}</span>';
+    regex.lastIndex = 1;
+    const match = regex.exec(text) ;
+    if ( match )
+    {
+      const closeBraces = match[1] ;
+      const openBraces = match[2] ;
+      if ( closeBraces )
+        console.log(`close braces found at position ${match.index}`);
+      if (openBraces)
+        console.log(`open braces found at position ${match.index}`);
+    }
+  }
+
+  {
+    const text = `  <td @click="travItem_setEdit(item, rowIndex, 'TRIPNAME');"><span>{{item.TRIPNAME}}</span></td>`
+    let bx = 60;
+
+    const dummy = string_substrLenient(text, bx, 20);
+    console.log(text);
+    const regex = /(\s*)((<\/)|({{)|(<)([.]))/g;
+    regex.lastIndex = bx;
+    const match = regex.exec(text);
+
+    if (match)
+    {
+      console.log(`found pattern ${string_substrLenient(text, match.index, 20)} position:${match.index}`);
+      console.log(`start scan ${bx}  text:${dummy}`);
+    }
+  }
+
 }
 
 // --------------------------------- regex_listFragments ------------------------
