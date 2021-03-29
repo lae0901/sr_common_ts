@@ -278,6 +278,25 @@ export async function dir_findFirstText(dirPath: string, findText: string)
   return promise;
 }
 
+// --------------------------------- dir_firstFile ---------------------------------
+export async function dir_firstFile( dirPath:string, matchPattern: RegExp )
+{
+  let firstFile = '' ;
+  const { files, errmsg } = await dir_readdir( dirPath ) ;
+  if ( files )
+  {
+    for( const fileName of files )
+    {
+      if ( matchPattern.test(fileName))
+      {
+        firstFile = fileName ;
+        break ;
+      }
+    }
+  }
+  return firstFile ;
+}
+
 // ------------------------------- dir_ensureExists -----------------------------
 export function dir_ensureExists( dirPath: string) : Promise<{ created:boolean, errmsg:string}>
 {

@@ -16,7 +16,9 @@ import {  file_open, file_close, file_writeText,
           object_properties,
           string_splitWhitespaceWords,
           scan_unquotedPattern,
-          string_substrLenient} from './core';
+          string_substrLenient,
+          file_readText,
+          dir_firstFile} from './core';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -637,6 +639,26 @@ async function dir_test()
     const aspect = 'create temp dir';
     const testResult = !errmsg_read ? 'created' : errmsg_read ;
     testResults_append(results, { expected, method, aspect, testResult });
+  }
+
+  // add file to tempTestDir
+  {
+    const filePath = path.join( tempTestDir, 'steve.html');
+    await file_writeNew( filePath, '<html></html>');
+    const {text} = await file_readText( filePath );
+    const expected = '<html></html>';
+    const method = 'file_readText' ;
+    const actual = text ;
+    testResults_append( results, {method, expected, actual });
+  }
+
+  // return first file if tempTestDir that matches pattern.
+  {
+    const firstFile = await dir_firstFile(tempTestDir, /.html$/);
+    const expected = 'steve.html' ;
+    const method = 'dir_firstFile' ;
+    const actual = firstFile ;
+    testResults_append(results, { method, expected, actual });
   }
 
   // count number of directories
