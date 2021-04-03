@@ -1292,10 +1292,19 @@ export function path_splitRootPath(in_path: string, rootPath: string)
   const match_items = items.slice(0, segCx ) ;
   const rem_items = items.slice( segCx ) ;
 
+  // the root path items which do not match input path.
+  const notMatchDepth = root_items.length - segCx ;
+  let notMatchPath = '' ;
+  if ( notMatchDepth > 0 )
+  {
+    const items = root_items.slice(segCx) ;
+    notMatchPath = path_fromBaseNameArray(items) ;
+  }
+
   const matchPath = path_fromBaseNameArray(match_items);
   const remPath = path_fromBaseNameArray(rem_items);
 
-  return {matchPath, remPath};
+  return {matchPath, remPath, notMatchPath };
 }
 
 // ----------------------------- path_toBaseNameArray -----------------------------

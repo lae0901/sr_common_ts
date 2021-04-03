@@ -401,6 +401,19 @@ function path_test()
     testResults_append(results, passText, errmsg, method);
   }
 
+  // path_splitRootPath.
+  {
+    method = 'path_splitRootPath';
+    const aspect = 'notMatchPath';
+    const fullPath = '/web/home/srichter/gcc/abc.pdf';
+    const rootPath = '/web/home/joe/visual';
+    const expected = 'joe/visual';
+    let { matchPath, remPath, notMatchPath } = path_splitRootPath(fullPath, rootPath);
+    notMatchPath = path_toUnixPath( notMatchPath );
+    const actual = notMatchPath ;
+    testResults_append(results, { aspect, method, expected, actual });
+  }
+
   // path_toBaseNameArray.
   {
     method = 'path_toBaseNameArray';
