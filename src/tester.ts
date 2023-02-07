@@ -16,7 +16,7 @@ import {  file_open, file_close, file_writeText,
           object_properties,
           string_splitWhitespaceWords,
           scan_unquotedPattern,
-          string_substrLenient,
+          str_substrLenient,
           file_readText,
           dir_firstFile} from './core';
 import * as os from 'os';
@@ -240,7 +240,7 @@ function regex_orDemo( )
     const text = `  <td @click="travItem_setEdit(item, rowIndex, 'TRIPNAME');"><span>{{item.TRIPNAME}}</span></td>`
     let bx = 60;
 
-    const dummy = string_substrLenient(text, bx, 20);
+    const dummy = str_substrLenient(text, bx, 20);
     console.log(text);
     const regex = /(\s*)((<\/)|({{)|(<)([.]))/g;
     regex.lastIndex = bx;
@@ -248,7 +248,7 @@ function regex_orDemo( )
 
     if (match)
     {
-      console.log(`found pattern ${string_substrLenient(text, match.index, 20)} position:${match.index}`);
+      console.log(`found pattern ${str_substrLenient(text, match.index, 20)} position:${match.index}`);
       console.log(`start scan ${bx}  text:${dummy}`);
     }
   }

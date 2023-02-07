@@ -192,7 +192,7 @@ function regexPattern_toFragments(pattern)
       const textLx = item.text.length;
       if ((!found_item) || (found_item.text.length < textLx))
       {
-        const patternText = string_substrLenient(pattern, bx, textLx);
+        const patternText = str_substrLenient(pattern, bx, textLx);
         if (patternText == item.text)
         {
           if ((item.highlevel) && (pattern == item.text))
@@ -217,7 +217,7 @@ function regexPattern_toFragments(pattern)
   {
     const bx = 1;
     const lx = pattern.length - 2;
-    pattern = string_substrLenient(pattern, bx, lx);
+    pattern = str_substrLenient(pattern, bx, lx);
     pattern = pattern.replace(/\\\//g, '/');
   }
 
@@ -291,7 +291,7 @@ function regexPattern_toFragments(pattern)
         // applies to.
         {
           const lx = matchText.length;
-          const nx1 = string_substrLenient(pattern, px + lx, 1);
+          const nx1 = str_substrLenient(pattern, px + lx, 1);
           if (regex_isQuantifier(nx1))
           {
             // split the regex text on its last character. Where a character is
@@ -724,10 +724,10 @@ function string_trim(str)
   }
 }
 
-// ---------------------------- string_substrLenient --------------------
+// ---------------------------- str_substrLenient --------------------
 // return substring of the input string. only, clip the results if start or end
 // pos are out of bounds of the string.
-function string_substrLenient(str, fx, lx = -1)
+function str_substrLenient(str, fx, lx = -1)
 {
   if ((typeof str) != 'string')
     return '';

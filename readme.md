@@ -78,7 +78,7 @@ const { index, text } = scan_unquotedPattern( scanText, 0, '<\\s*div\\s*>');
 * text = string_padRight(text, length, pad) ;
 * string_replaceAll( str, find, replace)
 * string_startsWith( str, text | string[])
-* string_substrLenient( str, bx, lx )
+* str_substrLenient( str, bx, lx )
 * distinctArr = stringArr_toDistinct( arr )
 * distinctArr = stringArr_toDistinctAndSorted( arr )
 

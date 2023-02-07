@@ -1,6 +1,6 @@
 // regex-frag.js
 
-import { string_isQuoted, string_substrLenient } from './core';
+import { string_isQuoted, str_substrLenient } from './core';
 import { rxp, regex_isQuantifier, regex_splitLastChar } from './regex_core';
 import { array_range, string_indexOfUnescapedChar, string_unescape } from './more-core' ;
 
@@ -306,7 +306,7 @@ export function regexPattern_toFragments(
 
       if ((!found_item) || (found_item.text.length < item.text.length))
       {
-        const patternText = string_substrLenient(pattern, bx, item.text.length );
+        const patternText = str_substrLenient(pattern, bx, item.text.length );
         if (patternText == item.text)
         {
           let canMatch = true ;
@@ -331,7 +331,7 @@ export function regexPattern_toFragments(
   {
     const bx = 1 ;
     const lx = pattern.length - 2 ;
-    pattern = string_substrLenient(pattern, bx, lx) ;
+    pattern = str_substrLenient(pattern, bx, lx) ;
     pattern = pattern.replace(/\\\//g, '/');
   }
 
@@ -394,7 +394,7 @@ export function regexPattern_toFragments(
         // applies to.
         {
           const lx = matchText.length ;
-          const nx1 = string_substrLenient(pattern, px + lx, 1) ;
+          const nx1 = str_substrLenient(pattern, px + lx, 1) ;
           if ( regex_isQuantifier(nx1))
           {
             // split the regex text on its last character. Where a character is

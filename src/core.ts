@@ -169,15 +169,15 @@ export function date_currentISO()
 export function date_fromISO(iso:string, iso_time?:string)
 {
   let dt;
-  const yr = Number(iso.substr(0, 4));
-  const mm = Number(iso.substr(5, 2)) - 1;
-  const dd = Number(iso.substr(8, 2));
+  const yr = Number(iso.substring(0, 0 + 4));
+  const mm = Number(iso.substring(5, 5 + 2)) - 1;
+  const dd = Number(iso.substring(8, 8 + 2));
 
   if (iso_time)
   {
-    const hr = Number(iso_time.substr(0, 2));
-    const min = Number(iso_time.substr(3, 2));
-    const sec = Number(iso_time.substr(6, 2));
+    const hr = Number(iso_time.substring(0, 0 + 2));
+    const min = Number(iso_time.substring(3, 3 + 2));
+    const sec = Number(iso_time.substring(6, 6 + 2));
     dt = new Date(yr, mm, dd, hr, min, sec);
   }
   else
@@ -1182,7 +1182,7 @@ export function path_removeQueryString(str: string): string
   const fx = str.indexOf('?');
   if (fx >= 0)
   {
-    return str.substr(0, fx);
+    return str.substring(0, 0 + fx);
   }
   else
     return str;
@@ -1250,10 +1250,10 @@ export function path_splitFront(path: string, sep: string = '/'): { front: strin
   const ix = path.indexOf(sep);
   if (ix >= 0)
   {
-    front = path.substr(0, ix);
+    front = path.substring(0, 0 + ix);
     if ( !front )
       front = '/' ;
-    rem = string_substrLenient(path, ix + 1);
+    rem = str_substrLenient(path, ix + 1);
   }
   else
   {
@@ -1342,7 +1342,7 @@ export function path_toFileUri(path: string): string
   let toPath = '';
   for (let ix = 0; ix < path.length; ++ix)
   {
-    const ch1 = path.substr(ix, 1);
+    const ch1 = path.substring(ix, ix + 1);
     if (ch1 == '\\')
       toPath += '/';
     else
@@ -1372,7 +1372,7 @@ export function scan_charEqAny(text: string, bx: number, pattern: string):
   let found_index = -1 ;
   while (ix < text.length)
   {
-    const ch1 = text.substr(ix, 1);
+    const ch1 = text.substring(ix, ix + 1);
     const fx = pattern.indexOf(ch1);
     if (fx >= 0)
     {
@@ -1392,7 +1392,7 @@ export function scan_charNeAll(text: string, bx: number, pattern: string): numbe
   let ix = bx;
   while (ix < text.length)
   {
-    const ch1 = text.substr(ix, 1);
+    const ch1 = text.substring(ix, ix + 1);
     const fx = pattern.indexOf(ch1);
     if (fx == -1)
       break;
@@ -1411,7 +1411,7 @@ export function scan_revCharEqAny(text: string, bx: number, anyChar: string): nu
   let ix = bx;
   while (ix >= 0)
   {
-    const ch1 = text.substr(ix, 1);
+    const ch1 = text.substring(ix, ix + 1);
     const fx = anyChar.indexOf(ch1);
     if (fx >= 0)
       break;
@@ -1430,7 +1430,7 @@ export function scan_revCharNeAll(text: string, bx: number, pattern: string): nu
   let ix = bx;
   while (ix >= 0)
   {
-    const ch1 = text.substr(ix, 1);
+    const ch1 = text.substring(ix, ix + 1);
     const fx = pattern.indexOf(ch1);
     if (fx == -1)
       break;
@@ -1465,7 +1465,7 @@ export function scan_revSepWord(text: string, pos: number, wsChars: string):
 
     // isolate the word.
     const lx = ex - bx + 1;
-    wordText = text.substr(bx, lx);
+    wordText = text.substring(bx, bx + lx);
   }
 
   return (wordText) ? { text: wordText, bx } : null;
@@ -1518,7 +1518,7 @@ export function scan_unquotedPattern(text: string, bx: number, pattern: string)
 }
 
 // ------------------------------ string_assignSubstr ------------------------------
-// assign text to substr location within target string.  Returns new string that 
+// assign text to substring location within target string.  Returns new string that 
 // contains the assigned value.
 export function string_assignSubstr(str: string, 
           start: number, length: number, vlu: string): string
@@ -1541,9 +1541,9 @@ export function string_assignSubstr(str: string,
 
   // the text of the string before and after the assigned to location.
   if (before_length > 0)
-    before_text = str.substr(0, before_length);
+    before_text = str.substring(0, 0 + before_length);
   if (after_length > 0)
-    after_text = str.substr(after_start, after_length);
+    after_text = str.substring(after_start, after_start + after_length);
 
   const result = before_text + vlu + after_text;
   return result;
@@ -1624,7 +1624,7 @@ export function string_head(str: string, lx: number)
   if (lx <= 0)
     return '';
   else
-    return str.substr(0, lx);
+    return str.substring(0, 0 + lx);
 }
 
 // ------------------------------- string_isQuoted --------------------------------
@@ -1642,7 +1642,7 @@ export function string_isQuoted(text : string, quoteChar? : string) : boolean
       {
         const tailCh1 = string_tail(text, 1);
         const tailCh2 = string_tail(text, 2);
-        if ((headChar == tailCh1) && (tailCh2.substr(0, 1) != '\\'))
+        if ((headChar == tailCh1) && (tailCh2.substring(0, 0 + 1) != '\\'))
           isQuoted = true;
       }
     }
@@ -1659,10 +1659,10 @@ export function string_matchGeneric(str: string, pattern: string): boolean
     return false;
 
   const pattern_lx = pattern.length - 1;
-  pattern = string_substrLenient(pattern, 0, pattern_lx);
+  pattern = str_substrLenient(pattern, 0, pattern_lx);
   if (pattern_lx == 0)
     return true;
-  else if (str.substr(0, pattern_lx) == pattern)
+  else if (str.substring(0, 0 + pattern_lx) == pattern)
     return true;
   else
     return false;
@@ -1732,7 +1732,7 @@ export function string_replaceAll( str:string, findText:string, replaceText:stri
 
     // copy not match text to result.
     if (lx > 0)
-      res += str.substr(ix, lx);
+      res += str.substring(ix, ix + lx);
 
     // match found. add replacement text to result.
     if (fx != -1)
@@ -1880,17 +1880,17 @@ export function string_startsWith(text: string, startText: string | string[] ): 
     const startLx = startText.length;
     if (startLx > text.length)
       return false;
-    else if (text.substr(0, startLx) == startText)
+    else if (text.substring(0, 0 + startLx) == startText)
       return true;
     else
       return false;
   }
 }
 
-// ---------------------------- string_substrLenient --------------------
+// ---------------------------- str_substrLenient --------------------
 // return substring of the input string. only, clip the results if start or end
 // pos are out of bounds of the string.
-export function string_substrLenient(str: string, fx: number, lx: number = -1): string
+export function str_substrLenient(str: string, fx: number, lx: number = -1): string
 {
   if ((typeof str) != 'string')
     return '';
@@ -1911,7 +1911,7 @@ export function string_substrLenient(str: string, fx: number, lx: number = -1): 
   if (fx >= str.length)
     return '';
   if (lx == -1)
-    return str.substr(fx);
+    return str.substring(fx);
 
   // remaining length.
   var remLx = str.length - fx;
@@ -1920,7 +1920,7 @@ export function string_substrLenient(str: string, fx: number, lx: number = -1): 
   if (lx > remLx)
     lx = remLx;
 
-  return str.substr(fx, lx);
+  return str.substring(fx, fx + lx);
 }
 
 // ----------------------string_tail ---------------------------------
@@ -1932,7 +1932,7 @@ export function string_tail(str: string, num: number): string
   else
   {
     var bx = str.length - num;
-    return str.substr(bx);
+    return str.substring(bx);
   }
 }
 
@@ -1948,7 +1948,7 @@ export function string_wordBx(text: string, word: string, ix: number)
     const remLx = text.length - ix;
     if (remLx >= wordLx)
     {
-      if (text.substr(ix, wordLx) == word)
+      if (text.substring(ix, ix + wordLx) == word)
       {
         bx = ix;
         break;
