@@ -1,8 +1,8 @@
 // regex-frag.js
 
-import { string_isQuoted, str_substrLenient } from './core';
+import { str_isQuoted, str_substrLenient } from './core';
 import { rxp, regex_isQuantifier, regex_splitLastChar } from './regex_core';
-import { array_range, string_indexOfUnescapedChar, string_unescape } from './more-core' ;
+import { arr_range, str_indexOfUnescapedChar, str_unescape } from './more-core' ;
 
 interface regexFrag_interface
 {
@@ -125,7 +125,7 @@ function regexPattern_charCommandList_applyUserFragments( regexArray : regexFrag
   });
 
   // range of existing userFragment items in charCommandList.
-  const {from_index, count } = array_range(regexPattern_charCommandList, (item) =>
+  const {from_index, count } = arr_range(regexPattern_charCommandList, (item) =>
   {
     return item.isUserFragment == true ;
   });
@@ -188,7 +188,7 @@ function frag_apply_text(frag : regexFrag_interface  , text : string)
 function frag_apply_varvlu(frag : regexFrag_interface, varvlu : string)
 {
   frag.varvlu = varvlu;
-  const unescaped_varvlu = string_unescape(varvlu);
+  const unescaped_varvlu = str_unescape(varvlu);
   if ( frag.textMask )
     frag.text = frag.textMask.replace('{{}}', frag.varvlu);
   if (frag.nameMask)
@@ -327,7 +327,7 @@ export function regexPattern_toFragments(
 
   // regex pattern is enclosed in forward slash. It is a regex literal. Remove the
   // enclosing slash and replace any escaped fwd slash with unescaped fwd slash.
-  if ( string_isQuoted(pattern, '/'))
+  if ( str_isQuoted(pattern, '/'))
   {
     const bx = 1 ;
     const lx = pattern.length - 2 ;
@@ -358,7 +358,7 @@ export function regexPattern_toFragments(
           if ( frag.tail.length > 1)
             fx = pattern.indexOf(frag.tail, bx);  // find the tail
           else 
-            fx = string_indexOfUnescapedChar( pattern, frag.tail, bx ) ;
+            fx = str_indexOfUnescapedChar( pattern, frag.tail, bx ) ;
 
           if (fx >= 0)
           {

@@ -4,17 +4,17 @@ import {  file_open, file_close, file_writeText,
           file_readAllText, file_writeNew, 
           path_joinUnix, path_toUnixPath, 
           date_toEpoch, date_fromISO,
-          array_copyItems, array_compareEqual, 
+          arr_copyItems, arr_compareEqual, 
           file_stat, file_utimes, 
           path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, date_toISO, 
-          dir_rmdir, iDirDeepOptions, object_compareEqual, object_apply, 
-          array_findAndSplice, any_toString, file_rename, path_rename, file_copy, file_exists, 
-          string_splitWords, file_resolve, string_random, stringArr_toDistinctAndSorted, 
-          stringWords_wordAtPosition, 
+          dir_rmdir, iDirDeepOptions, obj_compareEqual, obj_apply, 
+          arr_findAndSplice, any_toString, file_rename, path_rename, file_copy, file_exists, 
+          str_splitWords, file_resolve, str_random, strArr_toDistinctAndSorted, 
+          strWords_wordAtPosition, 
           iStringWord,
-          stringArr_toDistinct,
-          object_properties,
-          string_splitWhitespaceWords,
+          strArr_toDistinct,
+          obj_properties,
+          str_splitWhitespaceWords,
           scan_unquotedPattern,
           str_substrLenient,
           file_readText,
@@ -22,7 +22,7 @@ import {  file_open, file_close, file_writeText,
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
-import { string_assignSubstr, string_enquote, string_padLeft, string_padRight, 
+import { str_assignSubstr, str_enquote, str_padLeft, str_padRight, 
         path_findFile, path_parts, rxp, dir_readDirDeep } from './core';
 import {testResults_append, testResults_consoleLog, testResults_new } from 'sr_test_framework';
 import { system_downloadsFolder } from './system-downloads';
@@ -62,21 +62,21 @@ async function async_main( )
 {
   const results = testResults_new( ) ;
 
-  // string_test
+  // str_test
   {
-    const res = string_test() ;
+    const res = str_test() ;
     results.push( ...res ) ;
   }
 
-  // stringWords_test
+  // strWords_test
   {
-    const res = stringWords_test();
+    const res = strWords_test();
     results.push(...res);
   }
 
-  // array_test
+  // arr_test
   {
-    const res = array_test();
+    const res = arr_test();
     results.push(...res);
   }
 
@@ -123,9 +123,9 @@ async function async_main( )
     results.push(...res);
   }
 
-  // object_test
+  // obj_test
   {
-    const res = object_test();
+    const res = obj_test();
     results.push(...res);
   }
 
@@ -145,7 +145,7 @@ function any_test( )
   let method = '';
   const category = 'any_ methods';
 
-  // test the array_copyItems function.
+  // test the arr_copyItems function.
   {
     method = 'any_toString';
     const val = {name:'bob', salary:252.33 } ;
@@ -158,29 +158,29 @@ function any_test( )
   return results ;
 }
 
-// ---------------------------------- array_test ----------------------------------
-function array_test()
+// ---------------------------------- arr_test ----------------------------------
+function arr_test()
 {
   const results = testResults_new();
   let method = '';
   const category = 'array' ;
 
-  // test the array_copyItems function.
+  // test the arr_copyItems function.
   {
-    method = 'array_copyItems';
+    method = 'arr_copyItems';
     const arr = ['123', 'array', 53, 'test', 'babel'];
     const expected = [53, 'test', 'babel'];
-    const testResult = array_copyItems(arr, 2, 4);
+    const testResult = arr_copyItems(arr, 2, 4);
     const desc = 'copy array items';
     testResults_append( results, {category, expected, testResult, desc, method});
   }
 
-  // test the array_copyItems function.
+  // test the arr_copyItems function.
   {
-    method = 'array_findAndSplice';
+    method = 'arr_findAndSplice';
     const arr = ['123', 'array', 53, 'test', 'babel'];
     const expected = [ '123', 53, 'test', 'babel'];
-    const spliced = array_findAndSplice(arr, (item) =>
+    const spliced = arr_findAndSplice(arr, (item) =>
     {
       return item == 'array' ;
     });
@@ -189,26 +189,26 @@ function array_test()
     testResults_append(results, { category, expected, testResult:arr, desc, method });
   }
 
-  // test the array_compareEqual function. arrays are equal.
+  // test the arr_compareEqual function. arrays are equal.
   {
-    method = 'array_compareEqual';
+    method = 'arr_compareEqual';
     const aspect = 'arrays are equal';
     const arr1 = ['123', 'array', 53, {age:25, name:'abc'}, ['22', 89, 'jack'], 'test', 'babel'];
     const arr2 = ['123', 'array', 53, {age:25, name:'abc'}, ['22', 89, 'jack'], 'test', 'babel'];
     const expected = true;
-    const testResult = array_compareEqual( arr1, arr2 ) ;
+    const testResult = arr_compareEqual( arr1, arr2 ) ;
     const desc = 'compare arrays for equality';
     testResults_append(results, { category, expected, testResult, desc, method, aspect });
   }
 
-  // test the array_compareEqual function. arrays not equal.
+  // test the arr_compareEqual function. arrays not equal.
   {
-    method = 'array_compareEqual';
+    method = 'arr_compareEqual';
     const aspect = 'arrays not equal';
     const arr1 = ['123', 'array', 53, { age: 25, name: 'abc' }, ['22', 89, 'jack'], 'test', 'babel'];
     const arr2 = ['123', 'array', 53, { age: 27, name: 'abc' }, ['22', 89, 'jack'], 'test', 'babel'];
     const expected = false;
-    const testResult = array_compareEqual(arr1, arr2);
+    const testResult = arr_compareEqual(arr1, arr2);
     const desc = 'compare arrays for equality';
     testResults_append(results, { category, expected, testResult, desc, method, aspect });
   }
@@ -267,47 +267,47 @@ function regex_listFragments()
   // }
 }
 
-// ---------------------------------- object_test ----------------------------------
-function object_test()
+// ---------------------------------- obj_test ----------------------------------
+function obj_test()
 {
   const results = testResults_new();
   let method = '';
   const category = 'object';
 
-  // test the object_compareEqual function.
+  // test the obj_compareEqual function.
   {
-    method = 'object_compareEqual';
+    method = 'obj_compareEqual';
     const obj1 = { names: ['123', 'array'], age: 53, textLines:['test', 'babel']};
     const obj2 = { names: ['123', 'array'], age: 53, textLines:['test', 'babel']};
     const expected = true;
-    const testResult = object_compareEqual( obj1, obj2);
+    const testResult = obj_compareEqual( obj1, obj2);
     const desc = 'compare object equality';
     const aspect = 'objects match' ;
     testResults_append(results, { category, expected, testResult, desc, method, aspect });
   }
 
-  // test the object_compareEqual function.
+  // test the obj_compareEqual function.
   {
-    method = 'object_compareEqual';
+    method = 'obj_compareEqual';
     const obj1 = { names: ['123', 'array'], age: 53, textLines: ['test', 'babel'] };
     const obj2 = { names: ['123', 'array'], textLines: ['test', 'babel'] };
     const expected = false;
-    const testResult = object_compareEqual(obj1, obj2);
+    const testResult = obj_compareEqual(obj1, obj2);
     const desc = 'compare object equality';
     const aspect = 'objects do not match';
     testResults_append(results, { category, expected, testResult, desc, method, aspect });
   }
 
-  // object_apply.
+  // obj_apply.
   {
-    method = 'object_apply';
+    method = 'obj_apply';
     const obj1 = { names: ['123', 'array'], age: 53, textLines: ['test', 'babel'] };
     const obj2 = { addr1: 'one bank street', city:'rockaway' };
-    object_apply( obj1, obj2 ) ;
+    obj_apply( obj1, obj2 ) ;
     const expected_obj = { names: ['123', 'array'], age: 53, textLines: ['test', 'babel'],
                        addr1: 'one bank street', city: 'rockaway' };
     const expected = true ;
-    const testResult = object_compareEqual(obj1, expected_obj);
+    const testResult = obj_compareEqual(obj1, expected_obj);
     const desc = 'apply properties to object';
     testResults_append(results, { category, expected, testResult, desc, method });
   }
@@ -447,42 +447,42 @@ function path_test()
 }
 
 
-// ---------------------------------- stringWords_test ----------------------------------
-function stringWords_test()
+// ---------------------------------- strWords_test ----------------------------------
+function strWords_test()
 {
   const results = testResults_new();
 
-  // string_splitWords
+  // str_splitWords
   {
-    const method = 'string_splitWords';
-    const text = ` : call string_split( arg1, 25 )`;
-    const actual = string_splitWords(text).map((item) =>
+    const method = 'str_splitWords';
+    const text = ` : call str_split( arg1, 25 )`;
+    const actual = str_splitWords(text).map((item) =>
     {
       const { text, delim } = item;
       return { text, delim };
     });
     const expected = [{text:'', delim:':'},  { text: 'call', delim: '' }, 
-    { text: 'string_split', delim: '(' },
+    { text: 'str_split', delim: '(' },
     { text: 'arg1', delim: ',' }, { text: '25', delim: ')' }];
     testResults_append(results, { method, actual, expected });
   }
 
-  // stringWords_wordAtPosition
+  // strWords_wordAtPosition
   {
-    const method = 'stringWords_wordAtPosition' ;
-    const text = ` call string_split( arg1, 25 )`;
-    const words = string_splitWords(text) ;
-    const {found} = stringWords_wordAtPosition( words, 7 ) ;
-    const actual = object_properties( found, ['bx', 'text', 'delim'] );
-    const expected = { bx:6, text:'string_split', delim:'(' } ;
+    const method = 'strWords_wordAtPosition' ;
+    const text = ` call str_split( arg1, 25 )`;
+    const words = str_splitWords(text) ;
+    const {found} = strWords_wordAtPosition( words, 7 ) ;
+    const actual = obj_properties( found, ['bx', 'text', 'delim'] );
+    const expected = { bx:6, text:'str_split', delim:'(' } ;
     testResults_append(results, { method, actual, expected });
   }
 
-  // string_splitWhitespaceWords
+  // str_splitWhitespaceWords
   {
-    const method = 'string_splitWhitespaceWords';
+    const method = 'str_splitWhitespaceWords';
     const text = ` : call :steve_split( arg1, 25 )`;
-    const rv = string_splitWhitespaceWords(text);
+    const rv = str_splitWhitespaceWords(text);
     const actual = { numItems:rv.length, thirdWord: rv[2].text  };
     const expected = {numItems:6, thirdWord:':steve_split('};
     testResults_append(results, { method, actual, expected });
@@ -492,29 +492,29 @@ function stringWords_test()
 }
 
 
-// ---------------------------------- string_test ----------------------------------
-function string_test( )
+// ---------------------------------- str_test ----------------------------------
+function str_test( )
 {
   const results = testResults_new( ) ;
   let method = '' ;
 
-  // test the string_padLeft function.
+  // test the str_padLeft function.
   {
-    method = 'string_padLeft' ;
+    method = 'str_padLeft' ;
     const text = '123' ;
     const expected = '0000123' ;
-    const actual = string_padLeft(text, 7, '0') ;
+    const actual = str_padLeft(text, 7, '0') ;
     testResults_append(results, {method, expected, actual});
   }
 
-  // test the string_padRight function.
+  // test the str_padRight function.
   {
-    method = 'string_padRight';
+    method = 'str_padRight';
     let passText = '';
     let errmsg = '';
     const text = '123';
     const expected = '1230000';
-    const paddedText = string_padRight(text, 7, '0');
+    const paddedText = str_padRight(text, 7, '0');
     if (paddedText != expected)
       errmsg = `incorrect result. ${paddedText}. expected ${expected}`;
     else
@@ -524,21 +524,21 @@ function string_test( )
 
   // generate string of random characters. 
   {
-    method = 'string_random';
+    method = 'str_random';
     const expected = 8;
-    const text = string_random( 8 ) ;
+    const text = str_random( 8 ) ;
     const actual = text.length ;
     testResults_append(results, { method, expected, actual });
   }
 
   // enquote string. simple.
   {
-    method = 'string_enquote';
+    method = 'str_enquote';
     let passText = '';
     let errmsg = '';
     const text = 'srcFiles' ;
     const expected = '"srcFiles"';
-    const rv = string_enquote(text, '"');
+    const rv = str_enquote(text, '"');
     if ( rv == expected)
       passText = `correct result. ${rv}` ;
     else
@@ -548,12 +548,12 @@ function string_test( )
 
   // enquote string. string contains backslash characters, quote characters.
   {
-    method = 'string_enquote';
+    method = 'str_enquote';
     let passText = '';
     let errmsg = '';
     const text = 'src"Fi\\les';
     const expected = '"src\\\"Fi\\\\les"';
-    const rv = string_enquote(text, '"');
+    const rv = str_enquote(text, '"');
     if (rv == expected)
       passText = `correct result. ${rv}`;
     else
@@ -561,14 +561,14 @@ function string_test( )
     testResults_append(results, passText, errmsg, method);
   }
 
-  // string_assignSubstr
+  // str_assignSubstr
   {
-    method = 'string_assignSubstr';
+    method = 'str_assignSubstr';
     let passText = '';
     let errmsg = '';
     const text = 'src"Fi\\les';
     const expected = 'srcToshles';
-    const rv = string_assignSubstr(text, 3, 4, 'Tosh');
+    const rv = str_assignSubstr(text, 3, 4, 'Tosh');
     if (rv == expected)
       passText = `correct result. ${rv}`;
     else
@@ -576,20 +576,20 @@ function string_test( )
     testResults_append(results, passText, errmsg, method);
   }
 
-  // stringArr_toDistinctAndSorted
+  // strArr_toDistinctAndSorted
   {
-    method = 'stringArr_toDistinctAndSorted' ;
+    method = 'strArr_toDistinctAndSorted' ;
     const inputArr = ['Joe', 'Sue', 'Bob', 'Joe'];
-    const actual = stringArr_toDistinctAndSorted( inputArr ) ;
+    const actual = strArr_toDistinctAndSorted( inputArr ) ;
     const expected = ['Bob', 'Joe', 'Sue'];
     testResults_append( results, {method, actual, expected});
   }
 
-  // stringArr_toDistinct
+  // strArr_toDistinct
   {
-    method = 'stringArr_toDistinct';
+    method = 'strArr_toDistinct';
     const inputArr = ['Joe', 'acwww', 'Sue', 'Bob', 'acwww', 'Joe'];
-    const actual = stringArr_toDistinct(inputArr);
+    const actual = strArr_toDistinct(inputArr);
     const expected = ['Joe', 'acwww', 'Sue', 'Bob'];
     testResults_append(results, { method, actual, expected });
   }
@@ -967,7 +967,7 @@ function system_test()
   const results = testResults_new();
   let method = '';
 
-  // test the string_padLeft function.
+  // test the str_padLeft function.
   {
     method = 'system_downloadsFolder';
     let passText = '';

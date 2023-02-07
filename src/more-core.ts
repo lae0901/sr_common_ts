@@ -1,7 +1,7 @@
 
-// ------------------------------ array_range ----------------------------------
+// ------------------------------ arr_range ----------------------------------
 // return range of items where selectFunction returns true in some items.
-export function array_range(arr: any [], selectFunction : ( item:any) => boolean )
+export function arr_range(arr: any [], selectFunction : ( item:any) => boolean )
 {
   let from_index = -1;
   let to_index = -1;
@@ -31,9 +31,9 @@ export function array_range(arr: any [], selectFunction : ( item:any) => boolean
   return { from_index, to_index, count, from_item, to_item };
 }
 
-// ----------------------- string_indexOfUnescapedChar ------------------------
+// ----------------------- str_indexOfUnescapedChar ------------------------
 // find char in string that is not escaped ( preceded with escape char ) 
-export function string_indexOfUnescapedChar(
+export function str_indexOfUnescapedChar(
                       text : string, findChar : string, bx : number) : number
 {
   let ix = bx || 0;  // start of search.
@@ -64,11 +64,11 @@ export function string_indexOfUnescapedChar(
   return foundIx;
 }
 
-// ----------------------- string_unescape ------------------------
+// ----------------------- str_unescape ------------------------
 // remove all the backslash characters from the string. With the exception of when
 // the backslash is followed by another backslash. In that case, remove only the
 // first of the pair.
-export function string_unescape(text : string) : string
+export function str_unescape(text : string) : string
 {
   let ix = 0;
   let result = '';

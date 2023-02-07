@@ -43,7 +43,7 @@ function frag_apply_text(frag, text)
 function frag_apply_varvlu(frag, varvlu)
 {
   frag.varvlu = varvlu;
-  const unescaped_varvlu = string_unescape(varvlu);
+  const unescaped_varvlu = str_unescape(varvlu);
   frag.text = frag.textMask.replace('{{}}', frag.varvlu);
   if (frag.nameMask)
     frag.name = frag.nameMask.replace('{{}}', unescaped_varvlu);
@@ -213,7 +213,7 @@ function regexPattern_toFragments(pattern)
 
   // regex pattern is enclosed in forward slash. It is a regex literal. Remove the
   // enclosing slash and replace any escaped fwd slash with unescaped fwd slash.
-  if (string_isQuoted(pattern, '/'))
+  if (str_isQuoted(pattern, '/'))
   {
     const bx = 1;
     const lx = pattern.length - 2;
@@ -246,7 +246,7 @@ function regexPattern_toFragments(pattern)
           if (frag.tail.length > 1)
             fx = pattern.indexOf(frag.tail, bx);  // find the tail
           else
-            fx = string_indexOfUnescapedChar(pattern, frag.tail, bx);
+            fx = str_indexOfUnescapedChar(pattern, frag.tail, bx);
 
           if (fx >= 0)
           {
@@ -628,9 +628,9 @@ function regex_splitLastChar(text)
   return { part1, part2 };
 }
 
-// -------------------------- string_head ----------------------
+// -------------------------- str_head ----------------------
 // return the front of the string
-function string_head(text, lx)
+function str_head(text, lx)
 {
   if (!text)
     return '';
@@ -642,9 +642,9 @@ function string_head(text, lx)
     return text.substr(0, lx);
 }
 
-// ----------------------- string_indexOfUnescapedChar ------------------------
+// ----------------------- str_indexOfUnescapedChar ------------------------
 // find char in string that is not escaped ( preceded with escape char ) 
-function string_indexOfUnescapedChar(text, findChar, bx)
+function str_indexOfUnescapedChar(text, findChar, bx)
 {
   let ix = bx || 0;  // start of search.
   let foundIx = -1;  // find result. init to not found.
@@ -674,13 +674,13 @@ function string_indexOfUnescapedChar(text, findChar, bx)
   return foundIx;
 }
 
-// ------------------------------- string_isQuoted --------------------------------
-function string_isQuoted(text, quoteChar)
+// ------------------------------- str_isQuoted --------------------------------
+function str_isQuoted(text, quoteChar)
 {
   let isQuoted = false;
   if (text.length >= 2)
   {
-    const headChar = string_head(text, 1);
+    const headChar = str_head(text, 1);
 
     // continue with test.  checking if is specified quote char.
     if (!quoteChar || (headChar == quoteChar))
@@ -688,8 +688,8 @@ function string_isQuoted(text, quoteChar)
       if ((headChar == '"') || (headChar == "'") || (headChar == '`') ||
         (headChar == '/'))
       {
-        const tailCh1 = string_tail(text, 1);
-        const tailCh2 = string_tail(text, 2);
+        const tailCh1 = str_tail(text, 1);
+        const tailCh2 = str_tail(text, 2);
         if ((headChar == tailCh1) && (tailCh2.substr(0, 1) != '\\'))
           isQuoted = true;
       }
@@ -698,8 +698,8 @@ function string_isQuoted(text, quoteChar)
   return isQuoted;
 }
 
-// ----------------------string_tail ---------------------------------
-function string_tail(text, lx)
+// ----------------------str_tail ---------------------------------
+function str_tail(text, lx)
 {
   if (text.length <= lx)
     return text;
@@ -710,8 +710,8 @@ function string_tail(text, lx)
   }
 }
 
-// ------------------------- string_trim --------------------
-function string_trim(str)
+// ------------------------- str_trim --------------------
+function str_trim(str)
 {
   if (typeof str == 'number')
     str = str.toString();
@@ -760,11 +760,11 @@ function str_substrLenient(str, fx, lx = -1)
   return str.substr(fx, lx);
 }
 
-// ----------------------- string_unescape ------------------------
+// ----------------------- str_unescape ------------------------
 // remove all the backslash characters from the string. With the exception of when
 // the backslash is followed by another backslash. In that case, remove only the
 // first of the pair.
-function string_unescape(text)
+function str_unescape(text)
 {
   let ix = 0;
   let result = '';

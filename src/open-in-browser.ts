@@ -3,7 +3,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as marked from 'marked';
 import { dir_ensureExists, file_readAllText, file_readFile, file_writeNew, file_writeText } from 'sr_core_ts';
-import { string_random } from './core';
+import { str_random } from './core';
 
 
 // ---------------------------------- iReportInfo ----------------------------
@@ -27,7 +27,7 @@ export async function openTextLinesInBrowser( textStream: string,
   {
     reportInfo = {title:reportInfo};
   }
-  const reportFileName = reportInfo.filePath ? path.basename(reportInfo.filePath) : string_random(8) ;
+  const reportFileName = reportInfo.filePath ? path.basename(reportInfo.filePath) : str_random(8) ;
 
   // replace tabs with spaces.
   textStream = textStream.replace(/\t/g, '  ');
@@ -60,7 +60,7 @@ export async function openTextLinesInBrowser( textStream: string,
   }
   catch (err)
   {
-    errmsg = err.message ;
+    errmsg = ( err instanceof Error ) ? err.message : '' ;
   }
 
   return errmsg ;

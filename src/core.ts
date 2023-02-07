@@ -67,8 +67,8 @@ export function any_toString(val: any, skipProps?: string[])
   return text;
 }
 
-// --------------------------------- array_compareEqual -------------------------
-export function array_compareEqual<T>( arr1: T[], arr2: T[]) : boolean 
+// --------------------------------- arr_compareEqual -------------------------
+export function arr_compareEqual<T>( arr1: T[], arr2: T[]) : boolean 
 {
   let res = true ;
   let ix = 0 ;
@@ -96,11 +96,11 @@ export function array_compareEqual<T>( arr1: T[], arr2: T[]) : boolean
 
       if (Array.isArray(vlu1) && Array.isArray(vlu2))
       {
-        res = array_compareEqual(vlu1 as string[], vlu2 as string[]);
+        res = arr_compareEqual(vlu1 as string[], vlu2 as string[]);
       }
       else if (typeof vlu1 == 'object' && typeof vlu2 == 'object')
       {
-        res = object_compareEqual(vlu1, vlu2);
+        res = obj_compareEqual(vlu1, vlu2);
       }
       else
       {
@@ -114,9 +114,9 @@ export function array_compareEqual<T>( arr1: T[], arr2: T[]) : boolean
   return res ;
 }
 
-// -------------------------------- array_copyItems --------------------------------
+// -------------------------------- arr_copyItems --------------------------------
 // return array containing items copied from input array.
-export function array_copyItems<T>(arr: T[], from: number, count: number): T[]
+export function arr_copyItems<T>(arr: T[], from: number, count: number): T[]
 {
   const toItems: T[] = [];
   let ix = from;
@@ -130,11 +130,11 @@ export function array_copyItems<T>(arr: T[], from: number, count: number): T[]
   return toItems;
 }
 
-// ------------------------------- array_findAndSplice ----------------------------
+// ------------------------------- arr_findAndSplice ----------------------------
 // find index of item in array where func(item) == true. Then use splice to remove
 // that found item.
 // return true if item was found and removed.
-export function array_findAndSplice<T>(arr: T[],
+export function arr_findAndSplice<T>(arr: T[],
   predicate: (value: T, index: number, obj: T[]) => unknown) : boolean
 {
   const fx = arr.findIndex(predicate);
@@ -144,9 +144,9 @@ export function array_findAndSplice<T>(arr: T[],
   return (fx != -1);
 }
 
-// ------------------------- array_front -------------------------------------
+// ------------------------- arr_front -------------------------------------
 // return either null or the first item in the array.
-export function array_front<T>(arr: T[]): T | null
+export function arr_front<T>(arr: T[]): T | null
 {
   if (arr.length == 0)
     return null;
@@ -224,7 +224,7 @@ export async function dir_containsItem( dirPath: string, itemNameArr: string[] )
     {
       const found = items.find((item) =>
       {
-        const containsItem = stringArray_contains(itemNameArr, item);
+        const containsItem = strArr_contains(itemNameArr, item);
         return containsItem ;
       });
       if ( found )
@@ -428,7 +428,7 @@ export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) :
       {
         const filePath = path.join(dirPath, file) ;
         const { isDir } = await file_isDir(filePath) ;
-        if (( isDir ) && !stringArray_contains( options.ignoreDir, file))
+        if (( isDir ) && !strArr_contains( options.ignoreDir, file))
         {
           let continue_deep = true ;
           let sub_containsMaxDepth = containsMaxDepth;
@@ -964,14 +964,14 @@ export function lines_findFirst(lines: string[], findText: string, options?: { s
   return { linn, coln };
 }
 
-// --------------------------------- object_apply ---------------------------------
+// --------------------------------- obj_apply ---------------------------------
 // apply properties from the from object to the to object.
-// use object_apply in place of the spread operator when you do not want to create 
+// use obj_apply in place of the spread operator when you do not want to create 
 // a new resulting object. 
-// object_apply( obj1, {name:'xxx', numOrders:3})
+// obj_apply( obj1, {name:'xxx', numOrders:3})
 // is different from:
-// const res = object_apply( obj1, {name:'xxx', numOrders:3})
-export function object_apply(toObj: { [key: string]: any }, fromObj: { [key: string]: any }) :
+// const res = obj_apply( obj1, {name:'xxx', numOrders:3})
+export function obj_apply(toObj: { [key: string]: any }, fromObj: { [key: string]: any }) :
     {[key:string]: any}
 {
   for (const prop in fromObj)
@@ -981,13 +981,24 @@ export function object_apply(toObj: { [key: string]: any }, fromObj: { [key: str
   return toObj ;
 }
 
-// ------------------------------ object_compareEqual ------------------------------
+// ------------------------------ obj_compareEqual ------------------------------
 // property by property, deep compare of two objects. 
 // return is equal or not.
-export function object_compareEqual(
-        obj1: { [key: string]: any }, obj2: {[key: string]: any}) : boolean
+export function obj_compareEqual(
+        obj1: { [key: string]: any }, obj2: {[key: string]: any} | null ) : boolean
 {
   let isEqual = true ;
+
+  // first, compare based on the args being null.
+  if ( obj1 == null )
+  {
+    return ( obj2 == null) ? true : false ;
+  }
+  else if ( obj2 == null )
+  {
+    return false ;
+  }
+
   const keys1 = Object.keys(obj1) ;
   const keys2 = Object.keys(obj2) ;
 
@@ -1007,11 +1018,11 @@ export function object_compareEqual(
         isEqual = false ;
       else if ( Array.isArray(vlu1) && Array.isArray(vlu2) )
       {
-        isEqual = array_compareEqual(vlu1, vlu2) ;
+        isEqual = arr_compareEqual(vlu1, vlu2) ;
       }
       else if ( typeof vlu1 == 'object' && typeof vlu2 == 'object')
       {
-        isEqual = object_compareEqual(vlu1, vlu2) ;
+        isEqual = obj_compareEqual(vlu1, vlu2) ;
       }
       else
       {
@@ -1027,9 +1038,9 @@ export function object_compareEqual(
   return isEqual ;
 }
 
-// --------------------------- object_indexerItems ------------------------
+// --------------------------- obj_indexerItems ------------------------
 // return an array containing the indexer properties of the object.
-export function object_indexerItems(obj: {[key: string]: any}): any[]
+export function obj_indexerItems(obj: {[key: string]: any}): any[]
 {
   const indexer: {}[] = [];
   let str = '';
@@ -1048,7 +1059,7 @@ export function object_indexerItems(obj: {[key: string]: any}): any[]
   return indexer;
 }
 
-// --------------------------------- object_properties ----------------------------
+// --------------------------------- obj_properties ----------------------------
 /**
  * extract and return specified list of properties of object. If the input object 
  * does not contain the property, the property is still added to the return object,
@@ -1056,7 +1067,7 @@ export function object_indexerItems(obj: {[key: string]: any}): any[]
  * @param obj 
  * @param propNameArr 
  */
-export function object_properties( obj: {[key:string]:any } | undefined, propNameArr:string[] )
+export function obj_properties( obj: {[key:string]:any } | undefined, propNameArr:string[] )
 {
   const to_obj : {[key:string]:any} = {} ;
   for( const propName of propNameArr )
@@ -1066,8 +1077,8 @@ export function object_properties( obj: {[key:string]:any } | undefined, propNam
   return to_obj ;
 }
 
-// ------------------------- object_toQueryString ---------------------------------
-export function object_toQueryString( obj:{} )
+// ------------------------- obj_toQueryString ---------------------------------
+export function obj_toQueryString( obj:{} )
 {
   // redefine the input obj argument. Redefine as object where all the property 
   // names are strings. And the property values are of type any.
@@ -1517,10 +1528,10 @@ export function scan_unquotedPattern(text: string, bx: number, pattern: string)
   return { index:findBx, text:foundText };
 }
 
-// ------------------------------ string_assignSubstr ------------------------------
+// ------------------------------ str_assignSubstr ------------------------------
 // assign text to substring location within target string.  Returns new string that 
 // contains the assigned value.
-export function string_assignSubstr(str: string, 
+export function str_assignSubstr(str: string, 
           start: number, length: number, vlu: string): string
 {
   let before_text = '';
@@ -1549,8 +1560,8 @@ export function string_assignSubstr(str: string,
   return result;
 }
 
-// -------------------------------- string_contains -------------------------------
-export function string_contains(str: string, pattern: string): boolean
+// -------------------------------- str_contains -------------------------------
+export function str_contains(str: string, pattern: string): boolean
 {
   if (str.indexOf(pattern) >= 0)
     return true;
@@ -1558,12 +1569,12 @@ export function string_contains(str: string, pattern: string): boolean
     return false;
 }
 
-// ----------------------- string_dequote ------------------------
+// ----------------------- str_dequote ------------------------
 // note: the quote char can be any character. The rule is the first char is the
 //       quote char. Then the closing quote is that same first char. And the
 //       backslash is used to escape the quote char within the string.
-// Use string_isQuoted
-export function string_dequote(text: string): string
+// Use str_isQuoted
+export function str_dequote(text: string): string
 {
   let dequoteText = '';
   const quoteChar = text[0];
@@ -1592,9 +1603,9 @@ export function string_dequote(text: string): string
   return dequoteText;
 }
 
-// -------------------------------- string_enquote --------------------------------
+// -------------------------------- str_enquote --------------------------------
 // enclose the input string in quotes. 
-export function string_enquote( text:string, quoteChar:string ) :string
+export function str_enquote( text:string, quoteChar:string ) :string
 {
   quoteChar = quoteChar || '"';
 
@@ -1613,9 +1624,9 @@ export function string_enquote( text:string, quoteChar:string ) :string
   return quoteChar + text + quoteChar ;
 }
 
-// -------------------------- string_head ----------------------
+// -------------------------- str_head ----------------------
 // return the front of the string
-export function string_head(str: string, lx: number)
+export function str_head(str: string, lx: number)
 {
   if (!str)
     return '';
@@ -1627,21 +1638,21 @@ export function string_head(str: string, lx: number)
     return str.substring(0, 0 + lx);
 }
 
-// ------------------------------- string_isQuoted --------------------------------
-export function string_isQuoted(text : string, quoteChar? : string) : boolean
+// ------------------------------- str_isQuoted --------------------------------
+export function str_isQuoted(text : string, quoteChar? : string) : boolean
 {
   let isQuoted = false;
   if (text.length >= 2)
   {
-    const headChar = string_head(text, 1);
+    const headChar = str_head(text, 1);
 
     if ( !quoteChar || quoteChar == headChar )
     {
       if ((headChar == '"') || (headChar == "'") || (headChar == '`') ||
             (headChar == '/'))
       {
-        const tailCh1 = string_tail(text, 1);
-        const tailCh2 = string_tail(text, 2);
+        const tailCh1 = str_tail(text, 1);
+        const tailCh2 = str_tail(text, 2);
         if ((headChar == tailCh1) && (tailCh2.substring(0, 0 + 1) != '\\'))
           isQuoted = true;
       }
@@ -1650,11 +1661,11 @@ export function string_isQuoted(text : string, quoteChar? : string) : boolean
   return isQuoted;
 }
 
-// --------------------------------- string_matchGeneric --------------------------
-export function string_matchGeneric(str: string, pattern: string): boolean
+// --------------------------------- str_matchGeneric --------------------------
+export function str_matchGeneric(str: string, pattern: string): boolean
 {
   // remove final '*' from pattern.
-  const starChar = string_tail(pattern, 1);
+  const starChar = str_tail(pattern, 1);
   if (starChar != '*')
     return false;
 
@@ -1668,9 +1679,9 @@ export function string_matchGeneric(str: string, pattern: string): boolean
     return false;
 }
 
-// ----------------------- string_padLeft -----------------------
+// ----------------------- str_padLeft -----------------------
 // pad on the left until specified length.
-export function string_padLeft(inText:string, length:number, padChar:string)
+export function str_padLeft(inText:string, length:number, padChar:string)
 {
   padChar = padChar || ' ';
   let text = inText;
@@ -1681,9 +1692,9 @@ export function string_padLeft(inText:string, length:number, padChar:string)
   return text;
 }
 
-// ------------------------- string_padRight ----------------------------
+// ------------------------- str_padRight ----------------------------
 // pad on the right with pad character.
-export function string_padRight(inText:string, padLx:number, padChar:string)
+export function str_padRight(inText:string, padLx:number, padChar:string)
 {
   padChar = padChar || ' ';
   let text = inText;
@@ -1694,12 +1705,12 @@ export function string_padRight(inText:string, padLx:number, padChar:string)
   return text;
 }
 
-// --------------------------------- string_random ---------------------------------
+// --------------------------------- str_random ---------------------------------
 /**
  * generate a random string of characters. 
  * @param length number of random characters.
  */
-export function string_random( length:number )
+export function str_random( length:number )
 {
   let result = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -1713,9 +1724,9 @@ export function string_random( length:number )
   return result;
 }
 
-// -------------------- string_replaceAll -----------------------
+// -------------------- str_replaceAll -----------------------
 // replace all occurance of findText with replaceText
-export function string_replaceAll( str:string, findText:string, replaceText:string )
+export function str_replaceAll( str:string, findText:string, replaceText:string )
 {
   let res = '';
   let ix = 0;
@@ -1747,8 +1758,8 @@ export function string_replaceAll( str:string, findText:string, replaceText:stri
   return res;
 }
 
-// ------------------------- string_rtrim --------------------
-export function string_rtrim(str:string): string
+// ------------------------- str_rtrim --------------------
+export function str_rtrim(str:string): string
 {
   if (!str)
     return '';
@@ -1773,14 +1784,14 @@ export interface iStringWord
   delim?:string;
 }
 
-// ------------------------------- string_splitWords -------------------------------
+// ------------------------------- str_splitWords -------------------------------
 /**
  * split string into array of words. Each word consisting of position in the string,
  * value of the word, and the text of delim that follows the word.
  * @param str String to split into words.
  * @returns array of words. Each word being an object that implements the iStringWord interface.
  */
-export function string_splitWords(str: string)
+export function str_splitWords(str: string)
 {
   const words: iStringWord[] = [] ;
   const regex = /(\s*)(\w+)?(\s*)(\W?)/g;
@@ -1819,12 +1830,12 @@ export function string_splitWords(str: string)
   return words ;
 }
 
-// ------------------------ string_splitWhitespaceWords --------------------
+// ------------------------ str_splitWhitespaceWords --------------------
 /**
  * split words on whitespace only. no delimeters. 
  * @param str 
  */
-export function string_splitWhitespaceWords(str: string)
+export function str_splitWhitespaceWords(str: string)
 {
   const words: iStringWord[] = [];
   const regex = /(\s*)(\S+)/g;
@@ -1859,9 +1870,9 @@ export function string_splitWhitespaceWords(str: string)
   return words;
 }
 
-// -------------------------------- string_startsWith -------------------------
+// -------------------------------- str_startsWith -------------------------
 // test that the starting text of text matches startText.
-export function string_startsWith(text: string, startText: string | string[] ): boolean
+export function str_startsWith(text: string, startText: string | string[] ): boolean
 {
   if (!startText)
     return false;
@@ -1869,7 +1880,7 @@ export function string_startsWith(text: string, startText: string | string[] ): 
   {
     for( const startTextItem of startText )
     {
-      const rc = string_startsWith(text, startTextItem) ;
+      const rc = str_startsWith(text, startTextItem) ;
       if ( rc )
         return true ;
     }
@@ -1923,9 +1934,9 @@ export function str_substrLenient(str: string, fx: number, lx: number = -1): str
   return str.substring(fx, fx + lx);
 }
 
-// ----------------------string_tail ---------------------------------
+// ----------------------str_tail ---------------------------------
 // return num number of characters from end of string.
-export function string_tail(str: string, num: number): string
+export function str_tail(str: string, num: number): string
 {
   if (str.length <= num)
     return str;
@@ -1936,9 +1947,9 @@ export function string_tail(str: string, num: number): string
   }
 }
 
-// ------------------------ string_wordBx ---------------------------
+// ------------------------ str_wordBx ---------------------------
 // return bx of word in text that has a char located at position ix.
-export function string_wordBx(text: string, word: string, ix: number)
+export function str_wordBx(text: string, word: string, ix: number)
   : number
 {
   let bx = -1;
@@ -1960,9 +1971,9 @@ export function string_wordBx(text: string, word: string, ix: number)
   return bx;
 }
 
-// ----------------------------- stringArray_contains -----------------------------
+// ----------------------------- strArr_contains -----------------------------
 // check if the array of strings contains the specified string.
-export function stringArray_contains(arr: string[] | undefined, text: string): boolean
+export function strArr_contains(arr: string[] | undefined, text: string): boolean
 {
   let contains = false;
   if (!arr)
@@ -1979,13 +1990,13 @@ export function stringArray_contains(arr: string[] | undefined, text: string): b
   return contains;
 }
 
-// ------------------------- stringArr_toDistinct -------------------------
+// ------------------------- strArr_toDistinct -------------------------
 /**
  * use Map object to convert input array of strings into distinct list of
  * string items.
  * @param arr input array of string
  */
-export function stringArr_toDistinct(arr: string[])
+export function strArr_toDistinct(arr: string[])
 {
   const map = new Map<string,string>( ) ;
   for( const item of arr )
@@ -1997,13 +2008,13 @@ export function stringArr_toDistinct(arr: string[])
   return distinctArr ;
 }
 
-// ------------------------- stringArr_toDistinctAndSorted -------------------------
+// ------------------------- strArr_toDistinctAndSorted -------------------------
 /**
  * use Map object to convert input array of strings into distinct and sorted list of
  * string items.
  * @param arr input array of string
  */
-export function stringArr_toDistinctAndSorted(arr: string[])
+export function strArr_toDistinctAndSorted(arr: string[])
 {
   const mappedArr = arr.reduce((rio, item) =>
   {
@@ -2023,18 +2034,18 @@ export function stringArr_toDistinctAndSorted(arr: string[])
   });
 }
 
-// -------------------------- stringWords_wordAtPosition --------------------------
+// -------------------------- strWords_wordAtPosition --------------------------
 /**
- * search array of words returned by `string_splitWords` function for the word 
+ * search array of words returned by `str_splitWords` function for the word 
  * located at the specified position. 
- * @param wordsArr array of words. This array returned by string_splitWords 
+ * @param wordsArr array of words. This array returned by str_splitWords 
  * function.
  * @param pos Position in the string. Search for the word located at this specified 
  * position.
  * @returns object containing found word, prev word, next word and index of the 
  * word in the array of words.
  */
-export function stringWords_wordAtPosition(wordsArr: iStringWord[], pos: number)
+export function strWords_wordAtPosition(wordsArr: iStringWord[], pos: number)
 {
   let found: iStringWord | undefined;
   let prev: iStringWord | undefined;

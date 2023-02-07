@@ -1,24 +1,24 @@
 # common typescript modules
 * rxp - regular expression constants
-* core.ts - contains series of string_ and scan_ functions.
+* core.ts - contains series of str_ and scan_ functions.
 
 ## usage
 ```
-import { dir_mkdir, string_tail, string_contains } from 'sr_core_ts';
+import { dir_mkdir, str_tail, str_contains } from 'sr_core_ts';
 
 ```
 
 ## array methods
-* array_compareEqual<T>( arr1, arr2 )
-* toarr = array_copyItems( arr, start, length )
-* array_findAndSplice( arr, predicate )
-* array_front<T>( arr: T[] ) : T | null
-* boolean = stringArray_contains( arr, text )
+* arr_compareEqual<T>( arr1, arr2 )
+* toarr = arr_copyItems( arr, start, length )
+* arr_findAndSplice( arr, predicate )
+* arr_front<T>( arr: T[] ) : T | null
+* boolean = strArr_contains( arr, text )
 
 ## object methods
 * any_toString( val )
-* object_apply( obj1, obj2 )
-* const isEqual = object_compareEqual( obj1, obj2 )
+* obj_apply( obj1, obj2 )
+* const isEqual = obj_compareEqual( obj1, obj2 )
 
 ## directory methods
 * {isDir, errmsg} = file_isDir(path)
@@ -67,34 +67,34 @@ const { index, text } = scan_unquotedPattern( scanText, 0, '<\\s*div\\s*>');
 
 ## string methods
 * {found_char, found_index } = scan_charEqAny(text,start,pattern)
-* string_assignSubstr( str, start, length, vlu ) : string
-* string_dequote( str )
-* text = string_enquote( str, quoteChar )
-* string_head( str, lx)
-* string_isQuoted( str )
-* string_matchGeneric( str: string, pattern: string ) : boolean
-* randomText = string_random( length ) 
-* text = string_padLeft(text, length, pad) ;
-* text = string_padRight(text, length, pad) ;
-* string_replaceAll( str, find, replace)
-* string_startsWith( str, text | string[])
+* str_assignSubstr( str, start, length, vlu ) : string
+* str_dequote( str )
+* text = str_enquote( str, quoteChar )
+* str_head( str, lx)
+* str_isQuoted( str )
+* str_matchGeneric( str: string, pattern: string ) : boolean
+* randomText = str_random( length ) 
+* text = str_padLeft(text, length, pad) ;
+* text = str_padRight(text, length, pad) ;
+* str_replaceAll( str, find, replace)
+* str_startsWith( str, text | string[])
 * str_substrLenient( str, bx, lx )
-* distinctArr = stringArr_toDistinct( arr )
-* distinctArr = stringArr_toDistinctAndSorted( arr )
+* distinctArr = strArr_toDistinct( arr )
+* distinctArr = strArr_toDistinctAndSorted( arr )
 
 ## string words methods
 
-`words = string_splitWords( str )`
+`words = str_splitWords( str )`
 
 Split string into array of words. Each word stores the text of the word, the delimeter, start position, whether there is whitespace before or after the word.  Each word object implements the `iStringWord` interface.
 
-`words = string_splitWhitespaceWords( str )`
+`words = str_splitWhitespaceWords( str )`
 
 Split string into array of words, where the words are split on whitespace only.
 
-`word = stringWords_wordAtPosition( words, pos )`
+`word = strWords_wordAtPosition( words, pos )`
 
-Using the input array of `iStringWord` words returned by `string_splitWords`, return the word that is found at the specified position.
+Using the input array of `iStringWord` words returned by `str_splitWords`, return the word that is found at the specified position.
 
 ## date methods
 * epoch = date_toEpoch( Date )
