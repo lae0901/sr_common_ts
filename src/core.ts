@@ -985,7 +985,8 @@ export function obj_apply(toObj: { [key: string]: any }, fromObj: { [key: string
 // property by property, deep compare of two objects. 
 // return is equal or not.
 export function obj_compareEqual(
-        obj1: { [key: string]: any }, obj2: {[key: string]: any} | null ) : boolean
+        obj1: {[key: string]: any} | null, 
+        obj2: {[key: string]: any} | null ) : boolean
 {
   let isEqual = true ;
 
