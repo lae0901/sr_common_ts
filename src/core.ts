@@ -1,15 +1,15 @@
 // sr_core_ts/src/core.ts
 
-import * as fs from 'fs';
-import * as path from 'path';
+// import * as fs from 'fs';
+// import * as path from 'path';
 import { rxp, regex_exec } from './regex_core' ;
 import { regexPattern_toFragments } from './regex-frag' ;
-import { system_downloadsFolder } from './system-downloads';
-import { openTextLinesInBrowser } from './open-in-browser';
+// import { system_downloadsFolder } from './system-downloads';
+// import { openTextLinesInBrowser } from './open-in-browser';
 
 export {rxp, regex_exec, regexPattern_toFragments } ;
-export { system_downloadsFolder};
-export { openTextLinesInBrowser } ;
+// export { system_downloadsFolder};
+// export { openTextLinesInBrowser } ;
 
 // --------------------------------- any_toString ---------------------------------
 // value to string. Objects have values of their properties printed. 
@@ -209,731 +209,731 @@ export function date_toISO( d: Date)
     + pad(d.getDate());
 }
 
-// ------------------------------- dir_containsItem -------------------------------
-/**
- * check if the directory contains an item, that is, file or directory.
- * @param dirPath path of directory to check.
- * @param itemNameArr array of item names to check that the directory contains.
- */
-export async function dir_containsItem( dirPath: string, itemNameArr: string[] ) : Promise<boolean>
-{
-  const promise = new Promise<boolean>((resolve, reject) =>
-  {
-    let contains = false ;
-    fs.readdir(dirPath, (err, items) =>
-    {
-      const found = items.find((item) =>
-      {
-        const containsItem = strArr_contains(itemNameArr, item);
-        return containsItem ;
-      });
-      if ( found )
-        contains = true ;
-      resolve( contains ) ;
-    });
-  });
-  return promise;
-}
+// // ------------------------------- dir_containsItem -------------------------------
+// /**
+//  * check if the directory contains an item, that is, file or directory.
+//  * @param dirPath path of directory to check.
+//  * @param itemNameArr array of item names to check that the directory contains.
+//  */
+// export async function dir_containsItem( dirPath: string, itemNameArr: string[] ) : Promise<boolean>
+// {
+//   const promise = new Promise<boolean>((resolve, reject) =>
+//   {
+//     let contains = false ;
+//     fs.readdir(dirPath, (err, items) =>
+//     {
+//       const found = items.find((item) =>
+//       {
+//         const containsItem = strArr_contains(itemNameArr, item);
+//         return containsItem ;
+//       });
+//       if ( found )
+//         contains = true ;
+//       resolve( contains ) ;
+//     });
+//   });
+//   return promise;
+// }
 
-// ------------------------------ dir_findFirstText -----------------------------
-export async function dir_findFirstText(dirPath: string, findText: string)
-  : Promise<{ foundFilePath: string, foundLinn: number }>
-{
-  const promise = new Promise<{ foundFilePath: string, foundLinn: number }>((resolve, reject) =>
-  {
-    fs.readdir(dirPath, async (err, items) =>
-    {
-      let foundFilePath = '';
-      let foundLinn = 0;
-      for (const item of items)
-      {
-        const itemPath = path.join(dirPath, item);
-        const {isDir}  = await file_isDir(itemPath);
-        if (isDir)
-        {
-          const rv = await dir_findFirstText(itemPath, findText);
+// // ------------------------------ dir_findFirstText -----------------------------
+// export async function dir_findFirstText(dirPath: string, findText: string)
+//   : Promise<{ foundFilePath: string, foundLinn: number }>
+// {
+//   const promise = new Promise<{ foundFilePath: string, foundLinn: number }>((resolve, reject) =>
+//   {
+//     fs.readdir(dirPath, async (err, items) =>
+//     {
+//       let foundFilePath = '';
+//       let foundLinn = 0;
+//       for (const item of items)
+//       {
+//         const itemPath = path.join(dirPath, item);
+//         const {isDir}  = await file_isDir(itemPath);
+//         if (isDir)
+//         {
+//           const rv = await dir_findFirstText(itemPath, findText);
 
-          // a file was found in the sub folder.
-          if (rv.foundFilePath)
-          {
-            foundFilePath = rv.foundFilePath;
-            foundLinn = rv.foundLinn;
-            break;
-          }
-        }
-        else
-        {
-          const rv = await file_findFirstText(itemPath, findText);
-          if (rv.foundLinn >= 0)
-          {
-            foundFilePath = itemPath;
-            foundLinn = rv.foundLinn;
-            break;
-          }
-        }
-      }
-      resolve({ foundFilePath, foundLinn });
-    });
-  });
-  return promise;
-}
+//           // a file was found in the sub folder.
+//           if (rv.foundFilePath)
+//           {
+//             foundFilePath = rv.foundFilePath;
+//             foundLinn = rv.foundLinn;
+//             break;
+//           }
+//         }
+//         else
+//         {
+//           const rv = await file_findFirstText(itemPath, findText);
+//           if (rv.foundLinn >= 0)
+//           {
+//             foundFilePath = itemPath;
+//             foundLinn = rv.foundLinn;
+//             break;
+//           }
+//         }
+//       }
+//       resolve({ foundFilePath, foundLinn });
+//     });
+//   });
+//   return promise;
+// }
 
-// --------------------------------- dir_firstFile ---------------------------------
-export async function dir_firstFile( dirPath:string, matchPattern: RegExp )
-{
-  let firstFile = '' ;
-  const { files, errmsg } = await dir_readdir( dirPath ) ;
-  if ( files )
-  {
-    for( const fileName of files )
-    {
-      if ( matchPattern.test(fileName))
-      {
-        firstFile = fileName ;
-        break ;
-      }
-    }
-  }
-  return firstFile ;
-}
+// // --------------------------------- dir_firstFile ---------------------------------
+// export async function dir_firstFile( dirPath:string, matchPattern: RegExp )
+// {
+//   let firstFile = '' ;
+//   const { files, errmsg } = await dir_readdir( dirPath ) ;
+//   if ( files )
+//   {
+//     for( const fileName of files )
+//     {
+//       if ( matchPattern.test(fileName))
+//       {
+//         firstFile = fileName ;
+//         break ;
+//       }
+//     }
+//   }
+//   return firstFile ;
+// }
 
-// ------------------------------- dir_ensureExists -----------------------------
-export function dir_ensureExists( dirPath: string) : Promise<{ created:boolean, errmsg:string}>
-{
-  const promise = new Promise<{created:boolean, errmsg:string}>(async (resolve, reject) =>
-  {
-    let created = false ;
-    let errmsg = '' ;
+// // ------------------------------- dir_ensureExists -----------------------------
+// export function dir_ensureExists( dirPath: string) : Promise<{ created:boolean, errmsg:string}>
+// {
+//   const promise = new Promise<{created:boolean, errmsg:string}>(async (resolve, reject) =>
+//   {
+//     let created = false ;
+//     let errmsg = '' ;
 
-    const { isDir } = await file_isDir(dirPath) ;
-    if ( isDir )
-    {
-    }
-    else
-    {
-      const {errmsg:errmsg2, exists} = await dir_mkdir(dirPath) ;
-      errmsg = errmsg2 ;
-      if ( !errmsg && !exists )
-        created = true ;
-    }
+//     const { isDir } = await file_isDir(dirPath) ;
+//     if ( isDir )
+//     {
+//     }
+//     else
+//     {
+//       const {errmsg:errmsg2, exists} = await dir_mkdir(dirPath) ;
+//       errmsg = errmsg2 ;
+//       if ( !errmsg && !exists )
+//         created = true ;
+//     }
 
-    resolve({ created, errmsg });
-  });
-  return promise;
-}
+//     resolve({ created, errmsg });
+//   });
+//   return promise;
+// }
 
-// ----------------------------------- dir_mkdir ------------------------------
-// create directory. return { exists, errmsg }
-export function dir_mkdir(dirPath: string): Promise<{exists:boolean,errmsg:string}>
-{
-  const promise = new Promise<{exists:boolean, errmsg:string}>(async (resolve, reject) =>
-  {
-    let errmsg = '', exists = false ;
-    fs.mkdir(dirPath, (err) =>
-    {
-      if (err)
-      {
-        if ( err.code == 'EEXIST')
-          exists = true ;
-        else
-          errmsg = err.message ;
-      }
-      resolve({exists, errmsg});
-    });
-  });
-  return promise;
-}
+// // ----------------------------------- dir_mkdir ------------------------------
+// // create directory. return { exists, errmsg }
+// export function dir_mkdir(dirPath: string): Promise<{exists:boolean,errmsg:string}>
+// {
+//   const promise = new Promise<{exists:boolean, errmsg:string}>(async (resolve, reject) =>
+//   {
+//     let errmsg = '', exists = false ;
+//     fs.mkdir(dirPath, (err) =>
+//     {
+//       if (err)
+//       {
+//         if ( err.code == 'EEXIST')
+//           exists = true ;
+//         else
+//           errmsg = err.message ;
+//       }
+//       resolve({exists, errmsg});
+//     });
+//   });
+//   return promise;
+// }
 
-// ----------------------------------- dir_rmdir ------------------------------
-// remove directory. use recursive option to also remove contents.
-export function dir_rmdir(dirPath: string, options?:{recursive?:boolean}): Promise<{ errmsg: string }>
-{
-  options = options || {} ;
-  const recursive = options.recursive || false;
-  const promise = new Promise<{ errmsg: string }>(async (resolve, reject) =>
-  {
-    let errmsg = '';
+// // ----------------------------------- dir_rmdir ------------------------------
+// // remove directory. use recursive option to also remove contents.
+// export function dir_rmdir(dirPath: string, options?:{recursive?:boolean}): Promise<{ errmsg: string }>
+// {
+//   options = options || {} ;
+//   const recursive = options.recursive || false;
+//   const promise = new Promise<{ errmsg: string }>(async (resolve, reject) =>
+//   {
+//     let errmsg = '';
 
-    fs.rmdir(dirPath, {recursive}, (err) =>
-    {
-      if (err)
-      {
-        errmsg = err.message;
-      }
-      resolve({ errmsg });
-    });
-  });
-  return promise;
-}
+//     fs.rmdir(dirPath, {recursive}, (err) =>
+//     {
+//       if (err)
+//       {
+//         errmsg = err.message;
+//       }
+//       resolve({ errmsg });
+//     });
+//   });
+//   return promise;
+// }
 
-// -------------------------------- iDirDeepOptions -------------------------------
-export interface iDirDeepOptions
-{
-  ignoreDir?: string[];
-  containsItem?: string[];
-  includeRoot?: boolean;
+// // -------------------------------- iDirDeepOptions -------------------------------
+// export interface iDirDeepOptions
+// {
+//   ignoreDir?: string[];
+//   containsItem?: string[];
+//   includeRoot?: boolean;
 
-  // containsHaltDeep: true false. When folder found that contains file, do not 
-  // continue looking in sub folders of that folder for more folders that also 
-  // contain the file.
-  containsHaltDeep?: boolean;
+//   // containsHaltDeep: true false. When folder found that contains file, do not 
+//   // continue looking in sub folders of that folder for more folders that also 
+//   // contain the file.
+//   containsHaltDeep?: boolean;
 
-  // how deep to folder tree to search for initial folder that contains file.
-  containsMaxDepth?: number;
-}
+//   // how deep to folder tree to search for initial folder that contains file.
+//   containsMaxDepth?: number;
+// }
 
-// -------------------------------- dir_readDirDeep --------------------------------
-// return deep list of directories contained within dirPath.
-// each directory returned is the full path of the directory.
-// use the ignoreDir parameter to ignore directories by their file name.
-// includeRoot: include this root directory in the returned list of directories.
-//              ( only if root directory passes include tests, like contains file. )
-export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : 
-          Promise<string[]>
-{
-  options = options || {} ;
-  const containsHaltDeep = options.containsHaltDeep || false ;
-  let containsMaxDepth = options.containsMaxDepth ;
-  let doContinue = true ;
+// // -------------------------------- dir_readDirDeep --------------------------------
+// // return deep list of directories contained within dirPath.
+// // each directory returned is the full path of the directory.
+// // use the ignoreDir parameter to ignore directories by their file name.
+// // includeRoot: include this root directory in the returned list of directories.
+// //              ( only if root directory passes include tests, like contains file. )
+// export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : 
+//           Promise<string[]>
+// {
+//   options = options || {} ;
+//   const containsHaltDeep = options.containsHaltDeep || false ;
+//   let containsMaxDepth = options.containsMaxDepth ;
+//   let doContinue = true ;
 
-  const promise = new Promise<string[]>(async (resolve, reject) =>
-  {
-    const {files, errmsg} = await dir_readdir(dirPath) ;
-    let foundDirs : string[] = [] ;
+//   const promise = new Promise<string[]>(async (resolve, reject) =>
+//   {
+//     const {files, errmsg} = await dir_readdir(dirPath) ;
+//     let foundDirs : string[] = [] ;
 
-    // include this root dir in list of result directories.
-    if ( options.includeRoot )
-    {
-      // check if the directory contains a specified file.
-      let skip = false;
-      if (options.containsItem)
-      {
-        const does_contain_file = await dir_containsItem( dirPath, options.containsItem);
-        if (does_contain_file == false)
-          skip = true;
-        else 
-        {
-          containsMaxDepth = undefined ;
-          if ( containsHaltDeep )
-            doContinue = false ;
-        }
-      }
-      if (!skip)
-        foundDirs.push(dirPath) ;
-    }
+//     // include this root dir in list of result directories.
+//     if ( options.includeRoot )
+//     {
+//       // check if the directory contains a specified file.
+//       let skip = false;
+//       if (options.containsItem)
+//       {
+//         const does_contain_file = await dir_containsItem( dirPath, options.containsItem);
+//         if (does_contain_file == false)
+//           skip = true;
+//         else 
+//         {
+//           containsMaxDepth = undefined ;
+//           if ( containsHaltDeep )
+//             doContinue = false ;
+//         }
+//       }
+//       if (!skip)
+//         foundDirs.push(dirPath) ;
+//     }
 
-    if ( doContinue )
-    {
-      for( const file of files)
-      {
-        const filePath = path.join(dirPath, file) ;
-        const { isDir } = await file_isDir(filePath) ;
-        if (( isDir ) && !strArr_contains( options.ignoreDir, file))
-        {
-          let continue_deep = true ;
-          let sub_containsMaxDepth = containsMaxDepth;
+//     if ( doContinue )
+//     {
+//       for( const file of files)
+//       {
+//         const filePath = path.join(dirPath, file) ;
+//         const { isDir } = await file_isDir(filePath) ;
+//         if (( isDir ) && !strArr_contains( options.ignoreDir, file))
+//         {
+//           let continue_deep = true ;
+//           let sub_containsMaxDepth = containsMaxDepth;
 
-          // check if the directory contains a specified file.
-          let does_contain_file = false ;
-          let doPush = true ;
-          if ( options.containsItem )
-          {
-            does_contain_file = await dir_containsItem(filePath, options.containsItem ) ;
-            if ( does_contain_file == false )
-              doPush = false ;
-            if ( does_contain_file && containsHaltDeep )
-              continue_deep = false ;
-          }
+//           // check if the directory contains a specified file.
+//           let does_contain_file = false ;
+//           let doPush = true ;
+//           if ( options.containsItem )
+//           {
+//             does_contain_file = await dir_containsItem(filePath, options.containsItem ) ;
+//             if ( does_contain_file == false )
+//               doPush = false ;
+//             if ( does_contain_file && containsHaltDeep )
+//               continue_deep = false ;
+//           }
 
-          // add to list of found directories.
-          if ( doPush )
-          {
-            foundDirs.push(filePath) ;
-          }
+//           // add to list of found directories.
+//           if ( doPush )
+//           {
+//             foundDirs.push(filePath) ;
+//           }
 
-          // do not continue deep if this folder does not match contain rule and
-          // conainsMaxDepth has been reached.
-          if ( continue_deep && sub_containsMaxDepth != undefined )
-          {
-            if ( does_contain_file )  // once folder contains file, containsMaxDepth no longer applies.
-              sub_containsMaxDepth = undefined;
-            else if ( sub_containsMaxDepth <= 1 )
-              continue_deep = false ;
-          }
+//           // do not continue deep if this folder does not match contain rule and
+//           // conainsMaxDepth has been reached.
+//           if ( continue_deep && sub_containsMaxDepth != undefined )
+//           {
+//             if ( does_contain_file )  // once folder contains file, containsMaxDepth no longer applies.
+//               sub_containsMaxDepth = undefined;
+//             else if ( sub_containsMaxDepth <= 1 )
+//               continue_deep = false ;
+//           }
 
-          // search for deep directories in this sub directory.
-          if ( continue_deep )
-          {
-            if ( sub_containsMaxDepth )
-              sub_containsMaxDepth -= 1 ;
-            const subOptions = { ...options, includeRoot: false, 
-                                  containsMaxDepth: sub_containsMaxDepth };
-            const subFoundDirs = await dir_readDirDeep(filePath, subOptions);
-            foundDirs.push(...subFoundDirs);
-          }
-        }
-      }
-    }
-    resolve(foundDirs) ;
-  }) ;
-  return promise;
-}
+//           // search for deep directories in this sub directory.
+//           if ( continue_deep )
+//           {
+//             if ( sub_containsMaxDepth )
+//               sub_containsMaxDepth -= 1 ;
+//             const subOptions = { ...options, includeRoot: false, 
+//                                   containsMaxDepth: sub_containsMaxDepth };
+//             const subFoundDirs = await dir_readDirDeep(filePath, subOptions);
+//             foundDirs.push(...subFoundDirs);
+//           }
+//         }
+//       }
+//     }
+//     resolve(foundDirs) ;
+//   }) ;
+//   return promise;
+// }
 
-// --------------------------- dir_readdir ----------------------
-// return results of fs.readdir as a promise.
-export function dir_readdir(dirPath: string): Promise<{files:string[],errmsg:string}>
-{
-  const promise = new Promise<{files:string[],errmsg:string}>(async (resolve, reject) =>
-  {
-    fs.readdir(dirPath, (err, files) =>
-    {
-      if (files)
-      {
-        resolve({files,errmsg:''});
-      }
-      else
-      {
-        const errmsg = err ? err.message : '' ;
-        resolve({ files:[], errmsg });
-      }
-    });
-  });
-  return promise;
-}
+// // --------------------------- dir_readdir ----------------------
+// // return results of fs.readdir as a promise.
+// export function dir_readdir(dirPath: string): Promise<{files:string[],errmsg:string}>
+// {
+//   const promise = new Promise<{files:string[],errmsg:string}>(async (resolve, reject) =>
+//   {
+//     fs.readdir(dirPath, (err, files) =>
+//     {
+//       if (files)
+//       {
+//         resolve({files,errmsg:''});
+//       }
+//       else
+//       {
+//         const errmsg = err ? err.message : '' ;
+//         resolve({ files:[], errmsg });
+//       }
+//     });
+//   });
+//   return promise;
+// }
 
-// ----------------------------------- file_copy -----------------------------------
-/**
- * Copy file.
- * @param from path of file to copy
- * @param to path of destination file
- */
-export function file_copy( from:string, to:string ) : Promise<string>
-{
-  const promise = new Promise<string>((resolve, reject ) =>
-  {
-    fs.copyFile(from, to, (err) =>
-    {
-      const errmsg = err ? err.message : '' ;
-      resolve(errmsg) ;
-    });
-  });
-  return promise ;
-}
+// // ----------------------------------- file_copy -----------------------------------
+// /**
+//  * Copy file.
+//  * @param from path of file to copy
+//  * @param to path of destination file
+//  */
+// export function file_copy( from:string, to:string ) : Promise<string>
+// {
+//   const promise = new Promise<string>((resolve, reject ) =>
+//   {
+//     fs.copyFile(from, to, (err) =>
+//     {
+//       const errmsg = err ? err.message : '' ;
+//       resolve(errmsg) ;
+//     });
+//   });
+//   return promise ;
+// }
 
-// ---------------------------- file_create -----------------------------
-export async function file_create(path: string) : Promise<string>
-{
-  const promise = new Promise<string>((resolve, reject) =>
-  {
-    let errmsg = '' ;
-    fs.open(path, 'w', function (err, fd)
-    {
-      if (err)
-      {
-        errmsg = err.message ;
-        resolve(errmsg) ;
-      }
+// // ---------------------------- file_create -----------------------------
+// export async function file_create(path: string) : Promise<string>
+// {
+//   const promise = new Promise<string>((resolve, reject) =>
+//   {
+//     let errmsg = '' ;
+//     fs.open(path, 'w', function (err, fd)
+//     {
+//       if (err)
+//       {
+//         errmsg = err.message ;
+//         resolve(errmsg) ;
+//       }
 
-      fs.close(fd, () =>
-      {
-        resolve(errmsg);
-      });
-    });
-  });
-  return promise;
-}
+//       fs.close(fd, () =>
+//       {
+//         resolve(errmsg);
+//       });
+//     });
+//   });
+//   return promise;
+// }
 
-// ------------------------------ file_ensureExists ------------------------
-export async function file_ensureExists(path: string)
-{
-  let fileCreated = false;
-  const exists = await file_exists(path);
-  if (exists == false)
-  {
-    await file_create(path);
-    fileCreated = true;
-  }
-  return { fileCreated };
-}
+// // ------------------------------ file_ensureExists ------------------------
+// export async function file_ensureExists(path: string)
+// {
+//   let fileCreated = false;
+//   const exists = await file_exists(path);
+//   if (exists == false)
+//   {
+//     await file_create(path);
+//     fileCreated = true;
+//   }
+//   return { fileCreated };
+// }
 
-// -------------------------- file_exists ------------------------------
-export async function file_exists(path: string): Promise<boolean>
-{
-  const promise = new Promise<boolean>((resolve, reject) =>
-  {
-    fs.stat(path, (err, stat) =>
-    {
-      if (err == null)
-      {
-        resolve(true);
-      }
-      else
-      {
-        resolve(false);
-      }
-    });
-  });
-  return promise;
-}
+// // -------------------------- file_exists ------------------------------
+// export async function file_exists(path: string): Promise<boolean>
+// {
+//   const promise = new Promise<boolean>((resolve, reject) =>
+//   {
+//     fs.stat(path, (err, stat) =>
+//     {
+//       if (err == null)
+//       {
+//         resolve(true);
+//       }
+//       else
+//       {
+//         resolve(false);
+//       }
+//     });
+//   });
+//   return promise;
+// }
 
-// ------------------------------- file_findFirstText ----------------------------
-// find first instance of text in file.
-export function file_findFirstText(filePath: string, findText: string)
-  : Promise<{ foundLinn: number, foundPos: number }>
-{
-  const promise = new Promise<{ foundLinn: number, foundPos: number }>((resolve, reject) =>
-  {
-    fs.readFile(filePath, 'utf8', (err, data) =>
-    {
-      const lower_data = data.toLowerCase();
-      const lower_findText = findText.toLowerCase();
-      if (err)
-        reject('file_findText ' + filePath + ' ' + err)
-      else
-      {
-        let foundLinn = -1;
-        let foundPos = -1;
-        const fx = lower_data.indexOf(lower_findText);
-        if (fx >= 0)
-        {
-          const lines = lower_data.split('\n');
-          for (let linn = 0; linn < lines.length; ++linn)
-          {
-            const line = lines[linn];
-            const pos = line.indexOf(lower_findText);
-            if (pos >= 0)
-            {
-              foundLinn = linn;
-              foundPos = pos;
-              break;
-            }
-          }
-        }
-        resolve({ foundLinn, foundPos });
-      }
-    });
-  });
-  return promise;
-}
+// // ------------------------------- file_findFirstText ----------------------------
+// // find first instance of text in file.
+// export function file_findFirstText(filePath: string, findText: string)
+//   : Promise<{ foundLinn: number, foundPos: number }>
+// {
+//   const promise = new Promise<{ foundLinn: number, foundPos: number }>((resolve, reject) =>
+//   {
+//     fs.readFile(filePath, 'utf8', (err, data) =>
+//     {
+//       const lower_data = data.toLowerCase();
+//       const lower_findText = findText.toLowerCase();
+//       if (err)
+//         reject('file_findText ' + filePath + ' ' + err)
+//       else
+//       {
+//         let foundLinn = -1;
+//         let foundPos = -1;
+//         const fx = lower_data.indexOf(lower_findText);
+//         if (fx >= 0)
+//         {
+//           const lines = lower_data.split('\n');
+//           for (let linn = 0; linn < lines.length; ++linn)
+//           {
+//             const line = lines[linn];
+//             const pos = line.indexOf(lower_findText);
+//             if (pos >= 0)
+//             {
+//               foundLinn = linn;
+//               foundPos = pos;
+//               break;
+//             }
+//           }
+//         }
+//         resolve({ foundLinn, foundPos });
+//       }
+//     });
+//   });
+//   return promise;
+// }
 
-// ------------------------ file_isDir ----------------------------
-// return promise of fileSystem stat info of a file.
-export async function file_isDir(path: string)
-  : Promise<{ isDir: boolean, errmsg: string }>
-{
-  const promise = new Promise<{ isDir: boolean, errmsg: string }>((resolve, reject) =>
-  {
-    let isDir = false;
-    let errmsg = '';
-    fs.stat(path, (err, stats) =>
-    {
-      if (err)
-      {
-        errmsg = err.message;
-      }
-      else
-      {
-        isDir = stats.isDirectory();
-      }
+// // ------------------------ file_isDir ----------------------------
+// // return promise of fileSystem stat info of a file.
+// export async function file_isDir(path: string)
+//   : Promise<{ isDir: boolean, errmsg: string }>
+// {
+//   const promise = new Promise<{ isDir: boolean, errmsg: string }>((resolve, reject) =>
+//   {
+//     let isDir = false;
+//     let errmsg = '';
+//     fs.stat(path, (err, stats) =>
+//     {
+//       if (err)
+//       {
+//         errmsg = err.message;
+//       }
+//       else
+//       {
+//         isDir = stats.isDirectory();
+//       }
 
-      resolve({ isDir, errmsg });
-    });
-  });
+//       resolve({ isDir, errmsg });
+//     });
+//   });
 
-  return promise;
-}
+//   return promise;
+// }
 
-// --------------------------- file_readAllText ----------------------
-// return results of fs.readFile as string.
-export async function file_readAllText(filePath: string)
-{
-  const { data, errmsg } = await file_readFile(filePath);
-  const text = (data) ? data.toString('utf8') : '';
-  return { text, errmsg };
-}
+// // --------------------------- file_readAllText ----------------------
+// // return results of fs.readFile as string.
+// export async function file_readAllText(filePath: string)
+// {
+//   const { data, errmsg } = await file_readFile(filePath);
+//   const text = (data) ? data.toString('utf8') : '';
+//   return { text, errmsg };
+// }
 
-// --------------------------- file_readFile ----------------------
-// return results of fs.readFile as array of text lines.
-export function file_readFile(filePath: string): Promise<{ data: Buffer, errmsg: string }>
-{
-  const promise = new Promise<{ data: Buffer, errmsg: string }>(async (resolve, reject) =>
-  {
-    let errmsg = '';
-    fs.readFile(filePath, (err, data) =>
-    {
-      if (err)
-      {
-        errmsg = err.message;
-      }
-      resolve({ data, errmsg });
-    });
-  });
-  return promise;
-}
+// // --------------------------- file_readFile ----------------------
+// // return results of fs.readFile as array of text lines.
+// export function file_readFile(filePath: string): Promise<{ data: Buffer, errmsg: string }>
+// {
+//   const promise = new Promise<{ data: Buffer, errmsg: string }>(async (resolve, reject) =>
+//   {
+//     let errmsg = '';
+//     fs.readFile(filePath, (err, data) =>
+//     {
+//       if (err)
+//       {
+//         errmsg = err.message;
+//       }
+//       resolve({ data, errmsg });
+//     });
+//   });
+//   return promise;
+// }
 
-// --------------------------- file_readLines ----------------------
-// return results of fs.readFile as array of text lines.
-export function file_readLines(filePath: string): Promise<{ lines: string[], errmsg: string }>
-{
-  const promise = new Promise<{ lines: string[], errmsg: string }>(async (resolve, reject) =>
-  {
-    let lines: string[] = [];
-    let errmsg = '';
-    fs.readFile(filePath, (err, data) =>
-    {
-      if (data)
-      {
-        const text = data.toString('utf8');
-        lines = text.split('\n');
-      }
-      else if (err)
-      {
-        errmsg = err.message;
-      }
-      resolve({ lines, errmsg });
-    });
-  });
-  return promise;
-}
+// // --------------------------- file_readLines ----------------------
+// // return results of fs.readFile as array of text lines.
+// export function file_readLines(filePath: string): Promise<{ lines: string[], errmsg: string }>
+// {
+//   const promise = new Promise<{ lines: string[], errmsg: string }>(async (resolve, reject) =>
+//   {
+//     let lines: string[] = [];
+//     let errmsg = '';
+//     fs.readFile(filePath, (err, data) =>
+//     {
+//       if (data)
+//       {
+//         const text = data.toString('utf8');
+//         lines = text.split('\n');
+//       }
+//       else if (err)
+//       {
+//         errmsg = err.message;
+//       }
+//       resolve({ lines, errmsg });
+//     });
+//   });
+//   return promise;
+// }
 
-// -------------------------- file_rename ------------------------------
-// rename the file. return errmsg thru a resolved Promise.
-// to arg is an object. Use to specify the full path to rename/move to,
-// the directory to move to, the extension to rename the file to.
-export async function file_rename( oldPath: string, to: rename_path_to ) 
-            : Promise<{toPath:string,errmsg:string}>
-{
-  // using the to arg, setup name of rename file.
-  let toPath = path_rename( oldPath, to ) ;
+// // -------------------------- file_rename ------------------------------
+// // rename the file. return errmsg thru a resolved Promise.
+// // to arg is an object. Use to specify the full path to rename/move to,
+// // the directory to move to, the extension to rename the file to.
+// export async function file_rename( oldPath: string, to: rename_path_to ) 
+//             : Promise<{toPath:string,errmsg:string}>
+// {
+//   // using the to arg, setup name of rename file.
+//   let toPath = path_rename( oldPath, to ) ;
 
-  const promise = new Promise<{toPath:string,errmsg:string}>((resolve, reject) =>
-  {
-    fs.rename( oldPath, toPath, (err) =>
-    {
-      let errmsg = '' ;
-      if ( err != null )
-        errmsg = err.message ;
-      resolve( {toPath, errmsg });
-    });
-  });
-  return promise;
-}
+//   const promise = new Promise<{toPath:string,errmsg:string}>((resolve, reject) =>
+//   {
+//     fs.rename( oldPath, toPath, (err) =>
+//     {
+//       let errmsg = '' ;
+//       if ( err != null )
+//         errmsg = err.message ;
+//       resolve( {toPath, errmsg });
+//     });
+//   });
+//   return promise;
+// }
 
-// --------------------------------- file_resolve ---------------------------------
-/**
- * Search for fileName starting in dirPath and then deep directories of the root
- * directory.
- * @param dirPath root path in which to start search for file.
- * @param fileName File name to search for.
- */
-export async function file_resolve( dirPath: string, fileName:string )
-{
-  let resolvePath = '' ;
-  const filePath = path.join(dirPath, fileName ) ;
-  const exists = await file_exists(filePath) ;
-  if ( exists )
-  {
-    resolvePath = filePath ;
-  }
+// // --------------------------------- file_resolve ---------------------------------
+// /**
+//  * Search for fileName starting in dirPath and then deep directories of the root
+//  * directory.
+//  * @param dirPath root path in which to start search for file.
+//  * @param fileName File name to search for.
+//  */
+// export async function file_resolve( dirPath: string, fileName:string )
+// {
+//   let resolvePath = '' ;
+//   const filePath = path.join(dirPath, fileName ) ;
+//   const exists = await file_exists(filePath) ;
+//   if ( exists )
+//   {
+//     resolvePath = filePath ;
+//   }
 
-  if ( !resolvePath )
-  {
-    const { files } = await dir_readdir(dirPath);
-    for (const itemName of files)
-    {
-      const itemPath = path.join(dirPath, itemName);
-      const { isDir } = await file_isDir(itemPath);
-      if (isDir)
-      {
-        resolvePath = await file_resolve(itemPath, fileName ) ;
-        if ( resolvePath )
-          break ;
-      }
-    }
-  }
+//   if ( !resolvePath )
+//   {
+//     const { files } = await dir_readdir(dirPath);
+//     for (const itemName of files)
+//     {
+//       const itemPath = path.join(dirPath, itemName);
+//       const { isDir } = await file_isDir(itemPath);
+//       if (isDir)
+//       {
+//         resolvePath = await file_resolve(itemPath, fileName ) ;
+//         if ( resolvePath )
+//           break ;
+//       }
+//     }
+//   }
 
-  return resolvePath ;
-}
+//   return resolvePath ;
+// }
 
-// ------------------------ file_stat ----------------------------
-// return promise of fileSystem stat info of a file.
-export function file_stat(path: string): Promise<{stats:fs.Stats,errmsg:string}>
-{
-  const promise = new Promise<{stats:fs.Stats,errmsg:string}>((resolve, reject) =>
-  {
-    fs.stat(path, (err, stats) =>
-    {
-      let errmsg = '' ;
-      if ( err )
-        errmsg = err.message ;
-      resolve({stats, errmsg});
-    })
-  });
+// // ------------------------ file_stat ----------------------------
+// // return promise of fileSystem stat info of a file.
+// export function file_stat(path: string): Promise<{stats:fs.Stats,errmsg:string}>
+// {
+//   const promise = new Promise<{stats:fs.Stats,errmsg:string}>((resolve, reject) =>
+//   {
+//     fs.stat(path, (err, stats) =>
+//     {
+//       let errmsg = '' ;
+//       if ( err )
+//         errmsg = err.message ;
+//       resolve({stats, errmsg});
+//     })
+//   });
 
-  return promise;
-}
+//   return promise;
+// }
 
-// --------------------------- file_readText ----------------------
-// return results of fs.readFile as string.
-// get rid of this function. Use file_readAllText instead.
-export async function file_readText(filePath: string)
-{
-  const {data, errmsg } = await file_readFile(filePath) ;
-  const text = (data) ? data.toString('utf8') : '' ;
-  return { text, errmsg } ;
-}
+// // --------------------------- file_readText ----------------------
+// // return results of fs.readFile as string.
+// // get rid of this function. Use file_readAllText instead.
+// export async function file_readText(filePath: string)
+// {
+//   const {data, errmsg } = await file_readFile(filePath) ;
+//   const text = (data) ? data.toString('utf8') : '' ;
+//   return { text, errmsg } ;
+// }
 
-// -------------------------------- file_close --------------------------------
-export function file_close( fd:number): Promise<{errmsg:string}>
-{
-  const promise = new Promise<{ errmsg: string }>((resolve, reject) =>
-  {
-    let errmsg = '';
-    fs.close( fd, ( ) =>
-    {
-      resolve({ errmsg });
-    });
-  });
-  return promise;
-}
+// // -------------------------------- file_close --------------------------------
+// export function file_close( fd:number): Promise<{errmsg:string}>
+// {
+//   const promise = new Promise<{ errmsg: string }>((resolve, reject) =>
+//   {
+//     let errmsg = '';
+//     fs.close( fd, ( ) =>
+//     {
+//       resolve({ errmsg });
+//     });
+//   });
+//   return promise;
+// }
 
-// -------------------------------- file_open --------------------------------
-export function file_open( path: string, flags: string | number): Promise<{ fd:number, errmsg: string }>
-{
-  const promise = new Promise<{ fd:number, errmsg: string }>((resolve, reject) =>
-  {
-    let errmsg = '';
-    fs.open(path, flags, (err, fd) =>
-    {
-      if (err)
-      {
-        errmsg = err.message;
-      }
-      resolve({fd, errmsg});
-    });
-  });
-  return promise;
-}
+// // -------------------------------- file_open --------------------------------
+// export function file_open( path: string, flags: string | number): Promise<{ fd:number, errmsg: string }>
+// {
+//   const promise = new Promise<{ fd:number, errmsg: string }>((resolve, reject) =>
+//   {
+//     let errmsg = '';
+//     fs.open(path, flags, (err, fd) =>
+//     {
+//       if (err)
+//       {
+//         errmsg = err.message;
+//       }
+//       resolve({fd, errmsg});
+//     });
+//   });
+//   return promise;
+// }
 
-// ---------------------------- file_unlink -----------------------------
-// unlink, delete, remove file from file system.
-export async function file_unlink(path: string): Promise<{ errmsg: string }>
-{
-  const promise = new Promise<{ errmsg: string }>((resolve, reject) =>
-  {
-    let errmsg = '';
-    fs.unlink(path, (err) =>
-    {
-      if (err)
-      {
-        errmsg = err.message;
-        resolve({ errmsg });
-      }
-      else
-      {
-        resolve({ errmsg });
-      }
-    });
-  });
-  return promise;
-}
+// // ---------------------------- file_unlink -----------------------------
+// // unlink, delete, remove file from file system.
+// export async function file_unlink(path: string): Promise<{ errmsg: string }>
+// {
+//   const promise = new Promise<{ errmsg: string }>((resolve, reject) =>
+//   {
+//     let errmsg = '';
+//     fs.unlink(path, (err) =>
+//     {
+//       if (err)
+//       {
+//         errmsg = err.message;
+//         resolve({ errmsg });
+//       }
+//       else
+//       {
+//         resolve({ errmsg });
+//       }
+//     });
+//   });
+//   return promise;
+// }
 
-// ---------------------------------- file_utimes ---------------------------------
-// set atime and mtime ( access and modified ) times of a file.
-// Times are specified as unix epoch time. The number of seconds since a UTC 
-// starting time in 1970.
-export async function file_utimes(filePath: string, atime: number, mtime: number):
-              Promise<string>
-{
-  const promise = new Promise<string>((resolve, reject) =>
-  {
-    fs.utimes(filePath, atime, mtime, (err) =>
-    {
-      if (err)
-        resolve(err.message);
-      else
-        resolve('');
-    });
-  });
-  return promise;
-}
+// // ---------------------------------- file_utimes ---------------------------------
+// // set atime and mtime ( access and modified ) times of a file.
+// // Times are specified as unix epoch time. The number of seconds since a UTC 
+// // starting time in 1970.
+// export async function file_utimes(filePath: string, atime: number, mtime: number):
+//               Promise<string>
+// {
+//   const promise = new Promise<string>((resolve, reject) =>
+//   {
+//     fs.utimes(filePath, atime, mtime, (err) =>
+//     {
+//       if (err)
+//         resolve(err.message);
+//       else
+//         resolve('');
+//     });
+//   });
+//   return promise;
+// }
 
-// ----------------------------------- file_writeFile ------------------------------
-// write text to a new file.
-export function file_writeFile(filePath: string, text: string = ''): Promise<string>
-{
-  const promise = new Promise<string>(async (resolve, reject) =>
-  {
-    let errmsg = '';
-    fs.writeFile(filePath, text, (err) =>
-    {
-      if (err)
-        errmsg = err.message;
-      resolve(errmsg);
-    });
-  });
-  return promise;
-}
+// // ----------------------------------- file_writeFile ------------------------------
+// // write text to a new file.
+// export function file_writeFile(filePath: string, text: string = ''): Promise<string>
+// {
+//   const promise = new Promise<string>(async (resolve, reject) =>
+//   {
+//     let errmsg = '';
+//     fs.writeFile(filePath, text, (err) =>
+//     {
+//       if (err)
+//         errmsg = err.message;
+//       resolve(errmsg);
+//     });
+//   });
+//   return promise;
+// }
 
-// ---------------------------- file_writeNew -----------------------------
-// replace contents of existing file. Or write data to new file.
-export async function file_writeNew(path: string, data: string | Buffer ) : Promise<string>
-{
-  const promise = new Promise<string>((resolve, reject) =>
-  {
-    let errmsg = '' ;
+// // ---------------------------- file_writeNew -----------------------------
+// // replace contents of existing file. Or write data to new file.
+// export async function file_writeNew(path: string, data: string | Buffer ) : Promise<string>
+// {
+//   const promise = new Promise<string>((resolve, reject) =>
+//   {
+//     let errmsg = '' ;
 
-    if ( Buffer.isBuffer(data))
-    {
-      fs.writeFile( path, data, 'binary', (err) =>
-      {
-        if (err)
-          resolve(err.message);
-        else
-          resolve('');
-      });
-    }
-    else
-    {
-      fs.open(path, 'w', function (err, fd)
-      {
-        if (err)
-        {
-          errmsg = err.message ;
-          resolve(errmsg) ;
-        }
+//     if ( Buffer.isBuffer(data))
+//     {
+//       fs.writeFile( path, data, 'binary', (err) =>
+//       {
+//         if (err)
+//           resolve(err.message);
+//         else
+//           resolve('');
+//       });
+//     }
+//     else
+//     {
+//       fs.open(path, 'w', function (err, fd)
+//       {
+//         if (err)
+//         {
+//           errmsg = err.message ;
+//           resolve(errmsg) ;
+//         }
 
-        const buf = Buffer.alloc(data.length, data);
-        fs.write(fd, buf, 0, buf.length, null, (err) =>
-        {
-          if (err) reject('error writing file: ' + err);
-          fs.close(fd, () =>
-          {
-            resolve( errmsg );
-          });
-        });
-      });
-    }
-  });
-  return promise;
-}
+//         const buf = Buffer.alloc(data.length, data);
+//         fs.write(fd, buf, 0, buf.length, null, (err) =>
+//         {
+//           if (err) reject('error writing file: ' + err);
+//           fs.close(fd, () =>
+//           {
+//             resolve( errmsg );
+//           });
+//         });
+//       });
+//     }
+//   });
+//   return promise;
+// }
 
-// -------------------------------- file_writeText --------------------------------
-export function file_writeText(fd: number, text: string): Promise<{ errmsg: string }>
-{
-  const promise = new Promise<{ errmsg: string }>((resolve, reject) =>
-  {
-    const buf = Buffer.alloc(text.length, text);
-    fs.write(fd, buf, 0, buf.length, null, (err) =>
-    {
-      let errmsg = '';
-      if (err)
-        errmsg = `error writing file: ${err.message}`;
-      resolve({ errmsg });
-    });
-  });
-  return promise;
-}
+// // -------------------------------- file_writeText --------------------------------
+// export function file_writeText(fd: number, text: string): Promise<{ errmsg: string }>
+// {
+//   const promise = new Promise<{ errmsg: string }>((resolve, reject) =>
+//   {
+//     const buf = Buffer.alloc(text.length, text);
+//     fs.write(fd, buf, 0, buf.length, null, (err) =>
+//     {
+//       let errmsg = '';
+//       if (err)
+//         errmsg = `error writing file: ${err.message}`;
+//       resolve({ errmsg });
+//     });
+//   });
+//   return promise;
+// }
 
 // ------------------------------- lines_findFirst ----------------------------
 // return linn and coln of first occurance of findText in string array of lines.
@@ -1093,286 +1093,286 @@ export function obj_toQueryString( obj:{} )
   return qs;
 }
 
-// ---------------------------- path_findFile ----------------------------------
-// look for the file in each directory in the path.  Starting from the left.
-// returns the folder path where the file is found. Also returns the remaining
-// part of the path that was not searched.
-export async function path_findFile( dirPath: string, fileName: string ) 
-          : Promise<{dirPath:string,remPath:string}> 
-{
-  let checkPath = '', foundDirPath = '', foundRemPath = '' ;
-  let remPath = dirPath ;
+// // ---------------------------- path_findFile ----------------------------------
+// // look for the file in each directory in the path.  Starting from the left.
+// // returns the folder path where the file is found. Also returns the remaining
+// // part of the path that was not searched.
+// export async function path_findFile( dirPath: string, fileName: string ) 
+//           : Promise<{dirPath:string,remPath:string}> 
+// {
+//   let checkPath = '', foundDirPath = '', foundRemPath = '' ;
+//   let remPath = dirPath ;
 
-  // parse the path into separated parts. 
-  const parts = path_parts(dirPath) ;
+//   // parse the path into separated parts. 
+//   const parts = path_parts(dirPath) ;
 
-  // look for the file in each directory in the path.  Starting from the left.
-  for( const part of parts )
-  {
-    const filePath = path.join( part.path, fileName);
-    const exists = await file_exists(filePath);
-    if (exists)
-    {
-      foundDirPath = part.path;
-      foundRemPath = part.remPath;
-      break;
-    }
-  }
+//   // look for the file in each directory in the path.  Starting from the left.
+//   for( const part of parts )
+//   {
+//     const filePath = path.join( part.path, fileName);
+//     const exists = await file_exists(filePath);
+//     if (exists)
+//     {
+//       foundDirPath = part.path;
+//       foundRemPath = part.remPath;
+//       break;
+//     }
+//   }
 
-  return {dirPath:foundDirPath, remPath:foundRemPath} ;
-}
+//   return {dirPath:foundDirPath, remPath:foundRemPath} ;
+// }
 
-// ---------------------------- path_fromBaseNameArray ----------------------------
-export function path_fromBaseNameArray(items: string[]): string 
-{
-  let itemPath = '';
-  for (const item of items)
-  {
-    itemPath = path.join(itemPath, item);
-  }
-  return itemPath;
-}
+// // ---------------------------- path_fromBaseNameArray ----------------------------
+// export function path_fromBaseNameArray(items: string[]): string 
+// {
+//   let itemPath = '';
+//   for (const item of items)
+//   {
+//     itemPath = path.join(itemPath, item);
+//   }
+//   return itemPath;
+// }
 
-interface interface_pathPart {
-  root:string,  // root of the path.  drive letter  or slash.
-  base:string,  // filename.ext
-  ext:string,
-  dir:string,
-  path:string,   // input to parse 
-  remPath:string // remain path. all parts that follow the path of this part.
-};
+// interface interface_pathPart {
+//   root:string,  // root of the path.  drive letter  or slash.
+//   base:string,  // filename.ext
+//   ext:string,
+//   dir:string,
+//   path:string,   // input to parse 
+//   remPath:string // remain path. all parts that follow the path of this part.
+// };
 
-// --------------------------------- path_joinUnix ---------------------------------
-// combine the two paths with "/" between them. 
-// code mod: remove code which used path_toUnixPath on the resulting joined path.
-//           reason being that a windows backslash is a valid file name character
-//           in unix. So cannot blindly convert all backslash to unix path sep
-//           character.
-export function path_joinUnix( path1:string, path2:string, path3?:string) : string
-{
-  let unixPath = '' ;
-  if ( !path1 )
-    unixPath = path2 || '' ;
-  else if ( !path2 )
-    unixPath = path1 ;
-  else
-    unixPath = `${path1}/${path2}`;
+// // --------------------------------- path_joinUnix ---------------------------------
+// // combine the two paths with "/" between them. 
+// // code mod: remove code which used path_toUnixPath on the resulting joined path.
+// //           reason being that a windows backslash is a valid file name character
+// //           in unix. So cannot blindly convert all backslash to unix path sep
+// //           character.
+// export function path_joinUnix( path1:string, path2:string, path3?:string) : string
+// {
+//   let unixPath = '' ;
+//   if ( !path1 )
+//     unixPath = path2 || '' ;
+//   else if ( !path2 )
+//     unixPath = path1 ;
+//   else
+//     unixPath = `${path1}/${path2}`;
 
-  if ( path3 )
-  {
-    unixPath = `${unixPath}/${path3}`;
-  }
+//   if ( path3 )
+//   {
+//     unixPath = `${unixPath}/${path3}`;
+//   }
 
-  return unixPath ;
-}
+//   return unixPath ;
+// }
 
-// ------------------------- path_parts -----------------------------------
-export function path_parts(str:string) : interface_pathPart[]
-{
-  let arr : interface_pathPart[] = [] ;
-  let cur = str ;
-  let remPath = '' ;
+// // ------------------------- path_parts -----------------------------------
+// export function path_parts(str:string) : interface_pathPart[]
+// {
+//   let arr : interface_pathPart[] = [] ;
+//   let cur = str ;
+//   let remPath = '' ;
 
-  while(cur)
-  {
-    const rv = path.parse(cur) ;
-    const { root, base, dir, ext } = path.parse(cur) ;
-    arr.push({root,base,dir,ext,path:cur, remPath });
-    if ( !base )
-      break ;
-    cur = dir ;
-    remPath = path.join(base,remPath) ;
-  }
+//   while(cur)
+//   {
+//     const rv = path.parse(cur) ;
+//     const { root, base, dir, ext } = path.parse(cur) ;
+//     arr.push({root,base,dir,ext,path:cur, remPath });
+//     if ( !base )
+//       break ;
+//     cur = dir ;
+//     remPath = path.join(base,remPath) ;
+//   }
 
-  return arr.reverse( ) ;
-}
+//   return arr.reverse( ) ;
+// }
 
-// ----------------------------------- path_removeQueryString ---------------------
-// find and remove the query string portion of the path 
-export function path_removeQueryString(str: string): string
-{
-  const fx = str.indexOf('?');
-  if (fx >= 0)
-  {
-    return str.substring(0, 0 + fx);
-  }
-  else
-    return str;
-}
+// // ----------------------------------- path_removeQueryString ---------------------
+// // find and remove the query string portion of the path 
+// export function path_removeQueryString(str: string): string
+// {
+//   const fx = str.indexOf('?');
+//   if (fx >= 0)
+//   {
+//     return str.substring(0, 0 + fx);
+//   }
+//   else
+//     return str;
+// }
 
-// -------------------------------- rename_path_to --------------------------------
-interface rename_path_to {
-  path?: string;
-  dirPath?: string;
-  ext?: string;
-  baseName?: string;
-  baseNameNoExt?: string;
-}
+// // -------------------------------- rename_path_to --------------------------------
+// interface rename_path_to {
+//   path?: string;
+//   dirPath?: string;
+//   ext?: string;
+//   baseName?: string;
+//   baseNameNoExt?: string;
+// }
 
-// -------------------------- path_rename ------------------------------
-// rename the input path. Apply the dirPath, ext, baseName, baseNameNoExt
-// properties of the to arg.
-export function path_rename(oldPath: string, to: rename_path_to ) : string 
-{
-  // using the to arg, setup name of rename file.
-  let toPath = oldPath;
+// // -------------------------- path_rename ------------------------------
+// // rename the input path. Apply the dirPath, ext, baseName, baseNameNoExt
+// // properties of the to arg.
+// export function path_rename(oldPath: string, to: rename_path_to ) : string 
+// {
+//   // using the to arg, setup name of rename file.
+//   let toPath = oldPath;
 
-  // rename entire path
-  if ( to.path )
-  {
-    toPath = to.path ;
-  }
+//   // rename entire path
+//   if ( to.path )
+//   {
+//     toPath = to.path ;
+//   }
 
-  // change dirPath of the input path.
-  if ( to.dirPath )
-  {
-    toPath = path.join( to.dirPath, path.basename(toPath)) ;
-  }
+//   // change dirPath of the input path.
+//   if ( to.dirPath )
+//   {
+//     toPath = path.join( to.dirPath, path.basename(toPath)) ;
+//   }
 
-  // change name of extension.
-  if ( to.ext )
-  {
-    const ext = path.extname(toPath) ;
-    const baseName_noExt = path.basename(toPath, ext ) ;
-    toPath = path.join( path.dirname(toPath), baseName_noExt + to.ext );
-  }
+//   // change name of extension.
+//   if ( to.ext )
+//   {
+//     const ext = path.extname(toPath) ;
+//     const baseName_noExt = path.basename(toPath, ext ) ;
+//     toPath = path.join( path.dirname(toPath), baseName_noExt + to.ext );
+//   }
 
-  // change basename of the input path.
-  if ( to.baseName )
-  {
-    toPath = path.join( path.dirname(toPath), to.baseName ) ;
-  }
+//   // change basename of the input path.
+//   if ( to.baseName )
+//   {
+//     toPath = path.join( path.dirname(toPath), to.baseName ) ;
+//   }
 
-  // change basename of input path, but keep the extension.
-  if ( to.baseNameNoExt )
-  {
-    const ext = path.extname(toPath);
-    toPath = path.join( path.dirname(toPath), to.baseNameNoExt + ext ) ;
-  }
+//   // change basename of input path, but keep the extension.
+//   if ( to.baseNameNoExt )
+//   {
+//     const ext = path.extname(toPath);
+//     toPath = path.join( path.dirname(toPath), to.baseNameNoExt + ext ) ;
+//   }
 
-  return toPath ;
-}
-
-
-// ---------------------------------- path_splitFront ----------------------------------
-// split a path from the front.  Returning the front item and the remaining items.
-export function path_splitFront(path: string, sep: string = '/'): { front: string, rem: string }
-{
-  let front = '', rem = '';
-  const ix = path.indexOf(sep);
-  if (ix >= 0)
-  {
-    front = path.substring(0, 0 + ix);
-    if ( !front )
-      front = '/' ;
-    rem = str_substrLenient(path, ix + 1);
-  }
-  else
-  {
-    front = path;
-    rem = '';
-  }
-
-  return { front, rem };
-}
-
-// ------------------------------ path_splitRootPath ------------------------------
-/**
- * split the input path on the segments of the path which match the input rootPath.
- * @param in_path 
- * @param rootPath 
- * @returns : {match_path, rem_path } match_path is input path that matches the 
- * root path. rem_path is remaining parts of input path.
- */
-export function path_splitRootPath(in_path: string, rootPath: string)
-{
-  const items = path_toBaseNameArray(in_path);
-  const root_items = path_toBaseNameArray(rootPath);
-
-  // number of segments which match root path segments
-  let segCx = 0 ;
-  for( let ix = 0 ; ix < root_items.length ; ++ix )
-  {
-    if ( ix >= items.length )
-      break ;
-    if ( items[ix] != root_items[ix])
-      break ;
-    segCx += 1 ;
-  }
-
-  // the remaining items of path after the root path.
-  const match_items = items.slice(0, segCx ) ;
-  const rem_items = items.slice( segCx ) ;
-
-  // the root path items which do not match input path.
-  const notMatchDepth = root_items.length - segCx ;
-  let notMatchPath = '' ;
-  if ( notMatchDepth > 0 )
-  {
-    const items = root_items.slice(segCx) ;
-    notMatchPath = path_fromBaseNameArray(items) ;
-  }
-
-  const matchPath = path_fromBaseNameArray(match_items);
-  const remPath = path_fromBaseNameArray(rem_items);
-
-  return {matchPath, remPath, notMatchPath };
-}
-
-// ----------------------------- path_toBaseNameArray -----------------------------
-/**
- * split path into array of segments. ( Each segment the return value of 
- * path.basename function. ) The return array items contain the path segments
- * ordered from left to right.
- * @param in_path The path to be parsed in array
- */
-export function path_toBaseNameArray(in_path: string): string[]
-{
-  let pathItems: string[] = [];
-  let curPath = in_path;
-  while (true)
-  {
-    const baseName = path.basename(curPath);
-    if (!baseName)
-    {
-      pathItems.unshift(curPath);
-      break;
-    }
-    pathItems.unshift(baseName);
-    curPath = path.dirname(curPath);
-  }
-
-  return pathItems;
-}
+//   return toPath ;
+// }
 
 
-// ------------------------------ path_toFileUri ----------------------------------
-// convert file path to string ready to be parsed by 
-export function path_toFileUri(path: string): string 
-{
-  // replace '\' with '/'
-  let toPath = '';
-  for (let ix = 0; ix < path.length; ++ix)
-  {
-    const ch1 = path.substring(ix, ix + 1);
-    if (ch1 == '\\')
-      toPath += '/';
-    else
-      toPath += ch1;
-  }
+// // ---------------------------------- path_splitFront ----------------------------------
+// // split a path from the front.  Returning the front item and the remaining items.
+// export function path_splitFront(path: string, sep: string = '/'): { front: string, rem: string }
+// {
+//   let front = '', rem = '';
+//   const ix = path.indexOf(sep);
+//   if (ix >= 0)
+//   {
+//     front = path.substring(0, 0 + ix);
+//     if ( !front )
+//       front = '/' ;
+//     rem = str_substrLenient(path, ix + 1);
+//   }
+//   else
+//   {
+//     front = path;
+//     rem = '';
+//   }
 
-  // append file:/// to front of path.
-  const return_path = 'file:///' + toPath;
+//   return { front, rem };
+// }
 
-  return return_path;
-}
+// // ------------------------------ path_splitRootPath ------------------------------
+// /**
+//  * split the input path on the segments of the path which match the input rootPath.
+//  * @param in_path 
+//  * @param rootPath 
+//  * @returns : {match_path, rem_path } match_path is input path that matches the 
+//  * root path. rem_path is remaining parts of input path.
+//  */
+// export function path_splitRootPath(in_path: string, rootPath: string)
+// {
+//   const items = path_toBaseNameArray(in_path);
+//   const root_items = path_toBaseNameArray(rootPath);
 
-// -------------------------------- path_toUnixPath --------------------------------
-export function path_toUnixPath( path: string ) : string
-{
-  const unixPath = path.replace(/\\/g, '\/') ;
-  return unixPath ;
-}
+//   // number of segments which match root path segments
+//   let segCx = 0 ;
+//   for( let ix = 0 ; ix < root_items.length ; ++ix )
+//   {
+//     if ( ix >= items.length )
+//       break ;
+//     if ( items[ix] != root_items[ix])
+//       break ;
+//     segCx += 1 ;
+//   }
+
+//   // the remaining items of path after the root path.
+//   const match_items = items.slice(0, segCx ) ;
+//   const rem_items = items.slice( segCx ) ;
+
+//   // the root path items which do not match input path.
+//   const notMatchDepth = root_items.length - segCx ;
+//   let notMatchPath = '' ;
+//   if ( notMatchDepth > 0 )
+//   {
+//     const items = root_items.slice(segCx) ;
+//     notMatchPath = path_fromBaseNameArray(items) ;
+//   }
+
+//   const matchPath = path_fromBaseNameArray(match_items);
+//   const remPath = path_fromBaseNameArray(rem_items);
+
+//   return {matchPath, remPath, notMatchPath };
+// }
+
+// // ----------------------------- path_toBaseNameArray -----------------------------
+// /**
+//  * split path into array of segments. ( Each segment the return value of 
+//  * path.basename function. ) The return array items contain the path segments
+//  * ordered from left to right.
+//  * @param in_path The path to be parsed in array
+//  */
+// export function path_toBaseNameArray(in_path: string): string[]
+// {
+//   let pathItems: string[] = [];
+//   let curPath = in_path;
+//   while (true)
+//   {
+//     const baseName = path.basename(curPath);
+//     if (!baseName)
+//     {
+//       pathItems.unshift(curPath);
+//       break;
+//     }
+//     pathItems.unshift(baseName);
+//     curPath = path.dirname(curPath);
+//   }
+
+//   return pathItems;
+// }
+
+
+// // ------------------------------ path_toFileUri ----------------------------------
+// // convert file path to string ready to be parsed by 
+// export function path_toFileUri(path: string): string 
+// {
+//   // replace '\' with '/'
+//   let toPath = '';
+//   for (let ix = 0; ix < path.length; ++ix)
+//   {
+//     const ch1 = path.substring(ix, ix + 1);
+//     if (ch1 == '\\')
+//       toPath += '/';
+//     else
+//       toPath += ch1;
+//   }
+
+//   // append file:/// to front of path.
+//   const return_path = 'file:///' + toPath;
+
+//   return return_path;
+// }
+
+// // -------------------------------- path_toUnixPath --------------------------------
+// export function path_toUnixPath( path: string ) : string
+// {
+//   const unixPath = path.replace(/\\/g, '\/') ;
+//   return unixPath ;
+// }
 
 // --------------------------- scan_charEqAny ------------------------------
 // scan in string until char equal any of pattern chars.
