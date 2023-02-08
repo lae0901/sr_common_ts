@@ -20,36 +20,6 @@ import { dir_mkdir, str_tail, str_contains } from 'sr_core_ts';
 * obj_apply( obj1, obj2 )
 * const isEqual = obj_compareEqual( obj1, obj2 )
 
-## directory methods
-* {isDir, errmsg} = file_isDir(path)
-* boolean = dir_containsItem( dirPath, itemNameArr )
-* string[] = dir_readDirDeep(dirPath, {ignoreDir, containsItem, includeRoot, containsHaltDeep, containsMaxDepth })
-* {errmsg} = await dir_rmdir( dirPath, {recursive})
-* fileName = await dir_firstFile( dirPath, regexpPattern )
-
-## file methods
-* { errmsg } = await file_close( fd ) ;
-* errmsg = await file_copy( source, dest ) ;
-* { fileCreated } = await file_ensureExists(filePath) ;
-* { fd, errmsg } = await file_open( filePath, flags ) ;
-* {text,errmsg} = await file_readAllText(filePath) ;
-* {data,errmsg} = await file_readFile(filePath) ;
-* {toPath,errmsg} = await file_rename( oldPath, {ext,path,dirPath, baseNameNoExt, baseName});
-* filePath = await file_resolve( dirPath, fileName ) ;
-* {errmsg} = await file_unlink( filePath ) ;
-* { errmsg } = await file_writeText( fd, text ) ;
-* errmsg = await file_utimes( filePath, atime, utime ) ;
-
-## path methods
-* path_findFile( dirPath: string, fileName: string ) : Promise<{dirPath,remPath}> 
-* toPath = path_fromBaseNameArray( arr: string[] )
-* path_joinUnix( path1: string, path2: string ) : string
-* toPath = path_rename( oldPath, {ext,path,dirPath, baseNameNoExt, baseName})
-* path_splitFront( path: string, sep: string = '/' ) : {front: string, rem:string }
-* remPath = path_splitRootPath( inPath: string, rootPath: string )
-* arr = path_toBaseNameArray( path: string )
-* path_toUnixPath( path: string ) : string
-
 ## scan methods
 
 `scan_unquotedPattern` - scan for pattern outside of quoted text. 
@@ -103,12 +73,6 @@ Using the input array of `iStringWord` words returned by `str_splitWords`, retur
 
 ## regular expression methods
 * regexPattern_toFragments( pattern: string) : regexFrag_interface[]
-
-## print methods
-* openTextLinesInBrowser( textStream, filePath, isMarkdown )
-
-## system methods
-* system_downloadsFolder( ) : string
 
 ## publish instructions
 * increment version number in package.json
