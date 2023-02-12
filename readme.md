@@ -1,4 +1,7 @@
-# common typescript modules
+# common typescript functions
+
+node specific functions in `sr_core_ts` have been removed and moved to new package named `sr_node_core`. 
+
 * rxp - regular expression constants
 * core.ts - contains series of str_ and scan_ functions.
 
