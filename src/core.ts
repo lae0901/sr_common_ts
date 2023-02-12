@@ -209,298 +209,6 @@ export function date_toISO( d: Date)
     + pad(d.getDate());
 }
 
-// // ------------------------------- dir_containsItem -------------------------------
-// /**
-//  * check if the directory contains an item, that is, file or directory.
-//  * @param dirPath path of directory to check.
-//  * @param itemNameArr array of item names to check that the directory contains.
-//  */
-// export async function dir_containsItem( dirPath: string, itemNameArr: string[] ) : Promise<boolean>
-// {
-//   const promise = new Promise<boolean>((resolve, reject) =>
-//   {
-//     let contains = false ;
-//     fs.readdir(dirPath, (err, items) =>
-//     {
-//       const found = items.find((item) =>
-//       {
-//         const containsItem = strArr_contains(itemNameArr, item);
-//         return containsItem ;
-//       });
-//       if ( found )
-//         contains = true ;
-//       resolve( contains ) ;
-//     });
-//   });
-//   return promise;
-// }
-
-// // ------------------------------ dir_findFirstText -----------------------------
-// export async function dir_findFirstText(dirPath: string, findText: string)
-//   : Promise<{ foundFilePath: string, foundLinn: number }>
-// {
-//   const promise = new Promise<{ foundFilePath: string, foundLinn: number }>((resolve, reject) =>
-//   {
-//     fs.readdir(dirPath, async (err, items) =>
-//     {
-//       let foundFilePath = '';
-//       let foundLinn = 0;
-//       for (const item of items)
-//       {
-//         const itemPath = path.join(dirPath, item);
-//         const {isDir}  = await file_isDir(itemPath);
-//         if (isDir)
-//         {
-//           const rv = await dir_findFirstText(itemPath, findText);
-
-//           // a file was found in the sub folder.
-//           if (rv.foundFilePath)
-//           {
-//             foundFilePath = rv.foundFilePath;
-//             foundLinn = rv.foundLinn;
-//             break;
-//           }
-//         }
-//         else
-//         {
-//           const rv = await file_findFirstText(itemPath, findText);
-//           if (rv.foundLinn >= 0)
-//           {
-//             foundFilePath = itemPath;
-//             foundLinn = rv.foundLinn;
-//             break;
-//           }
-//         }
-//       }
-//       resolve({ foundFilePath, foundLinn });
-//     });
-//   });
-//   return promise;
-// }
-
-// // --------------------------------- dir_firstFile ---------------------------------
-// export async function dir_firstFile( dirPath:string, matchPattern: RegExp )
-// {
-//   let firstFile = '' ;
-//   const { files, errmsg } = await dir_readdir( dirPath ) ;
-//   if ( files )
-//   {
-//     for( const fileName of files )
-//     {
-//       if ( matchPattern.test(fileName))
-//       {
-//         firstFile = fileName ;
-//         break ;
-//       }
-//     }
-//   }
-//   return firstFile ;
-// }
-
-// // ------------------------------- dir_ensureExists -----------------------------
-// export function dir_ensureExists( dirPath: string) : Promise<{ created:boolean, errmsg:string}>
-// {
-//   const promise = new Promise<{created:boolean, errmsg:string}>(async (resolve, reject) =>
-//   {
-//     let created = false ;
-//     let errmsg = '' ;
-
-//     const { isDir } = await file_isDir(dirPath) ;
-//     if ( isDir )
-//     {
-//     }
-//     else
-//     {
-//       const {errmsg:errmsg2, exists} = await dir_mkdir(dirPath) ;
-//       errmsg = errmsg2 ;
-//       if ( !errmsg && !exists )
-//         created = true ;
-//     }
-
-//     resolve({ created, errmsg });
-//   });
-//   return promise;
-// }
-
-// // ----------------------------------- dir_mkdir ------------------------------
-// // create directory. return { exists, errmsg }
-// export function dir_mkdir(dirPath: string): Promise<{exists:boolean,errmsg:string}>
-// {
-//   const promise = new Promise<{exists:boolean, errmsg:string}>(async (resolve, reject) =>
-//   {
-//     let errmsg = '', exists = false ;
-//     fs.mkdir(dirPath, (err) =>
-//     {
-//       if (err)
-//       {
-//         if ( err.code == 'EEXIST')
-//           exists = true ;
-//         else
-//           errmsg = err.message ;
-//       }
-//       resolve({exists, errmsg});
-//     });
-//   });
-//   return promise;
-// }
-
-// // ----------------------------------- dir_rmdir ------------------------------
-// // remove directory. use recursive option to also remove contents.
-// export function dir_rmdir(dirPath: string, options?:{recursive?:boolean}): Promise<{ errmsg: string }>
-// {
-//   options = options || {} ;
-//   const recursive = options.recursive || false;
-//   const promise = new Promise<{ errmsg: string }>(async (resolve, reject) =>
-//   {
-//     let errmsg = '';
-
-//     fs.rmdir(dirPath, {recursive}, (err) =>
-//     {
-//       if (err)
-//       {
-//         errmsg = err.message;
-//       }
-//       resolve({ errmsg });
-//     });
-//   });
-//   return promise;
-// }
-
-// // -------------------------------- iDirDeepOptions -------------------------------
-// export interface iDirDeepOptions
-// {
-//   ignoreDir?: string[];
-//   containsItem?: string[];
-//   includeRoot?: boolean;
-
-//   // containsHaltDeep: true false. When folder found that contains file, do not 
-//   // continue looking in sub folders of that folder for more folders that also 
-//   // contain the file.
-//   containsHaltDeep?: boolean;
-
-//   // how deep to folder tree to search for initial folder that contains file.
-//   containsMaxDepth?: number;
-// }
-
-// // -------------------------------- dir_readDirDeep --------------------------------
-// // return deep list of directories contained within dirPath.
-// // each directory returned is the full path of the directory.
-// // use the ignoreDir parameter to ignore directories by their file name.
-// // includeRoot: include this root directory in the returned list of directories.
-// //              ( only if root directory passes include tests, like contains file. )
-// export function dir_readDirDeep( dirPath: string, options: iDirDeepOptions ) : 
-//           Promise<string[]>
-// {
-//   options = options || {} ;
-//   const containsHaltDeep = options.containsHaltDeep || false ;
-//   let containsMaxDepth = options.containsMaxDepth ;
-//   let doContinue = true ;
-
-//   const promise = new Promise<string[]>(async (resolve, reject) =>
-//   {
-//     const {files, errmsg} = await dir_readdir(dirPath) ;
-//     let foundDirs : string[] = [] ;
-
-//     // include this root dir in list of result directories.
-//     if ( options.includeRoot )
-//     {
-//       // check if the directory contains a specified file.
-//       let skip = false;
-//       if (options.containsItem)
-//       {
-//         const does_contain_file = await dir_containsItem( dirPath, options.containsItem);
-//         if (does_contain_file == false)
-//           skip = true;
-//         else 
-//         {
-//           containsMaxDepth = undefined ;
-//           if ( containsHaltDeep )
-//             doContinue = false ;
-//         }
-//       }
-//       if (!skip)
-//         foundDirs.push(dirPath) ;
-//     }
-
-//     if ( doContinue )
-//     {
-//       for( const file of files)
-//       {
-//         const filePath = path.join(dirPath, file) ;
-//         const { isDir } = await file_isDir(filePath) ;
-//         if (( isDir ) && !strArr_contains( options.ignoreDir, file))
-//         {
-//           let continue_deep = true ;
-//           let sub_containsMaxDepth = containsMaxDepth;
-
-//           // check if the directory contains a specified file.
-//           let does_contain_file = false ;
-//           let doPush = true ;
-//           if ( options.containsItem )
-//           {
-//             does_contain_file = await dir_containsItem(filePath, options.containsItem ) ;
-//             if ( does_contain_file == false )
-//               doPush = false ;
-//             if ( does_contain_file && containsHaltDeep )
-//               continue_deep = false ;
-//           }
-
-//           // add to list of found directories.
-//           if ( doPush )
-//           {
-//             foundDirs.push(filePath) ;
-//           }
-
-//           // do not continue deep if this folder does not match contain rule and
-//           // conainsMaxDepth has been reached.
-//           if ( continue_deep && sub_containsMaxDepth != undefined )
-//           {
-//             if ( does_contain_file )  // once folder contains file, containsMaxDepth no longer applies.
-//               sub_containsMaxDepth = undefined;
-//             else if ( sub_containsMaxDepth <= 1 )
-//               continue_deep = false ;
-//           }
-
-//           // search for deep directories in this sub directory.
-//           if ( continue_deep )
-//           {
-//             if ( sub_containsMaxDepth )
-//               sub_containsMaxDepth -= 1 ;
-//             const subOptions = { ...options, includeRoot: false, 
-//                                   containsMaxDepth: sub_containsMaxDepth };
-//             const subFoundDirs = await dir_readDirDeep(filePath, subOptions);
-//             foundDirs.push(...subFoundDirs);
-//           }
-//         }
-//       }
-//     }
-//     resolve(foundDirs) ;
-//   }) ;
-//   return promise;
-// }
-
-// // --------------------------- dir_readdir ----------------------
-// // return results of fs.readdir as a promise.
-// export function dir_readdir(dirPath: string): Promise<{files:string[],errmsg:string}>
-// {
-//   const promise = new Promise<{files:string[],errmsg:string}>(async (resolve, reject) =>
-//   {
-//     fs.readdir(dirPath, (err, files) =>
-//     {
-//       if (files)
-//       {
-//         resolve({files,errmsg:''});
-//       }
-//       else
-//       {
-//         const errmsg = err ? err.message : '' ;
-//         resolve({ files:[], errmsg });
-//       }
-//     });
-//   });
-//   return promise;
-// }
-
 // // ----------------------------------- file_copy -----------------------------------
 // /**
 //  * Copy file.
@@ -981,9 +689,67 @@ export function obj_apply(toObj: { [key: string]: any }, fromObj: { [key: string
   return toObj ;
 }
 
+// ------------------------------- obj_propertyMatch -------------------------------
+/** compare that the properties of obj1 exist in obj2 and that the values of 
+ * those properties are equal.
+ */
+export function obj_propertyMatch(
+        obj1: {[key: string]: any} | null, 
+        obj2: {[key: string]: any} | null ) : boolean
+{
+  let isEqual = true ;
+
+  // obj1 is null.  Consider this is a match.  Same as obj1 being empty.
+  if ( obj1 == null )
+    return true ;
+
+  const keys1 = Object.keys(obj1) ;
+  const keys2 = obj2 ? Object.keys(obj2) : [] ;
+
+  // match each property in obj1.
+  for( const key of keys1 )
+  {
+    // property in obj1 not found in obj2.
+    if ( keys2.indexOf(key) == -1 )
+    {
+      isEqual = false ;
+      break ;
+    }
+
+    // isolate property value
+    const vlu1 = obj1[key];
+    const vlu2 = obj2 ? obj2[key] : '' ; // obj2 will actually never be null.
+
+    if ( Array.isArray(vlu1) && Array.isArray(vlu2) )
+    {
+      isEqual = arr_compareEqual(vlu1, vlu2) ;
+    }
+    else if ( typeof vlu1 == 'object' && typeof vlu2 == 'object')
+    {
+      isEqual = obj_compareEqual(vlu1, vlu2) ;
+    }
+    else
+    {
+      isEqual = (vlu1 === vlu2) ;
+    }
+
+    // property is not equal. break out.
+    if ( !isEqual )
+      break ;
+  }
+
+  return isEqual ;
+}
+
 // ------------------------------ obj_compareEqual ------------------------------
-// property by property, deep compare of two objects. 
-// return is equal or not.
+/**
+ * property by property, deep compare of two objects. Both objects must have
+ * same number of properties, property names and values must match for compare 
+ * equal to return true.
+ * @param obj1 
+ * @param obj2 
+ * @returns 
+ */
 export function obj_compareEqual(
         obj1: {[key: string]: any} | null, 
         obj2: {[key: string]: any} | null ) : boolean

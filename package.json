@@ -1,12 +1,12 @@
 {
   "name": "sr_core_ts",
-  "version": "1.46.58",
+  "version": "1.46.59",
   "description": "core typescript functions",
   "main": "lib/core.js",
   "types": "lib/core.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "node ./lib/tester.js"
+    "tests": "node ./lib/tester.js"
   },
   "files": [
     "/lib"

@@ -1,20 +1,10 @@
 import {  
-  // file_open, file_close, file_writeText,
-  //        file_isDir, dir_ensureExists, dir_mkdir, dir_readdir, 
-  //         file_ensureExists, file_unlink,
-  //         file_readAllText, file_writeNew, 
-  //         path_joinUnix, path_toUnixPath, 
           date_toEpoch, date_fromISO,
           arr_copyItems, arr_compareEqual, 
-          // file_stat, file_utimes, 
-          // path_splitRootPath, path_toBaseNameArray, path_fromBaseNameArray, 
           date_toISO, 
-          // dir_rmdir, iDirDeepOptions, 
-          obj_compareEqual, obj_apply, 
+          obj_compareEqual, obj_apply, obj_propertyMatch,
           arr_findAndSplice, any_toString, 
-          // file_rename, path_rename, file_copy, file_exists, 
           str_splitWords, 
-          // file_resolve, 
           str_random, strArr_toDistinctAndSorted, 
           strWords_wordAtPosition, 
           iStringWord,
@@ -23,19 +13,12 @@ import {
           str_splitWhitespaceWords,
           scan_unquotedPattern,
           str_substrLenient,
-          // file_readText,
-          // dir_firstFile
         } from './core';
-// import * as os from 'os';
-// import * as fs from 'fs';
-// import * as path from 'path';
 import { str_assignSubstr, str_enquote, str_padLeft, str_padRight, 
-        // path_findFile, path_parts, 
         rxp, 
-        // dir_readDirDeep 
       } from './core';
-import {testResults_append, testResults_consoleLog, testResults_new } from 'sr_test_framework';
-// import { system_downloadsFolder } from './system-downloads';
+import {testResults_append, testResults_consoleLog, 
+        testResults_new } from 'sr_test_framework';
 
 const folderPath = '/c:/github/tester';
 const fileName = 'app.vue';
@@ -320,6 +303,27 @@ function obj_test()
     const testResult = obj_compareEqual(obj1, expected_obj);
     const desc = 'apply properties to object';
     testResults_append(results, { category, expected, testResult, desc, method });
+  }
+  
+  // obj_propertyMatch.
+  {
+    method = 'obj_propertyMatch';
+    const obj1 = { age: 53, textLines: ['test', 'babel'] };
+    const obj2 = { names: ['123', 'array'], age: 53, textLines: ['test', 'babel'] };
+    const actual = obj_propertyMatch( obj1, obj2 ) ;
+    const expected = true ;
+    testResults_append(results, { actual, expected, category, method });
+  }
+  
+  // obj_propertyMatch.
+  {
+    method = 'obj_propertyMatch';
+    const aspect = 'property missing from obj2';
+    const obj1 = { age: 53, weight:153, textLines: ['test', 'babel'] };
+    const obj2 = { names: ['123', 'array'], age: 53, textLines: ['test', 'babel'] };
+    const actual = obj_propertyMatch( obj1, obj2 ) ;
+    const expected = false ;
+    testResults_append(results, { actual, expected, category, method, aspect });
   }
 
   return results;

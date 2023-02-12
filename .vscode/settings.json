@@ -2,8 +2,8 @@
   "editor.fontSize": 15,
   "workbench.colorTheme": "Default Dark+",
   "workbench.colorCustomizations": {
-    "titleBar.activeBackground": "#0059ff",
-    "titleBar.activeForeground": "#ffffa0"
+    "titleBar.activeBackground": "#ff4400",
+    "titleBar.activeForeground": "#080115"
   },
   "window.title": "SR_CORE_TS${separator}${dirty}${activeEditorMedium}${separator}${rootPath}${separator}${appName}",
   "editor.formatOnPaste": false,
