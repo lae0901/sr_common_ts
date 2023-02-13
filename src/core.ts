@@ -1162,3 +1162,37 @@ export function uint8Arr_toHexString(buf:Uint8Array, options?:{upper?:boolean})
   }
   return str ;
 }
+
+// ---------------------------- uint8Arr_scanUntilTerm ----------------------------
+/**
+ * scan ahead in buf until one of the terminate code values stored in termArr.
+ * @param buf 
+ * @param bx 
+ * @param termArr 
+ * @returns scanBuf - bytes scanned up to term byte. 
+ *          scanLx - total scan num bytes. scan bytes + termByte
+ *          termNum - the scan terminating byte. -1 if EOF.
+ */
+export function uint8Arr_scanUntilTerm(buf:Uint8Array, bx:number, termArr:number[]|Uint8Array)
+{
+  let ix = bx ;
+  let lx = 0 ;
+  let termNum = -1 ;
+  while( ix < buf.length )
+  {
+    const num = buf[ix] ;
+    if ( termArr.indexOf(num) >= 0 )
+    {
+      termNum = num ;
+      break ;
+    }
+    ix += 1 ;
+    lx += 1 ;
+  }
+
+  // extract the sequence of buffer bytes that run from bx until the found until
+  // code number.
+  const scanBuf = lx ? buf.slice( bx, bx + lx) : null;
+  const scanLx = termNum == -1 ? lx : lx + 1;
+  return { scanBuf, scanLx, termNum };
+}
