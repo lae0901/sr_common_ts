@@ -77,6 +77,10 @@ Using the input array of `iStringWord` words returned by `str_splitWords`, retur
 ## regular expression methods
 * regexPattern_toFragments( pattern: string) : regexFrag_interface[]
 
+## Uint8Array methods
+* uint8Arr_toString( buf )
+* uint8Arr_toHexString( buf )
+
 ## publish instructions
 * increment version number in package.json
 * make sure new functions are exported from core.ts
