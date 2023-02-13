@@ -1142,15 +1142,19 @@ export function uint8Arr_toString(buf:Uint8Array)
  * return the Uint8Array items as string of numeric values as hex with space 
  * between each value.
  * @param buf 
+ * @param options upper:set hex string values to upper case.  FF FA ...
  * @returns 
  */
-export function uint8Arr_toHexString(buf:Uint8Array)
+export function uint8Arr_toHexString(buf:Uint8Array, options?:{upper?:boolean})
 {
   let str = '' ;
+  options = options || {};
+  const upper = options.upper ? options.upper : false;
+
   for( var ix = 0 ; ix < buf.length ; ++ix )
   {
     const num = buf[ix];
-    const hex = num.toString(16);
+    const hex = upper ? num.toString(16).toUpperCase() : num.toString(16);
     if ( str )
       str += ` ${hex}`;
     else 

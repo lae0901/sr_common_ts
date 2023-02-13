@@ -13,6 +13,8 @@ import {
           str_splitWhitespaceWords,
           scan_unquotedPattern,
           str_substrLenient,
+          uint8Arr_toString,
+          uint8Arr_toHexString,
         } from './core';
 import { str_assignSubstr, str_enquote, str_padLeft, str_padRight, 
         rxp, 
@@ -125,6 +127,12 @@ async function async_main( )
   // any_test
   {
     const res = any_test( ) ;
+    results.push(...res);
+  }
+
+  // uint8Arr
+  {
+    const res = uint8Arr_test();
     results.push(...res);
   }
 
@@ -345,121 +353,6 @@ function scan_test( )
 
   return results;
 }
-
-// // ---------------------------------- path_test ----------------------------------
-// function path_test()
-// {
-//   const results = testResults_new();
-//   let method = '';
-
-//   // path_toUnixPath.
-//   {
-//     method = 'path_toUnixPath';
-//     let passText = '';
-//     let errmsg = '';
-//     const text = '\\home\\srichter\\test.pdf';
-//     const expected = '/home/srichter/test.pdf';
-//     const unixPath = path_toUnixPath( text ) ;
-//     if (unixPath != expected)
-//       errmsg = `incorrect result. ${unixPath}. expected ${expected}`;
-//     else
-//       passText = `correct result. ${unixPath}.`;
-//     testResults_append(results, passText, errmsg, method);
-//   }
-
-//   // path_joinUnix.
-//   {
-//     method = 'path_joinUnix';
-//     const dirPath = '\\home\\srichter';
-//     const fileName = 'test.pdf';
-//     const expected = '/home/srichter/test.pdf';
-//     const actual = path_joinUnix( path_toUnixPath(dirPath), fileName );
-//     testResults_append(results, {method, expected, actual});
-//   }
-
-//   // path_joinUnix.
-//   {
-//     method = 'path_joinUnix';
-//     const aspect = 'three path arguments' ;
-//     const dirPath = '\\home\\srichter';
-//     const subFolder = 'autocoder' ;
-//     const fileName = 'test.pdf';
-//     const expected = '/home/srichter/autocoder/test.pdf';
-//     const actual = path_joinUnix(path_toUnixPath(dirPath), subFolder, fileName);
-//     testResults_append(results, { method, expected, actual, aspect });
-//   }
-
-//   // path_rename
-//   {
-//     const method = 'path_rename' ;
-//     const input_path = '/home/srichter/test.pdf';
-//     const actual = path_rename( input_path, { dirPath:'/home/pricelist', ext:'.txt'});
-//     const expected = '\\home\\pricelist\\test.txt' ;
-//     testResults_append( results, {method, expected, actual });
-//   }
-
-//   // path_splitRootPath.
-//   {
-//     method = 'path_splitRootPath';
-//     let passText = '';
-//     let errmsg = '';
-//     const fullPath = '/web/home/srichter/gcc/abc.pdf';
-//     const rootPath = '/web/home';
-//     const expected = 'srichter/gcc/abc.pdf';
-//     let { matchPath, remPath } = path_splitRootPath( fullPath, rootPath );
-//     remPath = path_toUnixPath(remPath) ;
-//     if (remPath != expected)
-//       errmsg = `incorrect result. remPath: ${remPath}. expected ${expected}`;
-//     else
-//       passText = `correct result. ${remPath}.`;
-//     testResults_append(results, passText, errmsg, method);
-//   }
-
-//   // path_splitRootPath.
-//   {
-//     method = 'path_splitRootPath';
-//     const aspect = 'notMatchPath';
-//     const fullPath = '/web/home/srichter/gcc/abc.pdf';
-//     const rootPath = '/web/home/joe/visual';
-//     const expected = 'joe/visual';
-//     let { matchPath, remPath, notMatchPath } = path_splitRootPath(fullPath, rootPath);
-//     notMatchPath = path_toUnixPath( notMatchPath );
-//     const actual = notMatchPath ;
-//     testResults_append(results, { aspect, method, expected, actual });
-//   }
-
-//   // path_toBaseNameArray.
-//   {
-//     method = 'path_toBaseNameArray';
-//     let passText = '';
-//     let errmsg = '';
-//     const fullPath = '/web/home/srichter/gcc/abc.pdf';
-//     const arr = path_toBaseNameArray(fullPath);
-//     if (( arr.length == 6) && (arr[1] == 'web') && (arr[5] == 'abc.pdf'))
-//       passText = `correct result. ${arr}.`;
-//     else
-//       errmsg = `incorrect result. number items ${arr.length}. expected 5.`;
-//     testResults_append(results, passText, errmsg, method);
-//   }
-
-//   // path_fromBaseNameArray.
-//   {
-//     method = 'path_fromBaseNameArray';
-//     let passText = '';
-//     let errmsg = '';
-//     const fullPath = '/web/home/srichter/gcc/abc.pdf';
-//     const arr = path_toBaseNameArray(fullPath);
-//     const toFullPath = path_toUnixPath(path_fromBaseNameArray(arr)) ;
-//     if ( fullPath == toFullPath )
-//       passText = `correct result. ${toFullPath}.`;
-//     else
-//       errmsg = `incorrect result. result ${toFullPath}. expected ${fullPath}`;
-//     testResults_append(results, passText, errmsg, method);
-//   }
-
-//   return results;
-// }
-
 
 // ---------------------------------- strWords_test ----------------------------------
 function strWords_test()
@@ -997,3 +890,29 @@ function date_test()
 //   return results;
 // }
 
+// ---------------------------------- uint8Arr_test ----------------------------------
+function uint8Arr_test()
+{
+  const results = testResults_new();
+  const category = 'uint8Arr';
+
+  // uint8Arr_toString
+  {
+    const method = 'uint8Arr_toString';
+    const buf = new Uint8Array([255,250,39,1,3,73]);
+    const expected = '255 250 39 1 3 73';
+    const actual = uint8Arr_toString(buf);
+    testResults_append(results, { method, category, expected, actual });
+  }
+
+  // uint8Arr_toHexString
+  {
+    const method = 'uint8Arr_toHexString';
+    const buf = new Uint8Array([255,250,39,1,3,73]);
+    const expected = 'FF FA 27 1 3 49';
+    const actual = uint8Arr_toHexString(buf, {upper:true});
+    testResults_append(results, { method, category, expected, actual });
+  }
+
+  return results;
+}
