@@ -947,9 +947,10 @@ export function str_startsWith(text: string, startText: string | string[] ): boo
 // ---------------------------- str_substrLenient --------------------
 // return substring of the input string. only, clip the results if start or end
 // pos are out of bounds of the string.
-export function str_substrLenient(str: string, fx: number, lx: number = -1): string
+export function str_substrLenient(
+            str: string|undefined, fx: number, lx: number = -1): string
 {
-  if ((typeof str) != 'string')
+  if ((typeof str != 'string') || ( str == null))
     return '';
 
   // move from from negative to zero. Reduce length by the adjusted amount.
