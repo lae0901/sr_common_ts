@@ -80,6 +80,8 @@ Using the input array of `iStringWord` words returned by `str_splitWords`, retur
 ## Uint8Array methods
 * uint8Arr_toString( buf )
 * uint8Arr_toHexString( buf )
+* uint8Arr_remLx( buf )
+* uint8Arr_nextNum( buf )
 
 ## publish instructions
 * increment version number in package.json

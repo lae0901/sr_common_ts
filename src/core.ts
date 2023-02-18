@@ -1116,6 +1116,22 @@ export function strWords_wordAtPosition(wordsArr: iStringWord[], pos: number)
   return { found, prev, next, arrayIndex };
 }
 
+// ------------------------------- uint8Arr_nextNum -------------------------------
+export function uint8Arr_nextNum(buf:Uint8Array, ix:number)
+{
+  const nx = ix + 1 ;
+  if ( nx < buf.length )
+    return buf[nx] ;
+  else 
+    return -1 ;
+}
+
+// -------------------------------- uint8Arr_remLx --------------------------------
+export function uint8Arr_remLx(buf:Uint8Array, ix:number)
+{
+  return buf.length - ix ;
+}
+
 // ------------------------------ uint8Arr_toString ------------------------------
 /**
  * return the Uint8Array items as string of numeric values with space between each
