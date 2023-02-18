@@ -1118,6 +1118,12 @@ export function strWords_wordAtPosition(wordsArr: iStringWord[], pos: number)
 }
 
 // ------------------------------- uint8Arr_nextNum -------------------------------
+/**
+ * return value of next uint8 item in array. If past end of array, return -1.
+ * @param buf 
+ * @param ix 
+ * @returns 
+ */
 export function uint8Arr_nextNum(buf:Uint8Array, ix:number)
 {
   const nx = ix + 1 ;
@@ -1128,6 +1134,12 @@ export function uint8Arr_nextNum(buf:Uint8Array, ix:number)
 }
 
 // -------------------------------- uint8Arr_remLx --------------------------------
+/**
+ * return remaining length of array from index to the end.
+ * @param buf 
+ * @param ix 
+ * @returns 
+ */
 export function uint8Arr_remLx(buf:Uint8Array, ix:number)
 {
   return buf.length - ix ;
