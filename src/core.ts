@@ -2,8 +2,10 @@
 
 import { rxp, regex_exec } from './regex_core' ;
 import { regexPattern_toFragments } from './regex-frag' ;
+import { iTestResultItem, testResults_append } from './test-result'
 
 export {rxp, regex_exec, regexPattern_toFragments } ;
+export { iTestResultItem, testResults_append };
 
 // --------------------------------- any_toString ---------------------------------
 // value to string. Objects have values of their properties printed. 
