@@ -19,8 +19,10 @@ import {
 import { str_assignSubstr, str_enquote, str_padLeft, str_padRight, 
         rxp, 
       } from './core';
-import {testResults_append, testResults_consoleLog, 
+import {testResults_consoleLog, 
         testResults_new } from 'sr_test_framework';
+import {testResults_append} from './test-result';
+          
 
 const folderPath = '/c:/github/tester';
 const fileName = 'app.vue';
@@ -171,9 +173,9 @@ function arr_test()
     method = 'arr_copyItems';
     const arr = ['123', 'array', 53, 'test', 'babel'];
     const expected = [53, 'test', 'babel'];
-    const testResult = arr_copyItems(arr, 2, 4);
+    const actual = arr_copyItems(arr, 2, 4);
     const desc = 'copy array items';
-    testResults_append( results, {category, expected, testResult, desc, method});
+    testResults_append( results, {category, expected, actual, desc, method});
   }
 
   // test the arr_copyItems function.
@@ -187,7 +189,7 @@ function arr_test()
     });
     
     const desc = 'find and remove item from array';
-    testResults_append(results, { category, expected, testResult:arr, desc, method });
+    testResults_append(results, { category, expected, actual:arr, desc, method });
   }
 
   // test the arr_compareEqual function. arrays are equal.
@@ -197,9 +199,9 @@ function arr_test()
     const arr1 = ['123', 'array', 53, {age:25, name:'abc'}, ['22', 89, 'jack'], 'test', 'babel'];
     const arr2 = ['123', 'array', 53, {age:25, name:'abc'}, ['22', 89, 'jack'], 'test', 'babel'];
     const expected = true;
-    const testResult = arr_compareEqual( arr1, arr2 ) ;
+    const actual = arr_compareEqual( arr1, arr2 ) ;
     const desc = 'compare arrays for equality';
-    testResults_append(results, { category, expected, testResult, desc, method, aspect });
+    testResults_append(results, { category, expected, actual, desc, method, aspect });
   }
 
   // test the arr_compareEqual function. arrays not equal.
@@ -209,9 +211,9 @@ function arr_test()
     const arr1 = ['123', 'array', 53, { age: 25, name: 'abc' }, ['22', 89, 'jack'], 'test', 'babel'];
     const arr2 = ['123', 'array', 53, { age: 27, name: 'abc' }, ['22', 89, 'jack'], 'test', 'babel'];
     const expected = false;
-    const testResult = arr_compareEqual(arr1, arr2);
+    const actual = arr_compareEqual(arr1, arr2);
     const desc = 'compare arrays for equality';
-    testResults_append(results, { category, expected, testResult, desc, method, aspect });
+    testResults_append(results, { category, expected, actual, desc, method, aspect });
   }
 
   return results;
@@ -281,10 +283,10 @@ function obj_test()
     const obj1 = { names: ['123', 'array'], age: 53, textLines:['test', 'babel']};
     const obj2 = { names: ['123', 'array'], age: 53, textLines:['test', 'babel']};
     const expected = true;
-    const testResult = obj_compareEqual( obj1, obj2);
+    const actual = obj_compareEqual( obj1, obj2);
     const desc = 'compare object equality';
     const aspect = 'objects match' ;
-    testResults_append(results, { category, expected, testResult, desc, method, aspect });
+    testResults_append(results, { category, expected, actual, desc, method, aspect });
   }
 
   // test the obj_compareEqual function.
@@ -293,10 +295,10 @@ function obj_test()
     const obj1 = { names: ['123', 'array'], age: 53, textLines: ['test', 'babel'] };
     const obj2 = { names: ['123', 'array'], textLines: ['test', 'babel'] };
     const expected = false;
-    const testResult = obj_compareEqual(obj1, obj2);
+    const actual = obj_compareEqual(obj1, obj2);
     const desc = 'compare object equality';
     const aspect = 'objects do not match';
-    testResults_append(results, { category, expected, testResult, desc, method, aspect });
+    testResults_append(results, { category, expected, actual, desc, method, aspect });
   }
 
   // obj_apply.
@@ -308,9 +310,9 @@ function obj_test()
     const expected_obj = { names: ['123', 'array'], age: 53, textLines: ['test', 'babel'],
                        addr1: 'one bank street', city: 'rockaway' };
     const expected = true ;
-    const testResult = obj_compareEqual(obj1, expected_obj);
+    const actual = obj_compareEqual(obj1, expected_obj);
     const desc = 'apply properties to object';
-    testResults_append(results, { category, expected, testResult, desc, method });
+    testResults_append(results, { category, expected, actual, desc, method });
   }
   
   // obj_propertyMatch.
@@ -417,16 +419,10 @@ function str_test( )
   // test the str_padRight function.
   {
     method = 'str_padRight';
-    let passText = '';
-    let errmsg = '';
     const text = '123';
     const expected = '1230000';
-    const paddedText = str_padRight(text, 7, '0');
-    if (paddedText != expected)
-      errmsg = `incorrect result. ${paddedText}. expected ${expected}`;
-    else
-      passText = `correct result. ${paddedText}.`;
-    testResults_append(results, passText, errmsg, method);
+    const actual = str_padRight(text, 7, '0');
+    testResults_append(results, {method, expected, actual});
   }
 
   // generate string of random characters. 
@@ -441,46 +437,28 @@ function str_test( )
   // enquote string. simple.
   {
     method = 'str_enquote';
-    let passText = '';
-    let errmsg = '';
     const text = 'srcFiles' ;
     const expected = '"srcFiles"';
-    const rv = str_enquote(text, '"');
-    if ( rv == expected)
-      passText = `correct result. ${rv}` ;
-    else
-      errmsg = `incorrect result. ${rv}. expected ${expected}`;
-    testResults_append(results, passText, errmsg, method);
+    const actual = str_enquote(text, '"');
+    testResults_append(results, {expected, actual, method});
   }
 
   // enquote string. string contains backslash characters, quote characters.
   {
     method = 'str_enquote';
-    let passText = '';
-    let errmsg = '';
     const text = 'src"Fi\\les';
     const expected = '"src\\\"Fi\\\\les"';
-    const rv = str_enquote(text, '"');
-    if (rv == expected)
-      passText = `correct result. ${rv}`;
-    else
-      errmsg = `incorrect result. ${rv}. expected ${expected}`;
-    testResults_append(results, passText, errmsg, method);
+    const actual = str_enquote(text, '"');
+    testResults_append(results, {expected, actual, method});
   }
 
   // str_assignSubstr
   {
     method = 'str_assignSubstr';
-    let passText = '';
-    let errmsg = '';
     const text = 'src"Fi\\les';
     const expected = 'srcToshles';
-    const rv = str_assignSubstr(text, 3, 4, 'Tosh');
-    if (rv == expected)
-      passText = `correct result. ${rv}`;
-    else
-      errmsg = `incorrect result. got ${rv}. expected ${expected}`;
-    testResults_append(results, passText, errmsg, method);
+    const actual = str_assignSubstr(text, 3, 4, 'Tosh');
+    testResults_append(results, {expected, actual, method});
   }
 
   // strArr_toDistinctAndSorted
@@ -516,8 +494,8 @@ function date_test()
     const desc = `convert date to epoch`;
     const dt = new Date(1595273994 * 1000) ;
     const expected = 1595273994;
-    const testResult = date_toEpoch(dt);
-    testResults_append(results, {method, expected, testResult, desc }) ;
+    const actual = date_toEpoch(dt);
+    testResults_append(results, {method, expected, actual, desc }) ;
   }
 
   {
@@ -528,8 +506,8 @@ function date_test()
     const dt = date_fromISO(iso_date, iso_time) ;
     const mtime = date_toEpoch(dt) ;
     const expected = 1550262318 ;
-    const testResult = mtime ;
-    testResults_append(results, { method, expected, testResult, desc });
+    const actual = mtime ;
+    testResults_append(results, { method, expected, actual, desc });
   }
 
   {
@@ -537,8 +515,8 @@ function date_test()
     const desc = `convert date to ISO form`;
     const dt = new Date(2020,4,22) ;
     const expected = '2020-05-22';
-    const testResult = date_toISO( dt ) ;
-    testResults_append(results, { method, expected, testResult, desc });
+    const actual = date_toISO( dt ) ;
+    testResults_append(results, { method, expected, actual, desc });
   }
 
   return results;
@@ -557,8 +535,8 @@ function date_test()
 //     const method = 'dir_ensureExists';
 //     const expected = 'created';
 //     const aspect = 'create temp dir';
-//     const testResult = !errmsg_read ? 'created' : errmsg_read ;
-//     testResults_append(results, { expected, method, aspect, testResult });
+//     const actual = !errmsg_read ? 'created' : errmsg_read ;
+//     testResults_append(results, { expected, method, aspect, actual });
 //   }
 
 //   // add file to tempTestDir
@@ -589,8 +567,8 @@ function date_test()
 //     const expected = 2;
 //     const method = 'dir_readDirDeep' ;
 //     const aspect = 'containsItem' ;
-//     const testResult = dirPathNames.length ;
-//     testResults_append( results, {expected, method, aspect, testResult });
+//     const actual = dirPathNames.length ;
+//     testResults_append( results, {expected, method, aspect, actual });
 //   }
 
 //   // count number of directories that contain list of files
@@ -614,8 +592,8 @@ function date_test()
 //     const method = 'dir_rmdir';
 //     const expected = 'removed';
 //     const desc = 'delete temp dir';
-//     const testResult = !errmsg ? 'removed' : errmsg;
-//     testResults_append(results, { expected, method, desc, testResult });
+//     const actual = !errmsg ? 'removed' : errmsg;
+//     testResults_append(results, { expected, method, desc, actual });
 //   }
 
 //   return results;
