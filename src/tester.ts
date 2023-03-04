@@ -15,6 +15,7 @@ import {
           str_substrLenient,
           uint8Arr_toString,
           uint8Arr_toHexString,
+          uint8Arr_fromArrayObject,
         } from './core';
 import { str_assignSubstr, str_enquote, str_padLeft, str_padRight, 
         rxp, 
@@ -522,352 +523,6 @@ function date_test()
   return results;
 }
 
-// // ---------------------------------- dir_test ----------------------------------
-// async function dir_test()
-// {
-//   const results = testResults_new();
-//   const tempTestDir = path.join(os.tmpdir(), 'sr_core_ts');
-
-//   // create directory /tmp/sr_core_ts 
-//   {
-//     const { created, errmsg } = await dir_ensureExists(tempTestDir);
-//     const { files, errmsg:errmsg_read } = await dir_readdir(tempTestDir);
-//     const method = 'dir_ensureExists';
-//     const expected = 'created';
-//     const aspect = 'create temp dir';
-//     const actual = !errmsg_read ? 'created' : errmsg_read ;
-//     testResults_append(results, { expected, method, aspect, actual });
-//   }
-
-//   // add file to tempTestDir
-//   {
-//     const filePath = path.join( tempTestDir, 'steve.html');
-//     await file_writeNew( filePath, '<html></html>');
-//     const {text} = await file_readText( filePath );
-//     const expected = '<html></html>';
-//     const method = 'file_readText' ;
-//     const actual = text ;
-//     testResults_append( results, {method, expected, actual });
-//   }
-
-//   // return first file if tempTestDir that matches pattern.
-//   {
-//     const firstFile = await dir_firstFile(tempTestDir, /.html$/);
-//     const expected = 'steve.html' ;
-//     const method = 'dir_firstFile' ;
-//     const actual = firstFile ;
-//     testResults_append(results, { method, expected, actual });
-//   }
-
-//   // count number of directories
-//   {
-//     const dirPath = `c:\\github\\defn`;
-//     const options = { ignoreDir: ['node_modules', 'git', '.git'], containsItem: ['common', 'file-explorer'] };
-//     const dirPathNames = await dir_readDirDeep(dirPath, options);
-//     const expected = 2;
-//     const method = 'dir_readDirDeep' ;
-//     const aspect = 'containsItem' ;
-//     const actual = dirPathNames.length ;
-//     testResults_append( results, {expected, method, aspect, actual });
-//   }
-
-//   // count number of directories that contain list of files
-//   {
-//     const dirPath = `c:\\github`;
-//     const options : iDirDeepOptions = 
-//           { ignoreDir: ['node_modules', 'git', '.git'], containsMaxDepth:2, 
-//             containsItem: ['tslint.json', 'tester-core.ts', 'index.ts', 'preview.jpg'] };
-//     const dirPathNames = await dir_readDirDeep(dirPath, options);
-//     const expected = 6;
-//     const method = 'dir_readDirDeep';
-//     const aspect = 'containsMaxDepth';
-//     const actual = dirPathNames.length;
-//     const desc = 'count number dirs that contain list of files.' ;
-//     testResults_append(results, { expected, method, aspect, actual, desc });
-//   }
-
-//   // delete directory tempTestDir 
-//   {
-//     const { errmsg } = await dir_rmdir(tempTestDir, {recursive:true});
-//     const method = 'dir_rmdir';
-//     const expected = 'removed';
-//     const desc = 'delete temp dir';
-//     const actual = !errmsg ? 'removed' : errmsg;
-//     testResults_append(results, { expected, method, desc, actual });
-//   }
-
-//   return results;
-// }
-
-// // ---------------------------------- file_test ----------------------------------
-// async function file_test()
-// {
-//   const results = testResults_new();
-//   let method = '';
-//   const tempTestDir = path.join( os.tmpdir( ), 'sr_core_ts') ;
-
-//   // create directory /tmp/sr_core_ts 
-//   {
-//     const { created, errmsg } = await dir_ensureExists(tempTestDir);
-//     const {files} = await dir_readdir(tempTestDir) ;
-//     method = 'dir_readdir';
-//     let passText = `create dir ${tempTestDir}. passed.`;
-//     testResults_append(results, passText, '', method);
-//   }
-
-//   // file_writeNew
-//   let testTextFile = path.join(tempTestDir, 'textFile.txt');
-//   const textContents = 'tester.txt\nline 2\napp store' ;
-//   {
-//     method = 'file_writeNew';
-//     await file_writeNew(testTextFile, textContents) ;
-//     let passText = `write text ${textContents}`;
-//     testResults_append(results, passText, '', method);
-//   }
-
-//   // file_rename to ext .xxx
-//   {
-//     const method = 'file_rename' ;
-//     const expected = 'C:\\Users\\srich\\AppData\\Local\\Temp\\sr_core_ts\\textFile.xxx' ;
-//     const {errmsg, toPath}  = await file_rename( testTextFile, {ext:'.xxx'} ) ;
-//     const actual = toPath ;
-//     const aspect = 'rename to .xxx';
-//     testResults_append( results, {method, actual, expected, aspect});
-//     testTextFile = toPath ;
-//   }
-
-//   // file_rename back to ext .txt
-//   {
-//     const method = 'file_rename';
-//     const expected = 'C:\\Users\\srich\\AppData\\Local\\Temp\\sr_core_ts\\textFile.txt';
-//     const { errmsg, toPath } = await file_rename(testTextFile, { ext: '.txt' });
-//     const actual = toPath;
-//     const aspect = 'rename to back to .txt';
-//     testResults_append(results, { method, actual, expected, aspect });
-//     testTextFile = toPath;
-//   }
-
-//   // file_copy textFile.txt to steveFile.txt
-//   {
-//     let toTextFile = path.join( path.dirname(testTextFile), 'steveFile.txt') ;
-//     const method = 'file_copy';
-//     const expected = '';
-//     const actual = await file_copy(testTextFile, toTextFile ) ;
-//     const aspect = 'copy textFile.txt to steveFile.txt';
-//     testResults_append(results, { method, actual, expected, aspect });
-//   }
-
-//   // check that steveFile.txt exists
-//   {
-//     let toTextFile = path.join(path.dirname(testTextFile), 'steveFile.txt');
-//     const method = 'file_exists';
-//     const aspect = 'check after copy' ;
-//     const expected = true;
-//     const actual = await file_exists( toTextFile);
-//     testResults_append(results, { method, actual, expected, aspect });
-//   }
-
-//   // file_readAllText
-//   {
-//     method = 'file_readAllText';
-//     const {text:actual} = await file_readAllText(testTextFile);
-//     const expected = 'tester.txt\nline 2\napp store';
-//     testResults_append(results, {method, actual, expected});
-//   }
-
-//   // make sure file abc.txt exists in testTempDir
-//   {
-//     method = 'file_ensureExists';
-//     let failText = '';
-//     let passText = '';
-//     const abcFile = path.join(tempTestDir, 'abc.txt');
-//     const { fileCreated } = await file_ensureExists( abcFile);
-//     passText = `file exists. ${abcFile}`;
-//     testResults_append(results, passText, failText, method);
-//   }
-
-//   // file_stat, file_utimes
-//   {
-
-//   }
-
-//   // read stats of the file.
-//   {
-//     method = 'file_stat' ;
-//     let failText = '';
-//     let passText = '';
-//     const abcFile = path.join(tempTestDir, 'abc.txt');
-//     const { stats, errmsg } = await file_stat(abcFile);
-//     if ( errmsg )
-//       failText = `file stats error. file ${abcFile} ${errmsg}`;
-//     else
-//       passText = `got file stats. ${abcFile}`;
-//     testResults_append(results, passText, failText, method);
-//   }
-
-//   // file_utimes
-//   {
-//     method = 'file_utimes';
-//     let aspect = '' ;
-//     let failText = '';
-//     let passText = '';
-//     const filePath = path.join(tempTestDir, 'abc.txt');
-//     const { stats, errmsg } = await file_stat(filePath);
-//     if ( !errmsg )
-//     {
-//       const { mtimeMs, atimeMs } = stats ;
-//       const mtime = Math.round(mtimeMs / 1000 ) - 5 ;
-//       const atime = Math.round( atimeMs / 1000) ;
-//       aspect = 'set utimes' ;
-//       const errmsg_utimes = await file_utimes( filePath, atime, mtime ) ;
-//       if (errmsg_utimes)
-//         failText = `file utimes error. file ${filePath} ${errmsg_utimes}`;
-//       else
-//         passText = `set file mtime. ${filePath}`;
-//       testResults_append(results, passText, failText, {method,aspect});
-
-//       // run stat to read back mtime. check that mtime matches the value it was set to.
-//       const { stats: after_stats, errmsg: stat_errmsg } = await file_stat(filePath);
-//       failText = '' ;
-//       passText = '' ;
-//       if ( stat_errmsg )
-//         failText = `file_stat error after file_utimes. ${filePath} ${stat_errmsg}`;
-//       else if ( after_stats.mtimeMs / 1000 != mtime )
-//         failText = `mtime does not match value it was changed to. ${filePath} mtime ${mtime}`;
-//       else
-//         passText = `mtime set correctly. ${filePath} mtime ${mtime}`;
-//       aspect = 'check utimes';
-//       testResults_append(results, passText, failText, {method, aspect});
-//     }
-
-//     if (errmsg)
-//       failText = `file stats error. file ${filePath} ${errmsg}`;
-//     else
-//       passText = `got file stats. ${filePath}`;
-//     testResults_append(results, passText, failText, method);
-//   }
-
-//   // resolve to file abc.txt in tempTestDir
-//   {
-//     method = 'file_resolve' ;
-//     const fileName = 'abc.txt' ;
-//     const dirPath = path.dirname( tempTestDir ) ;
-//     const actual = await file_resolve( dirPath, fileName ) ;
-//     const expected = path.join( tempTestDir, fileName ) ;
-//     testResults_append( results, { method, actual, expected});
-//   }
-
-//   // run unlink to delete the just created file in testTempDir
-//   {
-//     method = 'file_unlink';
-//     let failText = '';
-//     let passText = '';
-//     const abcFile = path.join(tempTestDir, 'abc.txt');
-//     const {errmsg} = await file_unlink(abcFile);
-//     if (errmsg.length == 0)
-//     {
-//       passText = `file deleted. ${abcFile}`;
-//     }
-//     else
-//     {
-//       failText = `delete file failed. ${abcFile} ${errmsg}`;
-//     }
-//     testResults_append(results, passText, failText, method);
-//   }
-
-//   return results ;
-// }
-
-// // ---------------------------------- primitive_file_test ----------------------------------
-// // test primitive file functions.  open, write, close.
-// async function primitive_file_test()
-// {
-//   let method = '';
-//   const tempTestDir = path.join(os.tmpdir(), 'sr_core_ts');
-//   const testTextFile = path.join(tempTestDir, 'primitive-textFile.txt');
-//   const results = testResults_new() ;
-
-//   // create directory /tmp/sr_core_ts 
-//   {
-//     const { created, errmsg } = await dir_ensureExists(tempTestDir);
-//     const {files} = await dir_readdir(tempTestDir);
-//     testResults_append( results, `create dir ${tempTestDir}`, errmsg ) ;
-//   }
-
-//   // open file for writing.
-//   let fd : number ;
-//   {
-//     const {fd:num, errmsg} = await file_open( testTextFile, 'w' ) ;
-//     fd = num;
-//     testResults_append(results, `open file for writing ${testTextFile}`, errmsg);
-//   }
-
-//   // write some text.
-//   let accumWriteText = '' ;
-//   {
-//     const writeText = `String literal types allow you to specify the exact value a string must have.`;
-//     method = 'file_writeText';
-//     const { errmsg } = await file_writeText(fd, writeText ) ;
-//     accumWriteText = writeText ;
-//     testResults_append(results, `write text to file ${testTextFile}`, errmsg, method);
-//   }
-
-//   // write some more text.
-//   {
-//     const writeText = ` In practice string literal types combine nicely`;
-//     method = 'file_writeText';
-//     const { errmsg } = await file_writeText(fd, writeText);
-//     accumWriteText += writeText;
-//     testResults_append(results, `write more text to file ${testTextFile}`, errmsg, method);
-//   }
-
-//   // close the file.
-//   {
-//     const { errmsg } = await file_close(fd);
-//     testResults_append(results, `close file ${testTextFile}`, errmsg);
-//   }
-
-//   // file_readAllText
-//   {
-//     method = 'file_readAllText';
-//     let { text: allText, errmsg } = await file_readAllText(testTextFile);
-//     if ( !errmsg && ( allText != accumWriteText ))
-//       errmsg = `read all text does not match write text ${accumWriteText}`;
-//     testResults_append( results, `readAllText match ${allText}`, errmsg, method );
-//   }
-
-//   // run unlink to delete the just created file in testTempDir
-//   {
-//     method = 'file_unlink';
-//     const { errmsg } = await file_unlink(testTextFile);
-//     testResults_append(results, `remove file ${testTextFile}`, errmsg, method);
-//   }
-
-//   return { results };
-// }
-
-// // ---------------------------------- system_test ----------------------------------
-// function system_test()
-// {
-//   const results = testResults_new();
-//   let method = '';
-
-//   // test the str_padLeft function.
-//   {
-//     method = 'system_downloadsFolder';
-//     let passText = '';
-//     let errmsg = '';
-//     const folder = system_downloadsFolder( ) ;
-//     if ( !folder )
-//       errmsg = `downloads folder is empty.`;
-//     else
-//       passText = `got downloads folder ${folder}.`;
-//     testResults_append(results, passText, errmsg, method);
-//   }
-
-//   return results;
-// }
-
 // ---------------------------------- uint8Arr_test ----------------------------------
 function uint8Arr_test()
 {
@@ -889,6 +544,24 @@ function uint8Arr_test()
     const buf = new Uint8Array([255,250,39,1,3,73]);
     const expected = 'FF FA 27 1 3 49';
     const actual = uint8Arr_toHexString(buf, {upper:true});
+    testResults_append(results, { method, category, expected, actual });
+  }
+
+  // uint8Arr_fromArrayObject
+  {
+    const str = `
+    const method = 'uint8Arr_toString';
+    const buf = new Uint8Array([255,250,39,1,3,73]);
+    `;
+    const buf = Uint8Array.from(str, c => c.charCodeAt(0));
+    const buf_str = JSON.stringify(buf);
+    const buf_obj = JSON.parse( buf_str );
+    const buf2 = uint8Arr_fromArrayObject(buf_obj);
+    const str2 = Buffer.from(buf2).toString('utf8');
+
+    const method = 'uint8Arr_fromArrayObject';
+    const expected = str;
+    const actual = str2;
     testResults_append(results, { method, category, expected, actual });
   }
 

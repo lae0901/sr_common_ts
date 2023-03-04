@@ -1119,6 +1119,24 @@ export function strWords_wordAtPosition(wordsArr: iStringWord[], pos: number)
   return { found, prev, next, arrayIndex };
 }
 
+/**
+ * create Uint8Array from the array like number named properties of the input object.
+ * Intended to be used to create Uint8Array from the object returned when 
+ * JSON.parse is applied to the output when JSON.stringify is run against a 
+ * Uint8Array buffer.
+ * const buf = new Uint8Array([49, 50, 51])
+ * const str = JSON.stringify(buf)
+ * const bufObj = JSON.parse(str)
+ * const buf = uint8Arr_fromArrayObject(bufObj);
+ * @param obj 
+ * @returns 
+ */
+export function uint8Arr_fromArrayObject(obj:object)
+{
+  const buf = new Uint8Array( Object.values(obj) );
+  return buf;
+}
+
 // ------------------------------- uint8Arr_nextNum -------------------------------
 /**
  * return value of next uint8 item in array. If past end of array, return -1.
