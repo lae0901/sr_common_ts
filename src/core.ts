@@ -1149,14 +1149,14 @@ export function uint8Arr_fromArrayObject(obj:object)
  * @param bufFunc 
  * @returns 
  */
-export function uint8Arr_join( arr:any[], arrFunc:(item:any) => Uint8Array | undefined )
+export function uint8Arr_join<T>( arr:T[], arrFunc:(item:T) => Uint8Array | undefined )
 {
   // first pass thru input arr.
   // calc bytes needed in resulting joined Uint8Array buffer.
   let lx = 0;
   for( const item of arr)
   {
-    const buf = arrFunc(item);
+    const buf = arrFunc(item); 
     if ( buf )
       lx += buf.length;
   }
