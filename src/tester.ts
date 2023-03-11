@@ -16,6 +16,7 @@ import {
           uint8Arr_toString,
           uint8Arr_toHexString,
           uint8Arr_fromArrayObject,
+          uint8Arr_join,
         } from './core';
 import { str_assignSubstr, str_enquote, str_padLeft, str_padRight, 
         rxp, 
@@ -563,6 +564,25 @@ function uint8Arr_test()
     const expected = str;
     const actual = str2;
     testResults_append(results, { method, category, expected, actual });
+  }
+
+  // uint8Arr_join
+  {
+    const textArr = ['123', '', '567'];
+    const actual = uint8Arr_join( textArr, (item) => 
+    {
+      if ( item )
+      {
+        const arr = (item as string).split('').map( (item) => Number(item));
+        const buf = new Uint8Array([...arr]);
+        return buf;
+      }
+      else 
+        return undefined;
+    });
+    const expected = new Uint8Array([1,2,3,5,6,7]);
+    const method = 'uint8Arr_join';
+    testResults_append(results, { method, expected, actual });
   }
 
   return results;

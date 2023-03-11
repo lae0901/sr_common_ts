@@ -1137,6 +1137,48 @@ export function uint8Arr_fromArrayObject(obj:object)
   return buf;
 }
 
+// --------------------------------- uint8Arr_join ---------------------------------
+/**
+ * join the uint8Arr buffers provided by input array arr into a single output 
+ * Uint8Array buffer.
+ * The 2nd parameter is a function that is called for each input array item. This
+ * functions returns an Uint8Array provided by the input array. When the input
+ * array item does not provide a buffer join value, the callback function should 
+ * return a falsy value.
+ * @param arr 
+ * @param bufFunc 
+ * @returns 
+ */
+export function uint8Arr_join( arr:any[], arrFunc:(item:any) => Uint8Array | undefined )
+{
+  // first pass thru input arr.
+  // calc bytes needed in resulting joined Uint8Array buffer.
+  let lx = 0;
+  for( const item of arr)
+  {
+    const buf = arrFunc(item);
+    if ( buf )
+      lx += buf.length;
+  }
+
+  // allocate the joined Uint8Array buffer.
+  const join_buf = new Uint8Array(lx);
+
+  // second pass. Copy the buffers of the input items to the joined buffer.
+  let tx = 0;
+  for( const item of arr)
+  {
+    const buf = arrFunc(item);
+    if ( buf )
+    {
+      join_buf.set(buf,tx);
+      tx += buf.length;
+    }
+  }
+
+  return join_buf;
+}
+
 // ------------------------------- uint8Arr_nextNum -------------------------------
 /**
  * return value of next uint8 item in array. If past end of array, return -1.
