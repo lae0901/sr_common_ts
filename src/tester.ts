@@ -17,6 +17,7 @@ import {
           uint8Arr_toHexString,
           uint8Arr_fromArrayObject,
           uint8Arr_join,
+          str_replaceAt,
         } from './core';
 import { str_assignSubstr, str_enquote, str_padLeft, str_padRight, 
         rxp, 
@@ -406,6 +407,7 @@ function strWords_test()
 // ---------------------------------- str_test ----------------------------------
 function str_test( )
 {
+  const category = 'str';
   const results = testResults_new( ) ;
   let method = '' ;
 
@@ -480,6 +482,26 @@ function str_test( )
     const expected = ['Joe', 'acwww', 'Sue', 'Bob'];
     testResults_append(results, { method, actual, expected });
   }
+
+  // str_replaceAt
+  {
+    method = 'str_replaceAt';
+    const inText = 'autocoder_telnet';
+    const actual = str_replaceAt(inText, 5, 3, 'README');
+    const expected = 'autocREADMEr_telnet';
+    testResults_append(results, { method, actual, expected, category });
+  }
+
+  // str_replaceAt. aspect: replace to end of string
+  {
+    method = 'str_replaceAt';
+    const aspect = 'replace to end';
+    const inText = 'autocoder_telnet';
+    const actual = str_replaceAt(inText, 14, -1, 'README');
+    const expected = 'autocoder_telnREADME';
+    testResults_append(results, { method, actual, expected, category, aspect });
+  }
+
 
   return results ;
 }

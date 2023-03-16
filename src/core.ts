@@ -806,6 +806,31 @@ export function str_replaceAll( str:string, findText:string, replaceText:string 
   return res;
 }
 
+// --------------------- str_replaceAt -----------------
+/**
+ * replace substr in string at the specified location.
+ * @param text 
+ * @param bx 
+ * @param lx  set to -1 to replace text from bx to end of string.
+ * @param rplText 
+ * @returns 
+ */
+export function str_replaceAt( text:string, bx:number, lx:number, rplText:string )
+{
+  let beforeText = '' ;
+  let afterText = '' ;
+  if ( bx > 0 )
+    beforeText = text.substring(0, bx) ;
+  if ( lx != -1 )
+  {
+    const nx = bx + lx ;
+    if ( nx < text.length )
+      afterText = text.substring(nx) ;
+  }
+
+  return  beforeText + rplText + afterText ;
+}
+
 // ------------------------- str_rtrim --------------------
 export function str_rtrim(str:string): string
 {
