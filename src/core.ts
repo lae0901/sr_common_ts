@@ -820,7 +820,12 @@ export function str_replaceAt( text:string, bx:number, lx:number, rplText:string
   let beforeText = '' ;
   let afterText = '' ;
   if ( bx > 0 )
-    beforeText = text.substring(0, bx) ;
+  {
+    if ( text.length < bx )
+      beforeText = text.padEnd(bx, ' ');
+    else
+      beforeText = text.substring(0, bx) ;
+  }
   if ( lx != -1 )
   {
     const nx = bx + lx ;

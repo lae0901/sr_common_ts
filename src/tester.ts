@@ -502,6 +502,16 @@ function str_test( )
     testResults_append(results, { method, actual, expected, category, aspect });
   }
 
+  // str_replaceAt. aspect: replace to end of string
+  {
+    method = 'str_replaceAt';
+    const aspect = 'rpl pos exceeds input lgth';
+    const inText = ' ';
+    const actual = str_replaceAt(inText, 5, -1, 'README');
+    const expected = '     README';
+    testResults_append(results, { method, actual, expected, category, aspect });
+  }
+
 
   return results ;
 }
