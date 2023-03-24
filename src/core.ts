@@ -1167,6 +1167,22 @@ export function uint8Arr_fromArrayObject(obj:object)
   return buf;
 }
 
+// ------------------------------ uint8Arr_fromObject ------------------------------
+export function uint8Arr_fromObject(obj:{[key:string]: any})
+{
+  if (obj['data'])
+  {
+    const buf = new Uint8Array(obj.data);
+    return buf;
+  }
+  else 
+  {
+    const buf = new Uint8Array( Object.values(obj) );
+    return buf;
+ 
+  }
+}
+
 // --------------------------------- uint8Arr_join ---------------------------------
 /**
  * join the uint8Arr buffers provided by input array arr into a single output 
