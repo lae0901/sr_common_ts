@@ -234,6 +234,27 @@ export function lines_findFirst(lines: string[], findText: string, options?: { s
   return { linn, coln };
 }
 
+// ------------------------------ numArr_toString ------------------------------
+/**
+ * return the number array items as string of numeric values with space between each
+ * value.
+ * @param arr 
+ * @returns 
+ */
+export function numArr_toString(arr: number[])
+{
+  let str = '';
+  for (var ix = 0; ix < arr.length; ++ix)
+  {
+    const num = arr[ix];
+    if (str)
+      str += ` ${num}`;
+    else
+      str += `${num}`;
+  }
+  return str;
+}
+
 // --------------------------------- obj_apply ---------------------------------
 // apply properties from the from object to the to object.
 // use obj_apply in place of the spread operator when you do not want to create 
@@ -1251,6 +1272,30 @@ export function uint8Arr_nextNum(buf:Uint8Array, ix:number)
 export function uint8Arr_remLx(buf:Uint8Array, ix:number)
 {
   return buf.length - ix ;
+}
+
+// ------------------------------- uint8Arr_toArray -------------------------------
+/**
+ * copy items from Uint8Array to a number array.
+ * @param buf 
+ * @param bx 
+ * @param ex 
+ * @returns 
+ */
+export function uint8Arr_toArray(buf:Uint8Array, bx:number, ex?:number)
+{
+  ex = typeof ex == 'undefined' || ex == -1 ? buf.length : ex;
+  const lx = ex - bx;
+  const arr = [lx];
+  let ix = bx;
+  let tx = 0;
+  while(ix < ex)
+  {
+    arr[tx] = buf[ix];
+    tx += 1;
+    ix += 1;
+  }
+  return arr;
 }
 
 // ------------------------------ uint8Arr_toString ------------------------------

@@ -18,6 +18,7 @@ import {
           uint8Arr_fromArrayObject,
           uint8Arr_join,
           str_replaceAt,
+          uint8Arr_toArray,
         } from './core';
 import { str_assignSubstr, str_enquote, str_padLeft, str_padRight, 
         rxp, 
@@ -614,6 +615,16 @@ function uint8Arr_test()
     });
     const expected = new Uint8Array([1,2,3,5,6,7]);
     const method = 'uint8Arr_join';
+    testResults_append(results, { method, expected, actual });
+  }
+
+  // uint8Arr_toArray
+  {
+    const buf = new Uint8Array([1,2,3,5,6,7]);
+    const textArr = ['123', '', '567'];
+    const actual = uint8Arr_toArray( buf, 3, 6) ;
+    const expected = [5,6,7];
+    const method = 'uint8Arr_toArray';
     testResults_append(results, { method, expected, actual });
   }
 
