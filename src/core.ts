@@ -621,7 +621,12 @@ export function str_assignSubstr(str: string,
 
   // the text of the string before and after the assigned to location.
   if (before_length > 0)
-    before_text = str.substring(0, 0 + before_length);
+  {
+    if ( str.length < before_length )
+      before_text = str.padEnd(before_length);
+    else 
+      before_text = str.substring(0, 0 + before_length);
+  }
   if (after_length > 0)
     after_text = str.substring(after_start, after_start + after_length);
 
