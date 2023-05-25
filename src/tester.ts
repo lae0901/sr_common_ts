@@ -19,13 +19,13 @@ import {
           uint8Arr_join,
           str_replaceAt,
           uint8Arr_toArray,
-        } from './core';
+        } from './core.js';
 import { str_assignSubstr, str_enquote, str_padLeft, str_padRight, 
         rxp, 
-      } from './core';
+      } from './core.js';
 import {testResults_consoleLog, 
         testResults_new } from 'sr_test_framework';
-import {testResults_append} from './test-result';
+import {testResults_append} from './test-result.js';
           
 
 const folderPath = '/c:/github/tester';

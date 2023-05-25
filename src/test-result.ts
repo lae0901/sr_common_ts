@@ -1,5 +1,5 @@
 
-import { arr_compareEqual, obj_propertyMatch } from './core';
+import { arr_compareEqual, obj_propertyMatch } from './core.js';
 
 // -------------------------------- iTestResultItem --------------------------------
 export interface iTestResultItem

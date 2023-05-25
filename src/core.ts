@@ -1,8 +1,8 @@
 // sr_core_ts/src/core.ts
 
-import { rxp, regex_exec } from './regex_core' ;
-import { regexPattern_toFragments } from './regex-frag' ;
-import { iTestResultItem, testResults_append } from './test-result'
+import { rxp, regex_exec } from './regex_core.js' ;
+import { regexPattern_toFragments } from './regex-frag.js' ;
+import { iTestResultItem, testResults_append } from './test-result.js'
 
 export {rxp, regex_exec, regexPattern_toFragments } ;
 export { iTestResultItem, testResults_append };

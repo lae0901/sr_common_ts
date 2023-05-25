@@ -1,8 +1,8 @@
 // regex-frag.js
 
-import { str_isQuoted, str_substrLenient } from './core';
-import { rxp, regex_isQuantifier, regex_splitLastChar } from './regex_core';
-import { arr_range, str_indexOfUnescapedChar, str_unescape } from './more-core' ;
+import { str_isQuoted, str_substrLenient } from './core.js';
+import { rxp, regex_isQuantifier, regex_splitLastChar } from './regex_core.js';
+import { arr_range, str_indexOfUnescapedChar, str_unescape } from './more-core.js' ;
 
 interface regexFrag_interface
 {
