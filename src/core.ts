@@ -64,6 +64,7 @@ export function any_toString(val: any, skipProps?: string[])
 }
 
 // --------------------------------- arr_compareEqual -------------------------
+// get rid of this. user arr_equals instead.
 export function arr_compareEqual<T>( arr1: T[], arr2: T[]) : boolean 
 {
   let res = true ;
@@ -124,6 +125,21 @@ export function arr_copyItems<T>(arr: T[], from: number, count: number): T[]
     count -= 1;
   }
   return toItems;
+}
+
+/**
+ * compare if contents of arr1 and arr2 are equal.
+ * @param arr1 
+ * @param arr2 
+ * @returns 
+ */
+export function arr_equals<T>(arr1:T[], arr2:T[])
+{
+  if ( arr1.length != arr2.length )
+    return false ;
+
+  const isEquals = arr1.every((value, index) => value === arr2[index]);
+  return isEquals ;
 }
 
 // ------------------------------- arr_findAndSplice ----------------------------
@@ -1382,4 +1398,35 @@ export function uint8Arr_scanUntilTerm(buf:Uint8Array, bx:number, termArr:number
   const scanBuf = lx ? buf.slice( bx, bx + lx) : null;
   const scanLx = termNum == -1 ? lx : lx + 1;
   return { scanBuf, scanLx, termNum };
+}
+
+/**
+ * return the tail of the buffer. The tail is the last lx bytes of the buffer.
+ * @param buf 
+ * @param lx 
+ * @param pad - pad the tail with pad value to make the tail lx bytes long.
+ * @returns 
+ */
+export function uint8Arr_tail(buf:Uint8Array, lx:number, pad?:number)
+{
+  let tail:Uint8Array;
+  const ix = buf.length - lx;
+  if ( ix < 0 )
+  {
+    if ( typeof pad == 'number' )
+    {
+      const padLx = lx - buf.length;
+      const padArr = Array(padLx).fill(pad);
+      tail = new Uint8Array([...buf,...padArr]);
+    }
+    else 
+    {
+      tail = buf;
+    }
+  }
+  else 
+  {
+    tail = buf.slice(ix);
+  }
+  return tail;
 }
