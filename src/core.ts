@@ -175,6 +175,17 @@ export function date_currentISO()
   return date_toISO(dt);
 }
 
+/**
+ * return a Date object from the number of seconds since 1970.
+ * @param epochSeconds 
+ * @returns 
+ */
+export function date_fromEpochSeconds( epochSeconds:number ) 
+{
+  const dt = new Date( epochSeconds * 1000 ) ;
+  return dt ;
+}
+
 // --------------------------------- date_fromISO ------------------------------------
 // build Date object from yy, mm, dd parts of ISO date.
 // iso_time: time of day in hh:mm:ss form.
