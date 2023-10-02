@@ -282,6 +282,21 @@ export function numArr_toString(arr: number[])
   return str;
 }
 
+/**
+ * return the number of digits after the decimal point.
+ * @param num 
+ * @returns 
+ */
+export function number_numPrecisionDigits(num: number)
+{
+  const str = num.toString();
+  const ix = str.indexOf('.');
+  if (ix == -1)
+    return 0;
+  else
+    return str.length - ix - 1;
+}
+
 // --------------------------------- obj_apply ---------------------------------
 // apply properties from the from object to the to object.
 // use obj_apply in place of the spread operator when you do not want to create 
